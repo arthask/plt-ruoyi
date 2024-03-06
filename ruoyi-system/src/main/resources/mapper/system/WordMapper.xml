@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WordMapper">
+    
+    <resultMap type="Word" id="WordResult">
+        <result property="id"    column="id"    />
+        <result property="word"    column="word"    />
+        <result property="phonetic"    column="phonetic"    />
+        <result property="translation"    column="translation"    />
+        <result property="pos"    column="pos"    />
+        <result property="tag"    column="tag"    />
+        <result property="sentence"    column="sentence"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createUserId"    column="create_user_id"    />
+    </resultMap>
+
+    <sql id="selectWordVo">
+        select id, word, phonetic, translation, pos, tag, sentence, create_time, update_time, create_user_id from word
+    </sql>
+
+    <select id="selectWordList" parameterType="Word" resultMap="WordResult">
+        <include refid="selectWordVo"/>
+        <where>  
+            <if test="word != null  and word != ''"> and word = #{word}</if>
+            <if test="phonetic != null  and phonetic != ''"> and phonetic = #{phonetic}</if>
+            <if test="translation != null  and translation != ''"> and translation = #{translation}</if>
+            <if test="pos != null  and pos != ''"> and pos = #{pos}</if>
+            <if test="tag != null  and tag != ''"> and tag = #{tag}</if>
+            <if test="sentence != null  and sentence != ''"> and sentence = #{sentence}</if>
+            <if test="createUserId != null "> and create_user_id = #{createUserId}</if>
+        </where>
+    </select>
+    
+    <select id="selectWordById" parameterType="Long" resultMap="WordResult">
+        <include refid="selectWordVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectWordByName" resultType="com.ruoyi.system.domain.Word">
+        <include refid="selectWordVo"/>
+        where word = #{word}
+        and  create_user_id = #{userId}
+    </select>
+
+    <select id="getWordCount" resultType="java.lang.Long">
+        select count(*) from word where create_user_id = #{userId}
+    </select>
+
+    <select id="getRandomWordOfUser" resultType="com.ruoyi.system.domain.Word">
+        select w.*  from word_snapshot ws
+            left join word w on ws.word_id = w.id
+        where
+            ws.user_id = #{userId}
+            and type = 1
+            limit #{offset},1;
+    </select>
+
+    <select id="getNewWordOfUser" resultType="com.ruoyi.system.domain.Word">
+        select * from word w left join user_word uw on w.id = uw.word_id
+        where create_user_id = #{userId}
+          and uw.id is null
+    </select>
+
+    <select id="getNewWordCountOfUser" resultType="java.lang.Long">
+        select count(*) from word_snapshot ws
+        where
+            ws.user_id = #{userId}
+          and type = 1
+    </select>
+
+    <select id="getNewWordByIndex" resultType="com.ruoyi.system.domain.Word">
+        select w.*  from word_snapshot ws
+        left join word w on ws.word_id = w.id
+        where
+            ws.user_id = #{userId}
+            and type = 1
+            limit #{offset},1;
+    </select>
+
+    <insert id="insertWord" parameterType="Word" useGeneratedKeys="true" keyProperty="id">
+        insert into word
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="word != null">word,</if>
+            <if test="phonetic != null">phonetic,</if>
+            <if test="translation != null">translation,</if>
+            <if test="pos != null">pos,</if>
+            <if test="tag != null">tag,</if>
+            <if test="sentence != null">sentence,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createUserId != null">create_user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="word != null">#{word},</if>
+            <if test="phonetic != null">#{phonetic},</if>
+            <if test="translation != null">#{translation},</if>
+            <if test="pos != null">#{pos},</if>
+            <if test="tag != null">#{tag},</if>
+            <if test="sentence != null">#{sentence},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWord" parameterType="Word">
+        update word
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="word != null">word = #{word},</if>
+            <if test="phonetic != null">phonetic = #{phonetic},</if>
+            <if test="translation != null">translation = #{translation},</if>
+            <if test="pos != null">pos = #{pos},</if>
+            <if test="tag != null">tag = #{tag},</if>
+            <if test="sentence != null">sentence = #{sentence},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createUserId != null">create_user_id = #{createUserId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWordById" parameterType="Long">
+        delete from word where id = #{id}
+    </delete>
+
+    <delete id="deleteWordByIds" parameterType="String">
+        delete from word where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
