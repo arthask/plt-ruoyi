@@ -7,12 +7,11 @@ ruoyi:
   # 版权年份
   copyrightYear: 2023
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: D:/ruoyi/uploadPath
+  profile: C:/Users/14531/OneDrive/Documents/diycode/image
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
-
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
@@ -60,6 +59,9 @@ spring:
       max-file-size: 10MB
       # 设置总上传的文件大小
       max-request-size: 20MB
+  web:
+    resources:
+      static-locations: file:C:\\Users\\14531\\OneDrive\\Documents\\diycode\\image\\upload\\
   # 服务模块
   devtools:
     restart:

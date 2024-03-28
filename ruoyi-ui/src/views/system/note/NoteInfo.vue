@@ -55,14 +55,14 @@ export default {
 </script>
 
 <template>
-  <div class="ql-container ql-snow">
-    <div class="ql-editor">
-      <el-row :gutter="20" type="flex" justify="start" class="cc">
+  <div>
+    <div class="ck-content">
+      <el-row :gutter="20" type="flex" justify="start">
         <el-col :span="12"><h1>{{this.summaryForm.title}}</h1></el-col>
       </el-row>
-      <h2 class="dd">问题</h2>
-      <div class="ee" v-for="(data, index) in answerForm.data">
-        <el-row style="margin-bottom: 10px;" :gutter="0" type="flex" justify="start">
+      <h2>问题</h2>
+      <div v-for="(data, index) in answerForm.data">
+        <el-row  :gutter="0" type="flex" justify="start">
           <el-col :span="2"><h3>Q{{index+1}}:</h3></el-col>
           <el-col :span="15"><span>{{data.question}}</span> </el-col>
         </el-row>
@@ -72,31 +72,10 @@ export default {
         </el-row>
       </div>
       <h2>总结</h2>
-      <div class="ee" v-html="this.summaryForm.summary"></div>
+      <div v-html="this.summaryForm.summary"></div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.aa {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  margin: 0 auto;
-}
-
-.bb {
-  width: 800px;
-}
-.cc {
- margin: 40px 0;
-}
-.dd {
-  margin: 30px 0;
-}
-.ee {
-  margin: 20px 0;
-}
-
 </style>
