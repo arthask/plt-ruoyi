@@ -6,15 +6,23 @@ function resolve(dir) {
 }
 
 const CompressionPlugin = require('compression-webpack-plugin')
+const { CKEditorTranslationsPlugin } = require( '@ckeditor/ckeditor5-dev-translations' );
+const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
 
 const name = process.env.VUE_APP_TITLE || '若依管理系统' // 网页标题
 
-const port = process.env.port || process.env.npm_config_port || 80 // 端口
+const port = process.env.port || process.env.npm_config_port || 3030 // 端口
 
 // vue.config.js 配置说明
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions
 // 这里只列一部分，具体配置参考文档
 module.exports = {
+  // The source of CKEditor&nbsp;5 is encapsulated in ES6 modules. By default, the code
+  // from the node_modules directory is not transpiled, so you must explicitly tell
+  // the CLI tools to transpile JavaScript files in all ckeditor5-* modules.
+  transpileDependencies: [
+    /ckeditor5-[^/\\]+[/\\]src[/\\].+\.js$/,
+  ],
   // 部署生产环境和开发环境下的URL。
   // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
   // 例如 https://www.ruoyi.vip/。如果应用被部署在一个子路径上，你就需要用这个选项指定这个子路径。例如，如果你的应用被部署在 https://www.ruoyi.vip/admin/，则设置 baseUrl 为 /admin/。
@@ -66,7 +74,15 @@ module.exports = {
         filename: '[path].gz[query]',   // 压缩后的文件名
         algorithm: 'gzip',              // 使用gzip压缩
         minRatio: 0.8                   // 压缩率小于1才会压缩
-      })
+      }),
+      // CKEditor&nbsp;5 needs its own plugin to be built using webpack.
+      new CKEditorTranslationsPlugin( {
+        // See https://ckeditor.com/docs/ckeditor5/latest/features/ui-language.html
+        language: 'en',
+
+        // Append translations to the file matching the `app` name.
+        translationsOutputFile: /app/
+      } )
     ],
   },
   chainWebpack(config) {
@@ -77,6 +93,7 @@ module.exports = {
     config.module
       .rule('svg')
       .exclude.add(resolve('src/assets/icons'))
+      .add(path.join( __dirname, 'node_modules', '@ckeditor' ) )
       .end()
     config.module
       .rule('icons')
@@ -89,6 +106,27 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
+
+    config.module
+      .rule( 'cke-svg' )
+      .test( /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/ )
+      .use( 'raw-loader' )
+      .loader( 'raw-loader' );
+    config.module
+      .rule( 'cke-css' )
+      .test( /ckeditor5-[^/\\]+[/\\].+\.css$/ )
+      .use( 'postcss-loader' )
+      .loader( 'postcss-loader' )
+      .tap( () => {
+        return {
+          postcssOptions: styles.getPostCssConfig( {
+            themeImporter: {
+              themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
+            },
+            minify: true
+          } )
+        };
+      } );
 
     config.when(process.env.NODE_ENV !== 'development', config => {
           config

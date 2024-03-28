@@ -1,8 +1,10 @@
 <script>
 import {addQuestion} from "@/api/system/question";
 import {updateNote} from "@/api/system/note";
+import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {
+  components: {CkEditor},
   data() {
     return {
       active1: 0,
@@ -292,8 +294,9 @@ export default {
                           :prop="data.answer"
                           :label="data.question"
                           :key="data.key"
-                          :rules="{required: true, message: '问题不能为空', trigger: 'blur'}">
-              <editor class="bb" v-model="data.answer" :min-height="192"/>
+                          :rules="{required: true, message: '答案不能为空', trigger: 'blur'}">
+<!--              <editor class="bb" v-model="data.answer" :min-height="192"/>-->
+              <ck-editor class="bb" v-model="data.answer" :min-height="192"></ck-editor>
             </el-form-item>
             <el-form-item>
               <el-button @click="resetForm('answerForm')">重置</el-button>
@@ -307,7 +310,8 @@ export default {
           <el-form :label-position="labelPosition" label-width="100px" :model="summaryForm" v-show="showStep4"
                    ref="summaryForm2">
             <el-form-item label="总结" prop="summary">
-              <editor class="bb" v-model="summaryForm.summary" :min-height="192"/>
+<!--              <editor class="bb" v-model="summaryForm.summary" :min-height="192"/>-->
+              <ck-editor class="bb" v-model="summaryForm.summary" :min-height="192"></ck-editor>
             </el-form-item>
             <el-form-item>
               <el-button @click="resetForm('summaryForm2')">重置</el-button>
