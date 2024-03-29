@@ -13,6 +13,7 @@ import {Paragraph} from '@ckeditor/ckeditor5-paragraph'
 import {SimpleUploadAdapter} from '@ckeditor/ckeditor5-upload';
 import { Table, TableCaption, TableCellProperties, TableColumnResize, TableProperties, TableToolbar } from '@ckeditor/ckeditor5-table';
 import { CodeBlock } from '@ckeditor/ckeditor5-code-block';
+import { Heading } from '@ckeditor/ckeditor5-heading';
 import {
   AutoImage,
   Image,
@@ -93,6 +94,7 @@ export default {
           TableCaption, TableCellProperties, TableColumnResize,
           TableProperties,
           Code, CodeBlock,
+          Heading
         ],
 
         toolbar: {
@@ -102,6 +104,7 @@ export default {
             'link',
             'undo',
             'redo',
+            'heading',
             'code',
             'codeBlock',
             'insertTable',

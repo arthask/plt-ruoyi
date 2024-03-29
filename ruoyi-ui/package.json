@@ -42,6 +42,7 @@
     "@ckeditor/ckeditor5-dev-utils": "^39.6.3",
     "@ckeditor/ckeditor5-editor-classic": "^41.2.1",
     "@ckeditor/ckeditor5-essentials": "^41.2.1",
+    "@ckeditor/ckeditor5-heading": "^41.2.1",
     "@ckeditor/ckeditor5-image": "^41.2.1",
     "@ckeditor/ckeditor5-link": "^41.2.1",
     "@ckeditor/ckeditor5-paragraph": "^41.2.1",

@@ -120,7 +120,8 @@
           <el-input v-model="form.sceneId" placeholder="请输入场景id" />
         </el-form-item>
         <el-form-item label="发送内容">
-          <editor v-model="form.senderContent" :min-height="192"/>
+<!--          <editor v-model="form.senderContent" :min-height="192"/>-->
+          <ck-editor v-model="form.senderContent" :min-height="192"></ck-editor>
         </el-form-item>
         <el-form-item label="回复" prop="reply">
           <el-input v-model="form.reply" type="textarea" placeholder="请输入内容" />
@@ -142,9 +143,11 @@
 
 <script>
 import { listDialogue, getDialogue, delDialogue, addDialogue, updateDialogue } from "@/api/conversation/dialogue";
+import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {
   name: "Dialogue",
+  components: {CkEditor},
   data() {
     return {
       // 遮罩层

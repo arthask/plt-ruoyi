@@ -121,11 +121,11 @@
       <edit-note :note-id="noteId" @closeDialog = "closeMyDialog"/>
     </el-dialog>
 
-    <el-drawer
+    <el-dialog
       :visible.sync="noteInfoOpen"
-      :with-header="false">
+      :destroy-on-close="true">
       <note-info :note-id="noteId"/>
-    </el-drawer>
+    </el-dialog>
   </div>
 </template>
 
