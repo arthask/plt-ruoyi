@@ -58,3 +58,12 @@ export function getOneWord(index) {
     method: 'get'
   })
 }
+
+// 搜索单词
+export function searchWordByCN(query) {
+  return request({
+    url: '/system/word/searchWordByCN',
+    method: 'get',
+    params: query
+  })
+}

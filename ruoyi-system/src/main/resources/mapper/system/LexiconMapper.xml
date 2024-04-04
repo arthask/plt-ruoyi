@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.LexiconMapper">
+    
+    <resultMap type="Lexicon" id="LexiconResult">
+        <result property="id"    column="id"    />
+        <result property="uuid"    column="uuid"    />
+        <result property="name"    column="name"    />
+        <result property="language"    column="language"    />
+        <result property="createUserId"    column="create_user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectLexiconVo">
+        select id, uuid, name, language, create_user_id, create_time, update_time from lexicon
+    </sql>
+
+    <select id="selectLexiconList" parameterType="Lexicon" resultMap="LexiconResult">
+        <include refid="selectLexiconVo"/>
+        <where>  
+            <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="language != null  and language != ''"> and language = #{language}</if>
+            <if test="createUserId != null "> and create_user_id = #{createUserId}</if>
+        </where>
+    </select>
+    
+    <select id="selectLexiconById" parameterType="Long" resultMap="LexiconResult">
+        <include refid="selectLexiconVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertLexicon" parameterType="Lexicon" useGeneratedKeys="true" keyProperty="id">
+        insert into lexicon
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">uuid,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="language != null and language != ''">language,</if>
+            <if test="createUserId != null">create_user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">#{uuid},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="language != null and language != ''">#{language},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLexicon" parameterType="Lexicon">
+        update lexicon
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">uuid = #{uuid},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="language != null and language != ''">language = #{language},</if>
+            <if test="createUserId != null">create_user_id = #{createUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLexiconById" parameterType="Long">
+        delete from lexicon where id = #{id}
+    </delete>
+
+    <delete id="deleteLexiconByIds" parameterType="String">
+        delete from lexicon where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

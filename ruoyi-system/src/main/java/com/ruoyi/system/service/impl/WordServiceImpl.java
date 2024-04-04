@@ -1,6 +1,11 @@
 package com.ruoyi.system.service.impl;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.file.ParseUtils;
 import com.ruoyi.system.domain.Word;
 import com.ruoyi.system.mapper.WordMapper;
 import com.ruoyi.system.service.IWordService;
@@ -10,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -144,5 +152,35 @@ public class WordServiceImpl implements IWordService {
     @Override
     public List<Word> getNewWordOfUser(Long userId) {
         return wordMapper.getNewWordOfUser(userId);
+    }
+
+    @Override
+    public List<Word> searchWordByCN(String searchCn) {
+        return wordMapper.searchWordByCN(searchCn);
+    }
+
+    @Override
+    public String parseJsonFormatWordFile(File file, Long userId) {
+        try {
+            String jsonStr = ParseUtils.parseJsonFile(file);
+            JSONArray objects = JSONUtil.parseArray(jsonStr);
+            List<Word> wordList = new ArrayList<>();
+            objects.forEach(e -> {
+                JSONObject object =(JSONObject)e;
+                String name = object.getStr("name");
+                String trans = object.getJSONArray("trans").toString();
+                Word word = new Word();
+                word.setWord(name);
+                word.setTranslation(trans);
+                word.setCreateUserId(userId);
+                wordList.add(word);
+            });
+            if (!CollectionUtils.isEmpty(wordList)) {
+                wordMapper.insertBatch(wordList);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 }

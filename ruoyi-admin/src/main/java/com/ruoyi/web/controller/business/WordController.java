@@ -109,4 +109,14 @@ public class WordController extends BaseController {
     public AjaxResult getOneWord(@PathVariable("index") int index) {
        return success(wordService.getOneWord(this.getUserId(), index));
     }
+
+    /**
+     * 从内置词库中查找单词
+     * @param searchCn
+     * @return
+     */
+    @GetMapping("/searchWordByCN")
+    public AjaxResult searchWordByCN(@RequestParam("searchCn") String searchCn) {
+        return success(wordService.searchWordByCN(searchCn));
+    }
 }
