@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.LabelRefMapper">
+    
+    <resultMap type="LabelRef" id="LabelRefResult">
+        <result property="id"    column="id"    />
+        <result property="uuid"    column="uuid"    />
+        <result property="refUuid"    column="ref_uuid"    />
+        <result property="refType"    column="ref_type"    />
+        <result property="createUserId"    column="create_user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectLabelRefVo">
+        select id, uuid, ref_uuid, ref_type, create_user_id, create_time, update_time from label_ref
+    </sql>
+
+    <select id="selectLabelRefList" parameterType="LabelRef" resultMap="LabelRefResult">
+        <include refid="selectLabelRefVo"/>
+        <where>  
+            <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
+            <if test="refUuid != null "> and ref_uuid = #{refUuid}</if>
+            <if test="refType != null "> and ref_type = #{refType}</if>
+            <if test="createUserId != null "> and create_user_id = #{createUserId}</if>
+        </where>
+    </select>
+    
+    <select id="selectLabelRefById" parameterType="Long" resultMap="LabelRefResult">
+        <include refid="selectLabelRefVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertLabelRef" parameterType="LabelRef" useGeneratedKeys="true" keyProperty="id">
+        insert into label_ref
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">uuid,</if>
+            <if test="refUuid != null">ref_uuid,</if>
+            <if test="refType != null">ref_type,</if>
+            <if test="createUserId != null">create_user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">#{uuid},</if>
+            <if test="refUuid != null">#{refUuid},</if>
+            <if test="refType != null">#{refType},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLabelRef" parameterType="LabelRef">
+        update label_ref
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">uuid = #{uuid},</if>
+            <if test="refUuid != null">ref_uuid = #{refUuid},</if>
+            <if test="refType != null">ref_type = #{refType},</if>
+            <if test="createUserId != null">create_user_id = #{createUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLabelRefById" parameterType="Long">
+        delete from label_ref where id = #{id}
+    </delete>
+
+    <delete id="deleteLabelRefByIds" parameterType="String">
+        delete from label_ref where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

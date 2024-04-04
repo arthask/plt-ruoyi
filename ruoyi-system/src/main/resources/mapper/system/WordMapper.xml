@@ -105,6 +105,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createUserId != null">#{createUserId},</if>
          </trim>
     </insert>
+    <insert id="insertBatch">
+        insert into word(word, translation, create_user_id) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.word},#{item.translation},#{item.createUserId})
+        </foreach>
+    </insert>
 
     <update id="updateWord" parameterType="Word">
         update word
@@ -132,4 +138,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="searchWordByCN" resultType="com.ruoyi.system.domain.Word">
+        select *
+        from word w
+        where w.translation like concat('%', #{searchCn}, '%')
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.ruoyi.system.mapper;
 
 import com.ruoyi.system.domain.Word;
+import com.ruoyi.system.domain.WordSnapshot;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -94,4 +95,18 @@ public interface WordMapper
 
     Word getNewWordByIndex(@Param("userId") Long userId,
                               @Param("offset") int index);
+
+    /**
+     * 使用中文操作单词
+     * @param searchCn 中文搜索内容
+     * @return 匹配的单词
+     */
+    List<Word> searchWordByCN(@Param("searchCn") String searchCn);
+
+    /**
+     * 批量插入单词
+     * @param wordList
+     * @return
+     */
+    int insertBatch(List<Word> wordList);
 }

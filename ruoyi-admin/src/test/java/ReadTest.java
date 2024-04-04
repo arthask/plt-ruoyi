@@ -1,10 +1,15 @@
 import com.alibaba.excel.EasyExcel;
+import com.ruoyi.RuoYiApplication;
+import com.ruoyi.system.service.IWordService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@SpringBootTest(classes = RuoYiApplication.class)
 public class ReadTest {
 
     private final String WRITE_FILE_PREFIX = "src/export/";
@@ -16,6 +21,9 @@ public class ReadTest {
     private final String readFileName = READ_FILE_PREFIX + name;
 
     private final int size = 4;
+
+    @Autowired
+    private IWordService wordService;
 
     @Test
     public void readTxtFile() throws IOException {
@@ -98,5 +106,15 @@ public class ReadTest {
         }
         br.close();
         return wordDataList;
+    }
+
+    @Test
+    void parseJsonFormatWordFile() {
+        String path = this.getClass()
+                .getClassLoader()
+                .getResource("dicts/HeQiong_IELTS.json").getPath();
+        System.out.println(path);
+        File file = new File(path);
+        String s = wordService.parseJsonFormatWordFile(file, 1L);
     }
 }

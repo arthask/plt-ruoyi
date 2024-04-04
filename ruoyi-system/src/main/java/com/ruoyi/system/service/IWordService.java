@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import com.ruoyi.system.domain.Word;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -75,4 +76,18 @@ public interface IWordService
     Word getOneWord(Long userId, int index);
 
     List<Word> getNewWordOfUser(Long userId);
+
+    /**
+     * 通过中文搜索单词
+     * @param searchCn 中文搜索内容
+     * @return 单词列表
+     */
+    List<Word> searchWordByCN(String searchCn);
+
+    /**
+     * 解析json格式的单词文件
+     * @param file 单词文件 json格式
+     * @return 解析结果
+     */
+    String parseJsonFormatWordFile(File file, Long userId);
 }
