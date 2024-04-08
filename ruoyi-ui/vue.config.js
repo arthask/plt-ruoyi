@@ -6,10 +6,18 @@ function resolve(dir) {
 }
 
 const CompressionPlugin = require('compression-webpack-plugin')
-const { CKEditorTranslationsPlugin } = require( '@ckeditor/ckeditor5-dev-translations' );
-const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
+const {CKEditorTranslationsPlugin} = require('@ckeditor/ckeditor5-dev-translations');
+const {styles} = require('@ckeditor/ckeditor5-dev-utils');
+// 构建时间统计插件
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 
-const name = process.env.VUE_APP_TITLE || '若依管理系统' // 网页标题
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+
+const name = process.env.VUE_APP_TITLE || 'learning-tool' // 网页标题
+
+const os = require('os');
+// cpu核数
+const threads = os.cpus().length;
 
 const port = process.env.port || process.env.npm_config_port || 3030 // 端口
 
@@ -50,12 +58,12 @@ module.exports = {
         }
       }
     },
-    disableHostCheck: true
   },
   css: {
     loaderOptions: {
       sass: {
-        sassOptions: { outputStyle: "expanded" }
+        sassOptions: {
+          outputStyle: "expanded"},
       }
     }
   },
@@ -68,21 +76,17 @@ module.exports = {
     },
     plugins: [
       // http://doc.ruoyi.vip/ruoyi-vue/other/faq.html#使用gzip解压缩静态文件
-      new CompressionPlugin({
-        cache: false,                   // 不启用文件缓存
-        test: /\.(js|css|html)?$/i,     // 压缩文件格式
-        filename: '[path].gz[query]',   // 压缩后的文件名
-        algorithm: 'gzip',              // 使用gzip压缩
-        minRatio: 0.8                   // 压缩率小于1才会压缩
-      }),
+      new CompressionPlugin(),
       // CKEditor&nbsp;5 needs its own plugin to be built using webpack.
-      new CKEditorTranslationsPlugin( {
+      new CKEditorTranslationsPlugin({
         // See https://ckeditor.com/docs/ckeditor5/latest/features/ui-language.html
         language: 'en',
 
         // Append translations to the file matching the `app` name.
         translationsOutputFile: /app/
-      } )
+      }),
+      new SpeedMeasurePlugin(),
+      new NodePolyfillPlugin()
     ],
   },
   chainWebpack(config) {
@@ -93,8 +97,9 @@ module.exports = {
     config.module
       .rule('svg')
       .exclude.add(resolve('src/assets/icons'))
-      .add(path.join( __dirname, 'node_modules', '@ckeditor' ) )
+      .add(path.join(__dirname, 'node_modules', '@ckeditor'))
       .end()
+
     config.module
       .rule('icons')
       .test(/\.svg$/)
@@ -108,65 +113,58 @@ module.exports = {
       .end()
 
     config.module
-      .rule( 'cke-svg' )
-      .test( /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/ )
-      .use( 'raw-loader' )
-      .loader( 'raw-loader' );
+      .rule('cke-svg')
+      .test(/ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/)
+      .use('raw-loader')
+      .loader('raw-loader');
+
     config.module
-      .rule( 'cke-css' )
-      .test( /ckeditor5-[^/\\]+[/\\].+\.css$/ )
-      .use( 'postcss-loader' )
-      .loader( 'postcss-loader' )
-      .tap( () => {
+      .rule('cke-css')
+      .test(/ckeditor5-[^/\\]+[/\\].+\.css$/)
+      .use('postcss-loader')
+      .loader('postcss-loader')
+      .tap(() => {
         return {
-          postcssOptions: styles.getPostCssConfig( {
+          postcssOptions: styles.getPostCssConfig({
             themeImporter: {
-              themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
+              themePath: require.resolve('@ckeditor/ckeditor5-theme-lark')
             },
             minify: true
-          } )
+          })
         };
-      } );
+      });
 
     config.when(process.env.NODE_ENV !== 'development', config => {
-          config
-            .plugin('ScriptExtHtmlWebpackPlugin')
-            .after('html')
-            .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
-              inline: /runtime\..*\.js$/
-            }])
-            .end()
 
-          config.optimization.splitChunks({
-            chunks: 'all',
-            cacheGroups: {
-              libs: {
-                name: 'chunk-libs',
-                test: /[\\/]node_modules[\\/]/,
-                priority: 10,
-                chunks: 'initial' // only package third parties that are initially dependent
-              },
-              elementUI: {
-                name: 'chunk-elementUI', // split elementUI into a single package
-                test: /[\\/]node_modules[\\/]_?element-ui(.*)/, // in order to adapt to cnpm
-                priority: 20 // the weight needs to be larger than libs and app or it will be packaged into libs or app
-              },
-              commons: {
-                name: 'chunk-commons',
-                test: resolve('src/components'), // can customize your rules
-                minChunks: 3, //  minimum common number
-                priority: 5,
-                reuseExistingChunk: true
-              }
-            }
-          })
-
-          config.optimization.runtimeChunk('single'),
-          {
-             from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
-             to: './' //到根目录下
+      config.optimization.splitChunks({
+        chunks: 'all',
+        cacheGroups: {
+          libs: {
+            name: 'chunk-libs',
+            test: /[\\/]node_modules[\\/]/,
+            priority: 10,
+            chunks: 'initial' // only package third parties that are initially dependent
+          },
+          elementUI: {
+            name: 'chunk-elementUI', // split elementUI into a single package
+            test: /[\\/]node_modules[\\/]_?element-ui(.*)/, // in order to adapt to cnpm
+            priority: 20 // the weight needs to be larger than libs and app or it will be packaged into libs or app
+          },
+          commons: {
+            name: 'chunk-commons',
+            test: resolve('src/components'), // can customize your rules
+            minChunks: 3, //  minimum common number
+            priority: 5,
+            reuseExistingChunk: true
           }
+        }
+      })
+
+      config.optimization.runtimeChunk('single'),
+        {
+          from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
+          to: './' //到根目录下
+        }
     })
   }
 }

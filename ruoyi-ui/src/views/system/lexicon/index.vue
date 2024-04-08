@@ -96,28 +96,20 @@
     />
 
     <!-- 添加或修改词库对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入名称"/>
-        </el-form-item>
-        <el-form-item label="语言" prop="language">
-          <el-input v-model="form.language" placeholder="请输入语言"/>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
+    <el-dialog :title="title" :visible.sync="open" width="500px" :destroy-on-close="true">
+      <data-component></data-component>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import {listLexicon, getLexicon, delLexicon, addLexicon, updateLexicon} from "@/api/system/lexicon";
-
+import DataComponent from '@/views/system/lexicon/DataComponent.vue'
 export default {
   name: "Lexicon",
+  components:{
+    DataComponent
+  },
   data() {
     return {
       // 遮罩层
@@ -146,17 +138,6 @@ export default {
         name: null,
         language: null,
         createUserId: null,
-      },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-        name: [
-          {required: true, message: "名称不能为空", trigger: "blur"}
-        ],
-        language: [
-          {required: true, message: "语言不能为空", trigger: "blur"}
-        ]
       }
     };
   },
@@ -223,26 +204,6 @@ export default {
         this.title = "修改词库";
       });
     },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateLexicon(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addLexicon(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
@@ -259,7 +220,7 @@ export default {
       this.download('system/lexicon/export', {
         ...this.queryParams
       }, `lexicon_${new Date().getTime()}.xlsx`)
-    }
+    },
   }
 };
 </script>
