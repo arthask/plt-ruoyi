@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
+import cn.hutool.json.JSONArray;
 import com.ruoyi.system.domain.Word;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -90,4 +92,6 @@ public interface IWordService
      * @return 解析结果
      */
     String parseJsonFormatWordFile(File file, Long userId);
+
+    JSONArray parseUploadFile(MultipartFile file);
 }

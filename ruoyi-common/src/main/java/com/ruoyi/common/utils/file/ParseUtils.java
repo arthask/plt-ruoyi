@@ -1,6 +1,9 @@
 package com.ruoyi.common.utils.file;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class ParseUtils {
     /**
@@ -20,4 +23,17 @@ public class ParseUtils {
         fileReader.close();
         return sb.toString();
     }
+
+    public static String parseUploadFile(MultipartFile file) throws IOException {
+        Reader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
+        int ch = 0;
+        StringBuffer sb = new StringBuffer();
+        while ((ch = reader.read()) != -1) {
+            sb.append((char) ch);
+        }
+        reader.close();
+        return sb.toString();
+    }
+
+
 }

@@ -49,18 +49,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:lexicon:remove']"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="warning"
           plain
           icon="el-icon-download"
@@ -72,18 +60,22 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <el-row :gutter="20">
-      <el-col
-        v-for="(item, index)  in lexiconList"
-        :key="index"
-        :span="8">
-        <el-card class="box-card" style="margin-top: 20px">
-          <div style="padding: 0 14px 14px 14px;">
-            <p>{{ item.name }}</p>
-            <el-button type="text">查看</el-button>
-            <el-button type="text">修改</el-button>
-            <el-button type="text">删除</el-button>
-          </div>
+    <el-row class="row-box">
+      <el-col :span="6"
+              v-for="(item, index)  in lexiconList"
+              :key="item.uuid"
+              :offset="1"
+              >
+        <el-card class="el-card">
+            <div slot="header">
+              <p>{{ item.name }}</p>
+              <el-tag :key="label.uuid" v-for="label in item.labelList" type="success">{{label.name}}</el-tag>
+            </div>
+            <div>
+              <el-button type="text" >开始学习</el-button>
+              <el-button type="text" @click="handleUpdate(item.id)">修改</el-button>
+              <el-button type="text" @click="handleDelete(item.id)" >删除</el-button>
+            </div>
         </el-card>
       </el-col>
     </el-row>
@@ -97,13 +89,26 @@
 
     <!-- 添加或修改词库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" :destroy-on-close="true">
-      <data-component></data-component>
+      <data-component :lexicon-id="lexiconId" @closeDig="closeDig"></data-component>
     </el-dialog>
   </div>
 </template>
-
+<style>
+.row-box {
+  //display: flex;
+  //flex-flow: wrap;
+}
+.row-box .el-card {
+  min-width: 100%;
+  height: 200px;
+  max-height: 200px;
+  margin-top: 20px;
+  border: 0px;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+}
+</style>
 <script>
-import {listLexicon, getLexicon, delLexicon, addLexicon, updateLexicon} from "@/api/system/lexicon";
+import {listLexicon, getLexicon, delLexicon} from "@/api/system/lexicon";
 import DataComponent from '@/views/system/lexicon/DataComponent.vue'
 export default {
   name: "Lexicon",
@@ -138,7 +143,8 @@ export default {
         name: null,
         language: null,
         createUserId: null,
-      }
+      },
+      lexiconId: null,
     };
   },
   created() {
@@ -161,16 +167,6 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
-        id: null,
-        uuid: null,
-        name: null,
-        language: null,
-        createUserId: null,
-        createTime: null,
-        updateTime: null
-      };
-      this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -190,23 +186,21 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
+      // this.reset();
       this.open = true;
       this.title = "添加词库";
+      this.lexiconId = null
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getLexicon(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改词库";
-      });
+    async handleUpdate(dataId) {
+      this.open = true;
+      this.title = "修改词库";
+      this.lexiconId = dataId
     },
     /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
+    handleDelete(id) {
+      console.log("删除")
+      const ids = id || this.ids;
       this.$modal.confirm('是否确认删除词库编号为"' + ids + '"的数据项？').then(function () {
         return delLexicon(ids);
       }).then(() => {
@@ -221,6 +215,10 @@ export default {
         ...this.queryParams
       }, `lexicon_${new Date().getTime()}.xlsx`)
     },
+    closeDig() {
+      this.open = false;
+      this.getList();
+    }
   }
 };
 </script>

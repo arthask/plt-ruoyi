@@ -31,6 +31,18 @@
         <el-descriptions class="margin-top" title="详情" :column="2" size="medium" border>
           <el-descriptions-item>
             <template slot="label">
+              词典
+            </template>
+
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              标签
+            </template>
+
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
               单词
             </template>
             {{ detail.name }}
@@ -101,7 +113,6 @@ export default {
         searchWordByCN(params).then((res) => {
           this.options = []
           this.options = [...res.data]
-          console.log(this.options)
           this.loading = false;
         })
       } else {

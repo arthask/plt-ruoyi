@@ -27,7 +27,7 @@ import {
 } from '@ckeditor/ckeditor5-image'
 
 export default {
-  name: 'CkEditor',
+  name: 'MyCkEditor',
   props: {
     /* 编辑器的内容 */
     value: {

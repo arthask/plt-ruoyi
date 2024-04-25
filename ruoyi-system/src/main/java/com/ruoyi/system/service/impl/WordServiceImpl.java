@@ -1,19 +1,19 @@
 package com.ruoyi.system.service.impl;
 
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.file.ParseUtils;
 import com.ruoyi.system.domain.Word;
-import com.ruoyi.system.mapper.WordMapper;
+import com.ruoyi.system.mapper.OldWordMapper;
 import com.ruoyi.system.service.IWordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,11 +27,11 @@ import java.util.Objects;
  * @author ruoyi
  * @date 2023-12-28
  */
-@Service
+@Service("oldWorldService")
 public class WordServiceImpl implements IWordService {
     private static final Logger log = LoggerFactory.getLogger(WordServiceImpl.class);
     @Autowired
-    private WordMapper wordMapper;
+    private OldWordMapper oldWordMapper;
 
     /**
      * 查询单词
@@ -41,7 +41,7 @@ public class WordServiceImpl implements IWordService {
      */
     @Override
     public Word selectWordById(Long id) {
-        return wordMapper.selectWordById(id);
+        return oldWordMapper.selectWordById(id);
     }
 
     /**
@@ -52,7 +52,7 @@ public class WordServiceImpl implements IWordService {
      */
     @Override
     public List<Word> selectWordList(Word word) {
-        return wordMapper.selectWordList(word);
+        return oldWordMapper.selectWordList(word);
     }
 
     /**
@@ -63,7 +63,7 @@ public class WordServiceImpl implements IWordService {
      */
     @Override
     public int insertWord(Word word) {
-        return wordMapper.insertWord(word);
+        return oldWordMapper.insertWord(word);
     }
 
     /**
@@ -74,7 +74,7 @@ public class WordServiceImpl implements IWordService {
      */
     @Override
     public int updateWord(Word word) {
-        return wordMapper.updateWord(word);
+        return oldWordMapper.updateWord(word);
     }
 
     /**
@@ -85,7 +85,7 @@ public class WordServiceImpl implements IWordService {
      */
     @Override
     public int deleteWordByIds(Long[] ids) {
-        return wordMapper.deleteWordByIds(ids);
+        return oldWordMapper.deleteWordByIds(ids);
     }
 
     /**
@@ -96,7 +96,7 @@ public class WordServiceImpl implements IWordService {
      */
     @Override
     public int deleteWordById(Long id) {
-        return wordMapper.deleteWordById(id);
+        return oldWordMapper.deleteWordById(id);
     }
 
     @Override
@@ -112,14 +112,14 @@ public class WordServiceImpl implements IWordService {
             try {
                 word.setCreateUserId(userId);
                 // 验证是否存在这个单词
-                Word wordFromDb = wordMapper.selectWordByName(word.getWord(), userId);
+                Word wordFromDb = oldWordMapper.selectWordByName(word.getWord(), userId);
                 if (Objects.isNull(wordFromDb)) {
-                    wordMapper.insertWord(word);
+                    oldWordMapper.insertWord(word);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + word.getWord() + " 导入成功");
                 } else if (isUpdateSupport) {
                     word.setId(wordFromDb.getId());
-                    wordMapper.updateWord(word);
+                    oldWordMapper.updateWord(word);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + word.getWord() + " 更新成功");
                 } else {
@@ -146,17 +146,17 @@ public class WordServiceImpl implements IWordService {
     public Word getOneWord(Long userId, int index) {
 //        Long count = wordMapper.getNewWordCountOfUser(userId);
 //        long offset = RandomUtils.nextLong(0, count);
-        return wordMapper.getRandomWordOfUser(userId, Long.valueOf(index));
+        return oldWordMapper.getRandomWordOfUser(userId, Long.valueOf(index));
     }
 
     @Override
     public List<Word> getNewWordOfUser(Long userId) {
-        return wordMapper.getNewWordOfUser(userId);
+        return oldWordMapper.getNewWordOfUser(userId);
     }
 
     @Override
     public List<Word> searchWordByCN(String searchCn) {
-        return wordMapper.searchWordByCN(searchCn);
+        return oldWordMapper.searchWordByCN(searchCn);
     }
 
     @Override
@@ -176,11 +176,21 @@ public class WordServiceImpl implements IWordService {
                 wordList.add(word);
             });
             if (!CollectionUtils.isEmpty(wordList)) {
-                wordMapper.insertBatch(wordList);
+                oldWordMapper.insertBatch(wordList);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    @Override
+    public JSONArray parseUploadFile(MultipartFile file) {
+        try {
+            String jsonStr = ParseUtils.parseUploadFile(file);
+            return JSONUtil.parseArray(jsonStr);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
