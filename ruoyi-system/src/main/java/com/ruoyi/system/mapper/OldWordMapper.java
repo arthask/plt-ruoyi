@@ -1,7 +1,6 @@
 package com.ruoyi.system.mapper;
 
 import com.ruoyi.system.domain.Word;
-import com.ruoyi.system.domain.WordSnapshot;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  * @author ruoyi
  * @date 2023-12-28
  */
-public interface WordMapper 
+public interface OldWordMapper
 {
     /**
      * 查询单词

@@ -8,7 +8,7 @@ import com.ruoyi.system.domain.vo.StatisticsCountVo;
 import com.ruoyi.system.domain.vo.UserWordPeriodVo;
 import com.ruoyi.system.mapper.UserStudyRecordMapper;
 import com.ruoyi.system.mapper.UserWordMapper;
-import com.ruoyi.system.mapper.WordMapper;
+import com.ruoyi.system.mapper.OldWordMapper;
 import com.ruoyi.system.service.statistics.IStatisticsService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -32,7 +32,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
     public static final String HAVE_REVIEW = "haveReview";
     public static final String TOTAL_REVIEW_NUM = "totalReviewNum";
     @Autowired
-    private WordMapper wordMapper;
+    private OldWordMapper oldWordMapper;
 
     @Autowired
     private UserWordMapper userWordMapper;
@@ -47,7 +47,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
         StatisticsCountVo result = new StatisticsCountVo();
         // 目前是1，只有程序员词汇库
         result.setWordDataBaseNum(1L);
-        result.setWordCount(wordMapper.getWordCount(userId));
+        result.setWordCount(oldWordMapper.getWordCount(userId));
         result.setMyWordCount(userWordMapper.getWordCount(userId));
         result.setStudyRecordCount(userStudyRecordMapper.getStudyRecordCount(userId));
         return result;
@@ -162,8 +162,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
     @Override
     public Map<String, Long> getTotalAndNotStudyNum(Long userId) {
         Map<String, Long> result = new HashMap<>();
-        Long wordCount = wordMapper.getWordCount(userId);
-        Long notStudyNum = wordMapper.getNewWordCountOfUser(userId);
+        Long wordCount = oldWordMapper.getWordCount(userId);
+        Long notStudyNum = oldWordMapper.getNewWordCountOfUser(userId);
         result.put(TOTAL, wordCount);
         result.put(NOT_STUDY, notStudyNum);
         return result;

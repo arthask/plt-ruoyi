@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.ruoyi.system.domain.Word;
 import com.ruoyi.system.domain.vo.WordVo;
 import com.ruoyi.system.mapper.UserWordMapper;
-import com.ruoyi.system.mapper.WordMapper;
+import com.ruoyi.system.mapper.OldWordMapper;
 import com.ruoyi.system.service.review.IWordReviewService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
     @Autowired
     private UserWordMapper userWordMapper;
     @Autowired
-    private WordMapper wordMapper;
+    private OldWordMapper oldWordMapper;
 
     @Override
     public Word getReviewWord(Long userId) {
@@ -28,7 +28,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
         if (Objects.isNull(reviewWordId)) {
             return null;
         }
-        return wordMapper.selectWordById(reviewWordId);
+        return oldWordMapper.selectWordById(reviewWordId);
     }
 
     @Override

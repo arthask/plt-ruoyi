@@ -1,27 +1,27 @@
 package com.ruoyi.web.controller.business;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ruoyi.common.utils.uuid.UUID;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.ruoyi.system.domain.dto.LexiconData;
+import com.ruoyi.system.domain.dto.LexiconShowData;
+import com.ruoyi.system.gencode.entity.Lexicon;
+import com.ruoyi.system.gencode.service.LexiconService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.system.domain.Lexicon;
-import com.ruoyi.system.service.ILexiconService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 词库Controller
@@ -33,7 +33,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 @RequestMapping("/system/lexicon")
 public class LexiconController extends BaseController {
     @Autowired
-    private ILexiconService lexiconService;
+    private LexiconService lexiconService;
 
     /**
      * 查询词库列表
@@ -42,8 +42,10 @@ public class LexiconController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(Lexicon lexicon) {
         startPage();
-        List<Lexicon> list = lexiconService.selectLexiconList(lexicon);
-        return getDataTable(list);
+        Wrapper<Lexicon> queryWrapper = new QueryWrapper<>(lexicon);
+        List<Lexicon> list = lexiconService.list(queryWrapper);
+        List<LexiconShowData> lexiconShowData = lexiconService.convertLexiconList(list);
+        return getDataTable(lexiconShowData);
     }
 
     /**
@@ -53,7 +55,7 @@ public class LexiconController extends BaseController {
     @Log(title = "词库", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Lexicon lexicon) {
-        List<Lexicon> list = lexiconService.selectLexiconList(lexicon);
+        List<Lexicon> list = new ArrayList<>();
         ExcelUtil<Lexicon> util = new ExcelUtil<Lexicon>(Lexicon.class);
         util.exportExcel(response, list, "词库数据");
     }
@@ -64,7 +66,7 @@ public class LexiconController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:lexicon:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(lexiconService.selectLexiconById(id));
+        return success(lexiconService.getInfo(id));
     }
 
     /**
@@ -73,11 +75,18 @@ public class LexiconController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:lexicon:add')")
     @Log(title = "词库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Lexicon lexicon) {
+    public AjaxResult add(@RequestParam("file") MultipartFile file,
+                          @RequestParam("name") String name,
+                          @RequestParam("language") String language,
+                          @RequestParam("label") List<String> labelList) {
         Long userId = getUserId();
-        lexicon.setCreateUserId(userId);
-        lexicon.setUuid(UUID.randomUUID().toString());
-        return toAjax(lexiconService.insertLexicon(lexicon));
+        LexiconData lexicon = new LexiconData();
+        lexicon.setFile(file);
+        lexicon.setName(name);
+        lexicon.setLanguage(language);
+        lexicon.setUserId(userId);
+        lexicon.setLabelList(labelList);
+        return AjaxResult.success(lexiconService.createLexicon(lexicon));
     }
 
     /**
@@ -86,8 +95,9 @@ public class LexiconController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:lexicon:edit')")
     @Log(title = "词库", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Lexicon lexicon) {
-        return toAjax(lexiconService.updateLexicon(lexicon));
+    public AjaxResult edit(@RequestBody LexiconShowData lexicon) {
+        lexicon.setCreateUserId(this.getUserId());
+        return AjaxResult.success(lexiconService.updateLexicon(lexicon));
     }
 
     /**
@@ -97,6 +107,6 @@ public class LexiconController extends BaseController {
     @Log(title = "词库", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(lexiconService.deleteLexiconByIds(ids));
+        return AjaxResult.success(lexiconService.removeLexicon(ids));
     }
 }
