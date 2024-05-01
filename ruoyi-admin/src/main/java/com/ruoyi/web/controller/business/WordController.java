@@ -7,12 +7,14 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.Word;
+import com.ruoyi.system.gencode.service.WordService;
 import com.ruoyi.system.service.IWordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -25,6 +27,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/system/word")
 public class WordController extends BaseController {
+    @Resource(name = "wordService")
+    private WordService newWordService;
+
     @Autowired
     private IWordService wordService;
 
@@ -117,6 +122,6 @@ public class WordController extends BaseController {
      */
     @GetMapping("/searchWordByCN")
     public AjaxResult searchWordByCN(@RequestParam("searchCn") String searchCn) {
-        return success(wordService.searchWordByCN(searchCn));
+        return success(newWordService.searchWordByCN(searchCn));
     }
 }

@@ -87,6 +87,7 @@ export default {
     },
 
     handleInputConfirm() {
+      this.inputVisible = false;
       let inputValue = this.inputValue;
       if (inputValue) {
         const newTag = {
@@ -94,7 +95,6 @@ export default {
         };
         this.dynamicTags.push(newTag);
       }
-      this.inputVisible = false;
       this.inputValue = '';
     },
 
@@ -187,41 +187,43 @@ export default {
         <el-input v-model="form.language" placeholder="请输入语言"/>
       </el-form-item>
       <el-form-item label="标签" prop="label">
-          <el-tag
-            :key="tag.name"
-            v-for="(tag, index) in dynamicTags"
-            v-show="!editTags[index]"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag, index)"
-            @click="showEditTagInput(index)"
-          >
-            {{ tag.name }}
-          </el-tag>
-
-        <el-input
-          class="input-new-tag"
-          size="small"
-          v-for="(tag, index) in dynamicTags" :key="index"
-          v-show="editTags[index]"
-          v-model="tag.name"
-          :ref="'editInput'+index"
-          @keyup.enter.native="handleEditableInputConfirm(tag, index)"
-          @change="handleEditableInputConfirm(tag, index)"
-          @blur="handleEditableInputBlur(tag, index)"
-        >
-        </el-input>
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        >
-        </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+标签</el-button>
+        <el-row>
+          <el-col :span="4" v-for="(tag, index) in dynamicTags" :key="index" :offset="1">
+            <el-input
+              class="input-new-tag"
+              v-if="editTags[index]"
+              v-model="tag.name"
+              :ref="'editInput'+index"
+              @keyup.enter.native="handleEditableInputConfirm(tag, index)"
+              @change="handleEditableInputConfirm(tag, index)"
+              @blur="handleEditableInputBlur(tag, index)"
+            >
+            </el-input>
+            <el-tag
+              class="input-new-tag"
+              :key="tag.name"
+              v-else
+              closable
+              :disable-transitions="false"
+              @close="handleClose(tag, index)"
+              @click="showEditTagInput(index)"
+            >
+              {{ tag.name }}
+            </el-tag>
+          </el-col>
+          <el-col :span="4" :offset="1">
+            <el-input
+              class="input-new-tag"
+              v-if="inputVisible"
+              v-model="inputValue"
+              ref="saveTagInput"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+            >
+            </el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">+标签</el-button>
+          </el-col>
+        </el-row>
       </el-form-item>
       <el-form-item label="词库文件" v-show="isInsert">
         <el-upload
@@ -248,8 +250,9 @@ export default {
 <style>
 
 .input-new-tag {
-  width: 90px;
-  margin-left: 10px;
+  //width: 70px;
+  height: 32px;
+  //margin-left: 10px;
   vertical-align: bottom;
 }
 

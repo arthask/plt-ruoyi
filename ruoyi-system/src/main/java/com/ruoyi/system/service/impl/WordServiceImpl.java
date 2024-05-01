@@ -6,10 +6,12 @@ import cn.hutool.json.JSONUtil;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.file.ParseUtils;
 import com.ruoyi.system.domain.Word;
+import com.ruoyi.system.domain.dto.WordShowData;
 import com.ruoyi.system.mapper.OldWordMapper;
 import com.ruoyi.system.service.IWordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -17,9 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 单词Service业务层处理
@@ -155,8 +156,19 @@ public class WordServiceImpl implements IWordService {
     }
 
     @Override
-    public List<Word> searchWordByCN(String searchCn) {
-        return oldWordMapper.searchWordByCN(searchCn);
+    public List<WordShowData> searchWordByCN(String searchCn) {
+        List<Word> wordList = oldWordMapper.searchWordByCN(searchCn);
+        // 查询单词对应的词库
+
+        List<WordShowData> resultList = Optional.ofNullable(wordList)
+                .orElse(Collections.emptyList())
+                .stream().map(e -> {
+                    WordShowData wordShowData = new WordShowData();
+                    BeanUtils.copyProperties(e, wordShowData);
+                    return wordShowData;
+                }).collect(Collectors.toList());
+
+        return null;
     }
 
     @Override
@@ -166,7 +178,7 @@ public class WordServiceImpl implements IWordService {
             JSONArray objects = JSONUtil.parseArray(jsonStr);
             List<Word> wordList = new ArrayList<>();
             objects.forEach(e -> {
-                JSONObject object =(JSONObject)e;
+                JSONObject object = (JSONObject) e;
                 String name = object.getStr("name");
                 String trans = object.getJSONArray("trans").toString();
                 Word word = new Word();

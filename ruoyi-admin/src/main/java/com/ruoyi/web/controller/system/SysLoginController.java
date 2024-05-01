@@ -87,16 +87,16 @@ public class SysLoginController
         ajax.put("roles", roles);
         ajax.put("permissions", permissions);
         // 生成快照
-        Long userId = SecurityUtils.getUserId();
-        wordSnapshotService.deleteByUserIdAndType(userId, SnapshotType.REVIEW.getValue());
-        List<Word> needReviewWords = wordReviewService.getNeedReviewWords(userId);
-        // 批量需复习插入
-        batchSaveWordSnapshot(needReviewWords, userId, SnapshotType.REVIEW.getValue());
-
-        wordSnapshotService.deleteByUserIdAndType(userId, SnapshotType.NEW.getValue());
-        List<Word> newWords = wordService.getNewWordOfUser(userId);
-        // 批量新单词插入
-        batchSaveWordSnapshot(newWords, userId, SnapshotType.NEW.getValue());
+//        Long userId = SecurityUtils.getUserId();
+//        wordSnapshotService.deleteByUserIdAndType(userId, SnapshotType.REVIEW.getValue());
+//        List<Word> needReviewWords = wordReviewService.getNeedReviewWords(userId);
+//        // 批量需复习插入
+//        batchSaveWordSnapshot(needReviewWords, userId, SnapshotType.REVIEW.getValue());
+//
+//        wordSnapshotService.deleteByUserIdAndType(userId, SnapshotType.NEW.getValue());
+//        List<Word> newWords = wordService.getNewWordOfUser(userId);
+//        // 批量新单词插入
+//        batchSaveWordSnapshot(newWords, userId, SnapshotType.NEW.getValue());
         return ajax;
     }
 
