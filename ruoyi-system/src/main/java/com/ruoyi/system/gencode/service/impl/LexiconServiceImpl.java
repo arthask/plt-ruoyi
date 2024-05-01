@@ -168,6 +168,9 @@ public class LexiconServiceImpl extends ServiceImpl<LexiconMapper, Lexicon> impl
 
     @Override
     public List<LexiconShowData> convertLexiconList(List<Lexicon> lexicons) {
+        if (CollectionUtils.isEmpty(lexicons)) {
+            return Collections.emptyList();
+        }
         List<LexiconShowData> result = new ArrayList<>();
         Optional.ofNullable(lexicons).ifPresent(e -> {
             List<LexiconShowData> lexiconDataList = e.stream()

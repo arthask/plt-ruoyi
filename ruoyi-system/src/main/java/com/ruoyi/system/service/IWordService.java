@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import cn.hutool.json.JSONArray;
 import com.ruoyi.system.domain.Word;
+import com.ruoyi.system.domain.dto.WordShowData;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -84,7 +85,7 @@ public interface IWordService
      * @param searchCn 中文搜索内容
      * @return 单词列表
      */
-    List<Word> searchWordByCN(String searchCn);
+    List<WordShowData> searchWordByCN(String searchCn);
 
     /**
      * 解析json格式的单词文件

@@ -33,13 +33,13 @@
             <template slot="label">
               词典
             </template>
-
+            {{ detail.lexiconName }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template slot="label">
               标签
             </template>
-
+            {{ detail.labelNames }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template slot="label">
@@ -121,9 +121,11 @@ export default {
     },
     showWordDetail(selected) {
       this.showDetail = true;
-      this.detail.name = selected.word
       this.value = selected.word;
+      this.detail.name = selected.word
       this.detail.translation = selected.translation
+      this.detail.labelNames = [... selected.labelList]
+      this.detail.lexiconName = [... selected.lexiconName]
     },
     // 播放音频
     playAudio(language, word) {

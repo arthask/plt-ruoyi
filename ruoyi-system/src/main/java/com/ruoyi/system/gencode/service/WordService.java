@@ -1,7 +1,11 @@
 package com.ruoyi.system.gencode.service;
 
+import com.ruoyi.system.domain.dto.WordShowData;
 import com.ruoyi.system.gencode.entity.Word;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface WordService extends IService<Word> {
 
+    /**
+     * 使用中文操作单词
+     * @param searchCn 中文搜索内容
+     * @return 匹配的单词
+     */
+    List<WordShowData> searchWordByCN(@Param("searchCn") String searchCn);
 }
