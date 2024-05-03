@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author author
- * @since 2024-04-12
+ * @since 2024-05-02
  */
 public interface LexiconWordService extends IService<LexiconWord> {
 

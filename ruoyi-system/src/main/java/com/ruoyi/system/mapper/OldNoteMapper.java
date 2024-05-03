@@ -10,7 +10,7 @@ import java.util.List;
  * @author ruoyi
  * @date 2024-02-02
  */
-public interface NoteMapper 
+public interface OldNoteMapper
 {
     /**
      * 查询笔记

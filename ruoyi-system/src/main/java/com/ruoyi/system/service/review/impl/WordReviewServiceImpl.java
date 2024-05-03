@@ -3,7 +3,7 @@ package com.ruoyi.system.service.review.impl;
 import cn.hutool.core.date.DateUtil;
 import com.ruoyi.system.domain.Word;
 import com.ruoyi.system.domain.vo.WordVo;
-import com.ruoyi.system.mapper.UserWordMapper;
+import com.ruoyi.system.mapper.OldUserWordMapper;
 import com.ruoyi.system.mapper.OldWordMapper;
 import com.ruoyi.system.service.review.IWordReviewService;
 import org.springframework.beans.BeanUtils;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @Service
 public class WordReviewServiceImpl implements IWordReviewService {
     @Autowired
-    private UserWordMapper userWordMapper;
+    private OldUserWordMapper oldUserWordMapper;
     @Autowired
     private OldWordMapper oldWordMapper;
 
@@ -24,7 +24,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
     public Word getReviewWord(Long userId) {
         // 阶段+最新学习记录 =》 确定下次学习时间
         // 找到下次学习时间小于当前时间的用户单词，并按学习时间排序
-        Long reviewWordId = userWordMapper.getReviewWordId(DateUtil.now(), userId);
+        Long reviewWordId = oldUserWordMapper.getReviewWordId(DateUtil.now(), userId);
         if (Objects.isNull(reviewWordId)) {
             return null;
         }
@@ -35,7 +35,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
     public WordVo getReviewWordByIndex(Long userId, int index) {
         // 阶段+最新学习记录 =》 确定下次学习时间
         // 找到下次学习时间小于当前时间的用户单词，并按学习时间排序
-        Word word = userWordMapper.getReviewWordByIndex(userId, index);
+        Word word = oldUserWordMapper.getReviewWordByIndex(userId, index);
         if (Objects.isNull(word)) {
             return null;
         }
@@ -47,6 +47,6 @@ public class WordReviewServiceImpl implements IWordReviewService {
 
     @Override
     public List<Word> getNeedReviewWords(Long userId) {
-        return userWordMapper.getNeedReviewWords(DateUtil.now(), userId);
+        return oldUserWordMapper.getNeedReviewWords(DateUtil.now(), userId);
     }
 }

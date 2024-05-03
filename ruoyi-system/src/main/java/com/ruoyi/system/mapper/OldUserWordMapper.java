@@ -15,7 +15,7 @@ import java.util.Map;
  * @author ruoyi
  * @date 2024-01-06
  */
-public interface UserWordMapper 
+public interface OldUserWordMapper
 {
     /**
      * 查询用户单词

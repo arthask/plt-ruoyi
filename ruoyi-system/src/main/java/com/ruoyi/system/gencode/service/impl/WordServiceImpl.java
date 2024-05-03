@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -59,7 +60,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
         List<LexiconWord> lexiconWords = lexiconWordService.list(queryWrapper);
 
         Map<String, List<LexiconWord>> lexiconWordGroupByLexiconUUID = lexiconWords.stream()
-                .collect(Collectors.groupingBy(LexiconWord::getLexionUuid));
+                .collect(Collectors.groupingBy(LexiconWord::getLexiconUuid));
 
         Set<String> lexiconUUIDSet = lexiconWordGroupByLexiconUUID.keySet();
 
@@ -72,12 +73,12 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
             QueryWrapper<Lexicon> lexiconQueryWrapper = new QueryWrapper<>();
             lexiconQueryWrapper.in("uuid", lexiconUUIDSet);
             List<Lexicon> lexicons = lexiconService.list(lexiconQueryWrapper);
-            lexiconMapGroupByUUID.putAll( lexicons.stream()
+            lexiconMapGroupByUUID.putAll(lexicons.stream()
                     .collect(Collectors.groupingBy(Lexicon::getUuid)));
 
             // 词库的标签
             QueryWrapper<LabelRef> labelRefQueryWrapper = new QueryWrapper<>();
-            queryWrapper.in("ref_uuid", lexiconUUIDSet);
+            labelRefQueryWrapper.in("ref_uuid", lexiconUUIDSet);
             List<LabelRef> labelRefList = labelRefService.list(labelRefQueryWrapper);
             Map<String, List<LabelRef>> labelRefGroupByLabelUUID = labelRefList.stream()
                     .collect(Collectors.groupingBy(LabelRef::getLabelUuid));
@@ -85,7 +86,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
                     .collect(Collectors.groupingBy(LabelRef::getRefUuid)));
 
             QueryWrapper<Label> labelQueryWrapper = new QueryWrapper<>();
-            queryWrapper.in("uuid", labelRefGroupByLabelUUID.keySet());
+            labelQueryWrapper.in("uuid", labelRefGroupByLabelUUID.keySet());
             List<Label> labelList = labelService.list(labelQueryWrapper);
             labelGroupByUUID.putAll(labelList.stream()
                     .collect(Collectors.groupingBy(Label::getUuid)));
@@ -100,7 +101,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
             List<LexiconWord> lexiconWordList = lexiconWordGroupByWordUUID.get(e.getUuid());
             if (lexiconWordGroupByWordUUID.containsKey(e.getUuid())) {
                 List<String> lexiconUUIDList = lexiconWordList.stream()
-                        .map(LexiconWord::getLexionUuid).collect(Collectors.toList());
+                        .map(LexiconWord::getLexiconUuid).collect(Collectors.toList());
                 lexiconUUIDList.forEach(l -> {
                     if (lexiconMapGroupByUUID.containsKey(l)) {
                         lexiconNameList.add(lexiconMapGroupByUUID.get(l).get(0).getName());
@@ -111,7 +112,6 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
                     }
                 });
             }
-
             WordShowData wordShowData = new WordShowData();
             BeanUtils.copyProperties(e, wordShowData);
             if (!CollectionUtils.isEmpty(lexiconNameList)) {
@@ -122,5 +122,20 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
             }
             return wordShowData;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public WordShowData getOneWord(Long userId, String lexiconUUID, int index) {
+        // 查询词库标签
+        Word word = wordMapper.getRandomWordOfUser(userId, lexiconUUID, (long) index);
+        Assert.notNull(word, "未查询到单词数据");
+        WordShowData wordShowData = new WordShowData();
+        BeanUtils.copyProperties(word, wordShowData);
+        List<Label> labelOfLexicon = lexiconService.getLabelOfLexicon(lexiconUUID);
+        if (!CollectionUtils.isEmpty(labelOfLexicon)) {
+            List<String> labelNames = labelOfLexicon.stream().map(Label::getName).collect(Collectors.toList());
+            wordShowData.setLabelList(labelNames);
+        }
+        return wordShowData;
     }
 }

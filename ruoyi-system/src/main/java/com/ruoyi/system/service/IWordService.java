@@ -76,7 +76,7 @@ public interface IWordService
      * 获取一个单词详情
      * @return
      */
-    Word getOneWord(Long userId, int index);
+    WordShowData getOneWord(Long userId, Long lexiconId, int index);
 
     List<Word> getNewWordOfUser(Long userId);
 

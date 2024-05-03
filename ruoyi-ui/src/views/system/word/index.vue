@@ -9,26 +9,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="音标" prop="phonetic">
-        <el-input
-          v-model="queryParams.phonetic"
-          placeholder="请输入音标"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="翻译" prop="translation">
         <el-input
           v-model="queryParams.translation"
           placeholder="请输入翻译"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="词性" prop="pos">
-        <el-input
-          v-model="queryParams.pos"
-          placeholder="请输入词性"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -103,27 +87,16 @@
         >导入
         </el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          icon="el-icon-upload2"
-          size="mini"
-          @click="beginWordStudy"
-        >开始学习
-        </el-button>
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="wordList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="编号" align="center" prop="id"/>
       <el-table-column label="单词" align="center" prop="word"/>
-      <el-table-column label="音标" align="center" prop="phonetic"/>
       <el-table-column label="翻译" align="center" prop="translation"/>
-      <el-table-column label="词性" align="center" prop="pos"/>
-      <el-table-column label="标签" align="center" prop="tag"/>
-      <el-table-column label="例句" align="center" prop="sentence"/>
+      <el-table-column label="词库" align="center" prop="tag"/>
+      <!--      <el-table-column label="标签" align="center" prop="tag"/>-->
+      <el-table-column label="创建时间" align="center" prop="createTime"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -221,82 +194,18 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="studyTitle" :visible.sync="studyOpen" :destroy-on-close="true" @open="starStudy()"
-               @close="closeStudyPanel()">
-      <el-container>
-        <el-header>
-          <el-row type="flex" justify="space-between">
-            <el-col :span="6">
-              <el-button type="primary" @click="forward()">上一个</el-button>
-            </el-col>
-            <el-col :span="6">
-              <el-button type="primary" @click="nextWord()">下一个</el-button>
-            </el-col>
-          </el-row>
-          <el-row type="flex" class="row-bg" justify="center">
-            <el-col :span="6">
-              <div>
-                <el-statistic
-                  group-separator=","
-                  :precision="0"
-                  :value="totalNum"
-                  title="总数">
-                </el-statistic>
-              </div>
-            </el-col>
-            <el-col :span="6">
-              <div>
-                <el-statistic title="剩余未学">
-                  <template slot="formatter">
-                    {{ this.remainNum }}
-                  </template>
-                </el-statistic>
-              </div>
-            </el-col>
-          </el-row>
-        </el-header>
-        <el-main>
-          <el-empty description="没有啦" v-show="!showWordInfo"></el-empty>
-          <el-descriptions title="单词信息" border v-show="showWordInfo">
-            <el-descriptions-item label="单词">
-              <span class="ok-content">{{ okTxt }}</span>
-              <span class="error-content">{{ notInputtedTxt }}</span>
-            </el-descriptions-item>
-            <el-descriptions-item label="词性">{{ oneWord.pos }}</el-descriptions-item>
-            <el-descriptions-item label="发音">{{ oneWord.phonetic }}</el-descriptions-item>
-            <el-descriptions-item label="释义">{{ oneWord.translation }}</el-descriptions-item>
-            <el-descriptions-item label="分类">
-              <el-tag size="small"> {{ oneWord.tag }}</el-tag>
-            </el-descriptions-item>
-          </el-descriptions>
-          <el-descriptions title="内容填写区" :colon="false" v-show="showWordInfo">
-            <el-descriptions-item>
-              <el-input
-                type="textarea"
-                :autosize="{ minRows: 4, maxRows: 6}"
-                placeholder="请输入内容"
-                v-model="currentInputTxt"
-                @input="userInputs"/>
-            </el-descriptions-item>
-          </el-descriptions>
-
-          <!--          <vue-typer class="vue-typer" :text="wordInput" :repeat="0" caret-animation="smooth" initial-action='erasing'></vue-typer>-->
-        </el-main>
-      </el-container>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import {listWord, getWord, delWord, addWord, updateWord, getOneWord} from "@/api/system/word";
+import {listWord, getWord, delWord, addWord, updateWord} from "@/api/system/word";
 import {importTemplate} from "@/api/system/word";
 import {getToken} from "@/utils/auth";
-import {addRecord} from "@/api/system/record";
-import {addUserWord} from "@/api/system/userword";
-import {getTotalAndNotStudyNum} from "@/api/statistics/statistics";
+import WordPanel from "@/views/system/word/wordPanel.vue";
 
 export default {
   name: "Word",
+  components: {WordPanel},
   data() {
     return {
       // 遮罩层
@@ -349,33 +258,10 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/system/word/importData"
       },
-      oneWord: {
-        id: 0,
-        word: "",
-        phonetic: "",
-        translation: "",
-        pos: "",
-        tag: "",
-      },
-      currentInputTxt: '',
-      oneWordTxt: '',
-      okTxt: '',
-      notInputtedTxt: '',
-      enterCount: 0,
-      // 学习记录
-      record: {
-        wordId: '',
-        word: ''
-      },
-      totalNum: 0,
-      remainNum: 0,
-      showWordInfo: true,
-      wordIndex: 0
     };
   },
   created() {
     this.getList();
-    this.speakCommon.speechInit();
   },
   methods: {
     /** 查询单词列表 */
@@ -500,140 +386,14 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
-    // 播放音频
-    playAudio(row) {
-      this.speakCommon.speak(row.word)
-    },
     // 开始学习
     async beginWordStudy() {
-      // 更新统计数据
-      await getTotalAndNotStudyNum().then(res => {
-        this.totalNum = res.data.total;
-        this.remainNum = res.data.notStudy;
-      });
       this.studyOpen = true;
     },
-    studyEnd: function () {
-      this.showWordInfo = false;
-      this.$notify({
-        type: "warning",
-        message: "新单词已学完，赶紧去复习一下吧^-^"
-      });
+    // 播放音频
+    playAudio(word) {
+      this.speakCommon.speak(word.word)
     },
-    async starStudy() {
-      await this.getOneWord(this.wordIndex);
-    },
-    async forward() {
-      let currentIndex = this.wordIndex - 1;
-      console.log("================currentIndex:" + currentIndex)
-      if (currentIndex < 0) {
-        this.$notify({
-          type: "success",
-          message: "请停下来，已经没有啦！"
-        });
-        this.wordIndex = 0;
-        return;
-      }
-      this.showWordInfo = true;
-      await this.getOneWord(currentIndex);
-      this.wordIndex--;
-    },
-    async nextWord() {
-      let currentIndex = this.wordIndex + 1;
-      console.log("================currentIndex:" + currentIndex)
-      if (currentIndex >= this.remainNum) {
-        this.$notify({
-          type: "success",
-          message: "请停下来，已经没有啦！"
-        });
-        this.wordIndex = this.remainNum - 2;
-        if (this.wordIndex < 0) {
-          this.wordIndex = 0;
-        }
-        return;
-      }
-      await this.getOneWord(currentIndex);
-      this.wordIndex++;
-    },
-    async getOneWord(index) {
-      if (this.remainNum === 0) {
-        this.studyEnd();
-        return;
-      }
-      this.clearPanelData();
-      await getOneWord(index).then(response => {
-        if (!response.data) {
-          this.showWordInfo = false;
-          return;
-        }
-        this.oneWord = response.data;
-        this.oneWordTxt = this.oneWord.word;
-        this.notInputtedTxt = this.oneWordTxt;
-      });
-      if (this.showWordInfo) {
-        this.okTxt = '';
-        this.playOneWordAudio()
-      }
-    },
-    playOneWordAudio() {
-      console.log("====================" + this.oneWordTxt)
-      this.speakCommon.speak(this.oneWordTxt)
-      // this.audio.src = "http://dict.youdao.com/dictvoice?type=0&audio=" + this.oneWordTxt;
-      // this.audio.play();
-    },
-    clearPanelData: function () {
-      this.enterCount = 0;
-      this.currentInputTxt = '';
-      this.notInputtedTxt = '';
-    },
-    async userInputs() {
-      console.log("====================" + this.currentInputTxt)
-      if ((this.currentInputTxt.length === this.oneWordTxt.length) &&
-        (this.currentInputTxt[this.currentInputTxt.length - 1] === this.oneWordTxt[this.currentInputTxt.length - 1])) {
-        this.clearPanelData();
-        this.okTxt = this.oneWordTxt;
-        this.record.wordId = this.oneWord.id;
-        this.record.word = this.oneWord.word;
-        // 我的单词+1
-        await addUserWord(this.record).then(() => {
-          this.$notify({
-            type: "success",
-            message: "单词量+1"
-          });
-        });
-        // 新增学习记录
-        await addRecord(this.record).then(() => {
-          this.$notify({
-            type: "success",
-            message: "学习记录+1"
-          });
-        });
-        this.wordIndex++;
-        if (this.wordIndex >= this.remainNum) {
-          this.$notify({
-            type: "success",
-            message: "请停下来，已经没有啦！"
-          });
-          this.studyEnd();
-          return;
-        }
-        await this.getOneWord(this.wordIndex);
-        return;
-      }
-      for (let i = 0; i < this.currentInputTxt.length; i++) {
-        if (this.currentInputTxt[i] === this.oneWordTxt[i]) {
-          this.enterCount = i + 1;
-          this.okTxt = this.oneWordTxt.slice(0, this.enterCount);
-          this.notInputtedTxt = this.oneWordTxt.slice(this.enterCount, this.oneWordTxt.length);
-        } else {
-          this.currentInputTxt = this.okTxt;
-          break;
-        }
-      }
-    },
-    closeStudyPanel() {
-      this.clearPanelData();
-    }
   }
 };
 </script>

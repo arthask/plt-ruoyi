@@ -75,7 +75,7 @@ public interface OldWordMapper
      * @param userId 用户id
      * @return
      */
-    Word getRandomWordOfUser(@Param("userId") Long userId, @Param("offset") Long offset);
+    Word getRandomWordOfUser(@Param("userId") Long userId,@Param("lexiconId") Long lexiconId, @Param("offset") Long offset);
 
     /**
      * 随机获取用户的一个新单词

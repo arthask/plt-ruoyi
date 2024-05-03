@@ -7,7 +7,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.vo.StatisticsCountVo;
 import com.ruoyi.system.domain.vo.UserWordPeriodVo;
 import com.ruoyi.system.mapper.UserStudyRecordMapper;
-import com.ruoyi.system.mapper.UserWordMapper;
+import com.ruoyi.system.mapper.OldUserWordMapper;
 import com.ruoyi.system.mapper.OldWordMapper;
 import com.ruoyi.system.service.statistics.IStatisticsService;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +35,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
     private OldWordMapper oldWordMapper;
 
     @Autowired
-    private UserWordMapper userWordMapper;
+    private OldUserWordMapper oldUserWordMapper;
 
     @Autowired
     private UserStudyRecordMapper userStudyRecordMapper;
@@ -48,7 +48,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
         // 目前是1，只有程序员词汇库
         result.setWordDataBaseNum(1L);
         result.setWordCount(oldWordMapper.getWordCount(userId));
-        result.setMyWordCount(userWordMapper.getWordCount(userId));
+        result.setMyWordCount(oldUserWordMapper.getWordCount(userId));
         result.setStudyRecordCount(userStudyRecordMapper.getStudyRecordCount(userId));
         return result;
     }
@@ -79,7 +79,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
         DateTime endDate = DateUtil.endOfYear(now);
         String beginStr = DateFormatUtils.format(startDate, DateUtils.YYYY_MM_DD_HH_MM_SS);
         String endStr = DateFormatUtils.format(endDate, DateUtils.YYYY_MM_DD_HH_MM_SS);
-        List<Long> userWordOfMonthList = userWordMapper.getUserWordOfMonth(userId, beginStr, endStr);
+        List<Long> userWordOfMonthList = oldUserWordMapper.getUserWordOfMonth(userId, beginStr, endStr);
         if (CollectionUtil.isEmpty(userWordOfMonthList)) {
             return result;
         }
@@ -92,7 +92,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
     @Override
     public List<UserWordPeriodVo> getUserWordPeriodCount(Long userId) {
 
-        List<UserWordPeriodVo> userWordPeriodCount = userWordMapper.getUserWordPeriodCount(userId);
+        List<UserWordPeriodVo> userWordPeriodCount = oldUserWordMapper.getUserWordPeriodCount(userId);
         if (CollectionUtil.isEmpty(userWordPeriodCount)) {
             return Collections.emptyList();
         }
@@ -135,7 +135,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
         Long[] exceptArray = initMonthDataArray(lengthOfMonth);
         Long[] actualArray = initMonthDataArray(lengthOfMonth);
         // 当天有期望学习时间才会有值
-        Map<String, Map<String, Long>> exceptValueOfDay = userWordMapper.getExceptValueOfDay(
+        Map<String, Map<String, Long>> exceptValueOfDay = oldUserWordMapper.getExceptValueOfDay(
                 userId,
                 DateUtil.format(beginOfMonth, DateUtils.YYYY_MM_DD_HH_MM_SS),
                 DateUtil.format(endOfMonth, DateUtils.YYYY_MM_DD_HH_MM_SS));
@@ -175,13 +175,13 @@ public class StatisticsServiceImpl implements IStatisticsService {
         DateTime now = DateUtil.date();
         String beginStr = DateUtil.format(DateUtil.beginOfDay(now), DateUtils.YYYY_MM_DD_HH_MM_SS);
         String endStr = DateUtil.format(DateUtil.endOfDay(now), DateUtils.YYYY_MM_DD_HH_MM_SS);
-        Long needReviewNumOfDay = userWordMapper.getNeedReviewNumOfDay(userId,
+        Long needReviewNumOfDay = oldUserWordMapper.getNeedReviewNumOfDay(userId,
                 beginStr,
                 endStr);
-        Long haveReviewNumOfDay = userWordMapper.getHaveReviewNumOfDay(userId,
+        Long haveReviewNumOfDay = oldUserWordMapper.getHaveReviewNumOfDay(userId,
                 beginStr,
                 endStr);
-        Long totalReviewNum = userWordMapper.getTotalReviewNum(userId);
+        Long totalReviewNum = oldUserWordMapper.getTotalReviewNum(userId);
         result.put(NEED_REVIEW, needReviewNumOfDay);
         result.put(HAVE_REVIEW, haveReviewNumOfDay);
         result.put(TOTAL_REVIEW_NUM, totalReviewNum);

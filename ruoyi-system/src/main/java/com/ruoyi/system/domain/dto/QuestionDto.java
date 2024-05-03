@@ -1,6 +1,7 @@
 package com.ruoyi.system.domain.dto;
 
-import com.ruoyi.system.domain.Question;
+
+import com.ruoyi.system.gencode.entity.Question;
 
 import java.util.List;
 

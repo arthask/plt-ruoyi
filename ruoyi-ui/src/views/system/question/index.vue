@@ -3,16 +3,8 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="noteId" prop="noteId">
         <el-input
-          v-model="queryParams.noteId"
-          placeholder="请输入"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="userId" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户id"
+          v-model="queryParams.question"
+          placeholder="请输入问题"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -71,12 +63,10 @@
 
     <el-table v-loading="loading" :data="questionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="笔记id" align="center" prop="noteId" />
+      <el-table-column label="笔记名称" align="center" prop="noteId" />
       <el-table-column label="问题" align="center" prop="question" />
-      <el-table-column label="答案" align="center" prop="answer" />
-      <el-table-column label="标签" align="center" prop="tag" />
-      <el-table-column label="用户id" align="center" prop="userId" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button

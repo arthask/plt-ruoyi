@@ -23,4 +23,11 @@ public interface WordMapper extends BaseMapper<Word> {
      * @return 匹配的单词
      */
     List<Word> searchWordByCN(@Param("searchCn") String searchCn);
+
+    /**
+     * 随机获取用户词库的一个单词
+     * @param userId 用户id
+     * @return
+     */
+    Word getRandomWordOfUser(@Param("userId") Long userId, @Param("lexiconUUID") String lexiconUUID, @Param("offset") Long offset);
 }

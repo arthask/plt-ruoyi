@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author author
- * @since 2024-04-12
+ * @since 2024-05-02
  */
 @Service
 public class LexiconWordServiceImpl extends ServiceImpl<LexiconWordMapper, LexiconWord> implements LexiconWordService {

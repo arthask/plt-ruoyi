@@ -110,9 +110,9 @@ public class WordController extends BaseController {
         return util.importTemplateExcel("单词数据");
     }
 
-    @GetMapping("/getOneWord/{index}")
-    public AjaxResult getOneWord(@PathVariable("index") int index) {
-       return success(wordService.getOneWord(this.getUserId(), index));
+    @GetMapping("/getOneWord/{lexiconUUId}/{index}")
+    public AjaxResult getOneWord(@PathVariable("lexiconUUId") String lexiconUUId,@PathVariable("index") int index) {
+       return success(newWordService.getOneWord(this.getUserId(), lexiconUUId, index));
     }
 
     /**
