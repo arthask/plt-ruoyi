@@ -1,18 +1,19 @@
 package com.ruoyi.web.controller.business;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.system.domain.UserWord;
+import com.ruoyi.system.gencode.entity.UserWord;
+import com.ruoyi.system.gencode.service.UserWordService;
 import com.ruoyi.system.service.IUserWordService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -24,8 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/system/userword")
 public class UserWordController extends BaseController {
-    @Autowired
+    @Resource(name = "oldUserWordService")
     private IUserWordService userWordService;
+
+    @Resource(name = "userWordService")
+    private UserWordService newUserWordService;
 
     /**
      * 查询用户单词列表
@@ -34,20 +38,9 @@ public class UserWordController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(UserWord userWord) {
         startPage();
-        List<UserWord> list = userWordService.selectUserWordList(userWord);
+//        QueryWrapper<UserWord> queryWrapper = new QueryWrapper<>();
+        List<UserWord> list = newUserWordService.list();
         return getDataTable(list);
-    }
-
-    /**
-     * 导出用户单词列表
-     */
-    @PreAuthorize("@ss.hasPermi('system:word:export')")
-    @Log(title = "用户单词", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, UserWord userWord) {
-        List<UserWord> list = userWordService.selectUserWordList(userWord);
-        ExcelUtil<UserWord> util = new ExcelUtil<UserWord>(UserWord.class);
-        util.exportExcel(response, list, "用户单词数据");
     }
 
     /**
@@ -68,7 +61,7 @@ public class UserWordController extends BaseController {
     public AjaxResult add(@RequestBody UserWord userWord) {
         userWord.setUserName(getUsername());
         userWord.setUserId(getUserId());
-        return toAjax(userWordService.insertUserWord(userWord));
+        return toAjax(newUserWordService.insertUserWord(userWord));
     }
 
     /**
@@ -78,7 +71,7 @@ public class UserWordController extends BaseController {
     @Log(title = "用户单词", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody UserWord userWord) {
-        return toAjax(userWordService.updateUserWord(userWord));
+        return toAjax(newUserWordService.updateById(userWord));
     }
 
     /**
@@ -89,5 +82,11 @@ public class UserWordController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(userWordService.deleteUserWordByIds(ids));
+    }
+
+
+    @PostMapping("/collect")
+    public AjaxResult collect(@RequestParam("wordUUID") String wordUUID) {
+        return success(newUserWordService.collect(wordUUID, getUserId(), getUsername()));
     }
 }

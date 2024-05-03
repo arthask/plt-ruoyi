@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 词库与单词关系表
+ * 用户单词表
  * </p>
  *
  * @author author
@@ -21,31 +21,52 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("lexicon_word")
-public class LexiconWord implements Serializable {
+@TableName("user_word")
+public class UserWord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 编号
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * uuid
-     */
-    @TableField("uuid")
-    private String uuid;
-
-    /**
-     * 词库id
-     */
-    @TableField("lexicon_uuid")
-    private String lexiconUuid;
-
-    /**
      * 单词id
      */
-    @TableField("word_uuid")
-    private String wordUuid;
+    @TableField("word_id")
+    private Long wordId;
+
+    /**
+     * 单词
+     */
+    @TableField("word")
+    private String word;
+
+    /**
+     * 用户id
+     */
+    @TableField("user_id")
+    private Long userId;
+
+    /**
+     * 用户名称
+     */
+    @TableField("user_name")
+    private String userName;
+
+    /**
+     * 阶段，拥有标识单词的单词的熟悉程度
+     */
+    @TableField("period")
+    private Integer period;
+
+    /**
+     * 是否收藏
+     */
+    @TableField("collect_flag")
+    private Integer collectFlag;
 
     /**
      * 创建时间
@@ -54,8 +75,14 @@ public class LexiconWord implements Serializable {
     private LocalDateTime createTime;
 
     /**
-     * 更新时间
+     * 更新时间时间
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 下次学习时间
+     */
+    @TableField("next_study_time")
+    private LocalDateTime nextStudyTime;
 }

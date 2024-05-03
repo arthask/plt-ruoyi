@@ -11,7 +11,7 @@ import java.util.List;
  * @author ruoyi
  * @date 2024-02-02
  */
-public interface QuestionMapper 
+public interface OldQuestionMapper
 {
     /**
      * 查询问题

@@ -121,7 +121,7 @@ public class LexiconServiceImpl extends ServiceImpl<LexiconMapper, Lexicon> impl
                         LexiconWord lexiconWord = new LexiconWord();
                         lexiconWord.setUuid(UUID.randomUUID().toString());
                         lexiconWord.setWordUuid(e);
-                        lexiconWord.setLexionUuid(lexiconUUID);
+                        lexiconWord.setLexiconUuid(lexiconUUID);
                         return lexiconWord;
                     })
                     .collect(Collectors.toList());
@@ -243,6 +243,20 @@ public class LexiconServiceImpl extends ServiceImpl<LexiconMapper, Lexicon> impl
         }
         return "修改成功";
     }
+
+    @Override
+    public List<Label> getLabelOfLexicon(String lexiconUUID) {
+        // 词库的标签
+        QueryWrapper<LabelRef> labelRefQueryWrapper = new QueryWrapper<>();
+        labelRefQueryWrapper.eq("ref_uuid", lexiconUUID);
+        List<LabelRef> labelRefList = labelRefService.list(labelRefQueryWrapper);
+        Map<String, List<LabelRef>> labelRefGroupByLabelUUID = labelRefList.stream()
+                .collect(Collectors.groupingBy(LabelRef::getLabelUuid));
+        QueryWrapper<Label> labelQueryWrapper = new QueryWrapper<>();
+        labelQueryWrapper.in("uuid", labelRefGroupByLabelUUID.keySet());
+        return labelService.list(labelQueryWrapper);
+    }
+
 
     private Map<String, List<Label>> getLabelNameList(List<Lexicon> lexicons) {
         List<String> lexiconUUIdList = Optional.ofNullable(lexicons)

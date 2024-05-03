@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -144,10 +145,14 @@ public class WordServiceImpl implements IWordService {
     }
 
     @Override
-    public Word getOneWord(Long userId, int index) {
+    public WordShowData getOneWord(Long userId, Long lexiconId, int index) {
 //        Long count = wordMapper.getNewWordCountOfUser(userId);
 //        long offset = RandomUtils.nextLong(0, count);
-        return oldWordMapper.getRandomWordOfUser(userId, Long.valueOf(index));
+        Word word = oldWordMapper.getRandomWordOfUser(userId,lexiconId, (long) index);
+        Assert.notNull(word,"未查询到单词数据");
+        WordShowData wordShowData = new WordShowData();
+        BeanUtils.copyProperties(word, wordShowData);
+        return wordShowData;
     }
 
     @Override

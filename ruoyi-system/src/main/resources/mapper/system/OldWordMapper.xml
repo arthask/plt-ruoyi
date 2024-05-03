@@ -50,11 +50,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getRandomWordOfUser" resultType="com.ruoyi.system.domain.Word">
-        select w.*  from word_snapshot ws
-            left join word w on ws.word_id = w.id
+        select w.*  from lexicon_word lw
+            left join word w on lw.word_uuid = w.uuid
         where
-            ws.user_id = #{userId}
-            and type = 1
+            lw.lexicon_id = #{lexiconId}
+            w.user_id = #{userId}
             limit #{offset},1;
     </select>
 

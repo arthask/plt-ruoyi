@@ -2,6 +2,7 @@ package com.ruoyi.system.gencode.service;
 
 import com.ruoyi.system.domain.dto.LexiconData;
 import com.ruoyi.system.domain.dto.LexiconShowData;
+import com.ruoyi.system.gencode.entity.Label;
 import com.ruoyi.system.gencode.entity.Lexicon;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -30,4 +31,6 @@ public interface LexiconService extends IService<Lexicon> {
     LexiconShowData getInfo(Long id);
 
     List<LexiconShowData> convertLexiconList(List<Lexicon> lexicons);
+
+    List<Label> getLabelOfLexicon(String lexiconUUID);
 }

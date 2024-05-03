@@ -331,7 +331,6 @@ export default {
       this.haveReview = res.data.haveReview;
       this.totalReviewNum = res.data.totalReviewNum;
     });
-    this.speakCommon.speechInit();
   },
   methods: {
     /** 查询用户单词列表 */

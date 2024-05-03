@@ -4,6 +4,8 @@ import com.ruoyi.system.domain.dto.WordShowData;
 import com.ruoyi.system.gencode.entity.Word;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -23,4 +25,6 @@ public interface WordService extends IService<Word> {
      * @return 匹配的单词
      */
     List<WordShowData> searchWordByCN(@Param("searchCn") String searchCn);
+
+    WordShowData getOneWord(Long userId, String lexiconUUID, int index);
 }

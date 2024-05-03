@@ -3,8 +3,8 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="用户id" prop="userId">
         <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户id"
+          v-model="queryParams.title"
+          placeholder="请输入笔记标题"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -16,16 +16,6 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:note:add']"
-        >新增</el-button>
-      </el-col>
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -73,10 +63,9 @@
 
     <el-table v-loading="loading" :data="noteList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="用户id" align="center" prop="userId" />
       <el-table-column label="笔记标题" align="center" prop="title" />
-      <el-table-column label="总结" align="center" prop="summary" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -238,12 +227,6 @@ export default {
       this.ids = selection.map(item => item.id)
       this.single = selection.length!==1
       this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加笔记";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {

@@ -1,7 +1,8 @@
 package com.ruoyi.system.domain.vo;
 
-import com.ruoyi.system.domain.Note;
-import com.ruoyi.system.domain.Question;
+
+import com.ruoyi.system.gencode.entity.Note;
+import com.ruoyi.system.gencode.entity.Question;
 
 import java.util.List;
 

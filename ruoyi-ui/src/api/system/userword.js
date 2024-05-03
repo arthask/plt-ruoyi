@@ -42,3 +42,11 @@ export function delWord(id) {
     method: 'delete'
   })
 }
+
+export function collect(query) {
+  return request({
+    url: '/system/userword/collect',
+    method: 'post',
+    data: query
+  })
+}

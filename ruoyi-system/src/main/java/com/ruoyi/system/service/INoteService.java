@@ -61,7 +61,4 @@ public interface INoteService
      */
     public int deleteNoteById(Long id);
 
-    NoteInfoVo getNoteInfo(Long id);
-
-    int updateNoteInfo(NoteInfoVo noteInfoVo);
 }

@@ -6,23 +6,25 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 词库与单词关系表
+ * 问题表
  * </p>
  *
  * @author author
- * @since 2024-05-02
+ * @since 2024-05-03
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("lexicon_word")
-public class LexiconWord implements Serializable {
+@TableName("question")
+public class Question implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,27 +37,41 @@ public class LexiconWord implements Serializable {
     @TableField("uuid")
     private String uuid;
 
-    /**
-     * 词库id
-     */
-    @TableField("lexicon_uuid")
-    private String lexiconUuid;
+    @TableField("note_id")
+    private Long noteId;
 
     /**
-     * 单词id
+     * 问题
      */
-    @TableField("word_uuid")
-    private String wordUuid;
+    @TableField("question")
+    private String question;
+
+    /**
+     * 答案
+     */
+    @TableField("answer")
+    private String answer;
+
+    /**
+     * 标签
+     */
+    @TableField("tag")
+    private String tag;
+
+    @TableField("user_id")
+    private Long userId;
 
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("create_time")
     private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("update_time")
     private LocalDateTime updateTime;
 }

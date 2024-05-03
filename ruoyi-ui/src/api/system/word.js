@@ -52,9 +52,9 @@ export function importTemplate(id) {
 }
 
 // 随机获取一个单词
-export function getOneWord(index) {
+export function getOneWord(uuid, index) {
   return request({
-    url: '/system/word/getOneWord/'+index,
+    url: '/system/word/getOneWord/'+uuid+"/"+index,
     method: 'get'
   })
 }

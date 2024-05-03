@@ -22,7 +22,7 @@
             </el-option>
           </el-select>
           <el-button v-show="showDetail" style="margin-left: 10px" type="primary"
-                     size="small" @click="collect">收藏</el-button>
+                     size="small" @click="collectWord(detail.uuid)">收藏</el-button>
         </div>
       </el-col>
     </el-row>
@@ -82,7 +82,8 @@
 </template>
 
 <script>
-import {searchWordByCN} from "@/api/system/word";
+import { searchWordByCN} from "@/api/system/word";
+import {collect} from "@/api/system/userword";
 
 export default {
   name: 'searchWord',
@@ -126,18 +127,24 @@ export default {
       this.detail.translation = selected.translation
       this.detail.labelNames = [... selected.labelList]
       this.detail.lexiconName = [... selected.lexiconName]
+      this.detail.uuid = selected.uuid
     },
     // 播放音频
     playAudio(language, word) {
       this.speakCommon.changeVoice(language)
       this.speakCommon.speak(word)
     },
-    collect() {
-      this.$notify({
-        title: '成功',
-        message: '已收藏',
-        type: 'success'
-      });
+    collectWord(uuid) {
+      var data = new FormData()
+      data.append("wordUUID", uuid)
+      collect(data).then((res) => {
+        console.log(res)
+        this.$notify({
+          title: '成功',
+          message: '已收藏',
+          type: 'success'
+        });
+      })
     }
   }
 }
