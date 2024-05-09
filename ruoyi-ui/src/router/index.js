@@ -87,6 +87,10 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/review',
+    component: () => import('@/views/system/userword/review'),
   }
 ]
 
@@ -161,7 +165,7 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
-  }
+  },
 ]
 
 // 防止连续点击多次路由报错

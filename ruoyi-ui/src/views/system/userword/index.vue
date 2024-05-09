@@ -85,7 +85,7 @@
           plain
           icon="el-icon-edit"
           size="mini"
-          @click="beginWordStudy"
+          @click="review"
           v-hasPermi="['system:word:edit']"
         >我要复习
         </el-button>
@@ -430,6 +430,10 @@ export default {
       this.download('system/word/export', {
         ...this.queryParams
       }, `word_${new Date().getTime()}.xlsx`)
+    },
+    review() {
+      this.$router.push("/review")
+      // this.$tab.openPage("复习", "/review");
     },
     // 开始学习
     async beginWordStudy() {
