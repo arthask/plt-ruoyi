@@ -13,7 +13,7 @@ import java.util.Map;
  * @author ruoyi
  * @date 2024-01-10
  */
-public interface UserStudyRecordMapper 
+public interface OldUserStudyRecordMapper
 {
     /**
      * 查询用户学习记录

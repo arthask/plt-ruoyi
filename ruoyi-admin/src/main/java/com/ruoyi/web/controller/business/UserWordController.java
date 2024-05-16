@@ -10,6 +10,7 @@ import com.ruoyi.system.gencode.entity.UserWord;
 import com.ruoyi.system.gencode.service.UserWordService;
 import com.ruoyi.system.service.IUserWordService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class UserWordController extends BaseController {
     @Resource(name = "oldUserWordService")
     private IUserWordService userWordService;
 
-    @Resource(name = "userWordService")
+    @Autowired
     private UserWordService newUserWordService;
 
     /**
@@ -49,7 +50,7 @@ public class UserWordController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:word:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(userWordService.selectUserWordById(id));
+        return success(newUserWordService.getById(id));
     }
 
     /**

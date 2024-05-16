@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author author
- * @since 2024-05-02
+ * @since 2024-05-16
  */
 public interface UserWordService extends IService<UserWord> {
     /**

@@ -60,11 +60,10 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <el-row class="row-box">
+    <el-row class="row-box" :gutter="20">
       <el-col :span="6"
               v-for="(item, index)  in lexiconList"
               :key="item.uuid"
-              :offset="1"
               >
         <el-card class="el-card">
             <div slot="header">
@@ -98,8 +97,7 @@
 </template>
 <style>
 .row-box {
-  //display: flex;
-  //flex-flow: wrap;
+
 }
 .row-box .el-card {
   min-width: 100%;

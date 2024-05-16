@@ -6,7 +6,10 @@ import cn.hutool.core.date.DateUtil;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.vo.StatisticsCountVo;
 import com.ruoyi.system.domain.vo.UserWordPeriodVo;
-import com.ruoyi.system.mapper.UserStudyRecordMapper;
+import com.ruoyi.system.gencode.mapper.UserStudyRecordMapper;
+import com.ruoyi.system.gencode.service.LexiconService;
+import com.ruoyi.system.gencode.service.UserStudyRecordService;
+import com.ruoyi.system.mapper.OldUserStudyRecordMapper;
 import com.ruoyi.system.mapper.OldUserWordMapper;
 import com.ruoyi.system.mapper.OldWordMapper;
 import com.ruoyi.system.service.statistics.IStatisticsService;
@@ -38,7 +41,10 @@ public class StatisticsServiceImpl implements IStatisticsService {
     private OldUserWordMapper oldUserWordMapper;
 
     @Autowired
-    private UserStudyRecordMapper userStudyRecordMapper;
+    private OldUserStudyRecordMapper oldUserStudyRecordMapper;
+
+    @Autowired
+    private LexiconService lexiconService;
 
     private static final int MONTH_NUM = 12;
 
@@ -46,10 +52,10 @@ public class StatisticsServiceImpl implements IStatisticsService {
     public StatisticsCountVo getStatisticsOfCount(Long userId) {
         StatisticsCountVo result = new StatisticsCountVo();
         // 目前是1，只有程序员词汇库
-        result.setWordDataBaseNum(1L);
+        result.setWordDataBaseNum(lexiconService.count());
         result.setWordCount(oldWordMapper.getWordCount(userId));
         result.setMyWordCount(oldUserWordMapper.getWordCount(userId));
-        result.setStudyRecordCount(userStudyRecordMapper.getStudyRecordCount(userId));
+        result.setStudyRecordCount(oldUserStudyRecordMapper.getStudyRecordCount(userId));
         return result;
     }
 
@@ -61,7 +67,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
         DateTime endDate = DateUtil.endOfYear(now);
         String beginStr = DateFormatUtils.format(startDate, DateUtils.YYYY_MM_DD_HH_MM_SS);
         String endStr = DateFormatUtils.format(endDate, DateUtils.YYYY_MM_DD_HH_MM_SS);
-        List<Long> studyRecordOfMonthList = userStudyRecordMapper.getStudyRecordOfMonth(userId, beginStr, endStr);
+        List<Long> studyRecordOfMonthList = oldUserStudyRecordMapper.getStudyRecordOfMonth(userId, beginStr, endStr);
         if (CollectionUtil.isEmpty(studyRecordOfMonthList)) {
             return result;
         }
@@ -147,7 +153,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
         });
         result.put(EXCEPT, exceptArray);
         // 当天单词学习记录
-        Map<String, Map<String, Long>> actualValueOfDay = userStudyRecordMapper.getActualValueOfDay(userId, DateUtil.format(beginOfMonth, DateUtils.YYYY_MM_DD_HH_MM_SS),
+        Map<String, Map<String, Long>> actualValueOfDay = oldUserStudyRecordMapper.getActualValueOfDay(userId, DateUtil.format(beginOfMonth, DateUtils.YYYY_MM_DD_HH_MM_SS),
                 DateUtil.format(endOfMonth, DateUtils.YYYY_MM_DD_HH_MM_SS));
         actualValueOfDay.forEach((k, v) -> {
             // 截取对应的天数

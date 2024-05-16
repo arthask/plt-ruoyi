@@ -100,8 +100,8 @@ export default {
       US: 'en-US',
       title: '',
       oneWord: {
-        id: 0,
         word: "",
+        uuid: "",
         phonetic: "",
         translation: "",
         pos: "",
@@ -114,8 +114,8 @@ export default {
       enterCount: 0,
       // 学习记录
       record: {
-        wordId: '',
-        word: ''
+        word: '',
+        wordUuid:''
       },
       totalNum: 0,
       remainNum: 0,
@@ -201,6 +201,7 @@ export default {
           return;
         }
         this.oneWord = response.data;
+        console.log(this.oneWord)
         this.oneWordTxt = this.oneWord.word;
         this.notInputtedTxt = this.oneWordTxt;
         if (this.showWordInfo) {
@@ -231,7 +232,7 @@ export default {
         (this.currentInputTxt[this.currentInputTxt.length - 1] === this.oneWordTxt[this.currentInputTxt.length - 1])) {
         this.clearPanelData();
         this.okTxt = this.oneWordTxt;
-        this.record.wordId = this.oneWord.id;
+        this.record.wordUuid = this.oneWord.uuid;
         this.record.word = this.oneWord.word;
         // 我的单词+1
         await addUserWord(this.record).then(() => {

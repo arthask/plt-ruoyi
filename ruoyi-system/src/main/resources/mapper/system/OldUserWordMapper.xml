@@ -83,9 +83,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getHaveReviewNumOfDay" resultType="java.lang.Long">
-        select count(distinct uw.word_id) from user_word uw
+        select count(distinct uw.word_uuid) from user_word uw
         left join user_study_record usr
-        on uw.word_id = usr.word_id
+        on uw.word_uuid = usr.word_uuid
         where uw.user_id = #{userId}
         and uw.next_study_time > #{endStr}
         and usr.study_time  >= #{beginStr} and usr.study_time <![CDATA[<=]]> #{endStr}
@@ -93,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getReviewWordByIndex" resultType="com.ruoyi.system.domain.Word">
         select w.*  from word_snapshot ws
-            left join word w on ws.word_id = w.id
+            left join word w on ws.word_uuid = w.uuid
         where
             ws.user_id = #{userId}
             and type = 0

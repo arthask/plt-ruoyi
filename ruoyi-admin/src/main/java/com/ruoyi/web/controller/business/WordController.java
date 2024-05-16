@@ -127,11 +127,11 @@ public class WordController extends BaseController {
 
     /**
      * 从内置词库中查找单词
-     * @param wordId
+     * @param wordUuid
      * @return
      */
     @GetMapping("/getWordInfo")
-    public AjaxResult getWordInfo(@RequestParam("wordId") Long wordId) {
-        return success(newWordService.getWordInfo(wordId));
+    public AjaxResult getWordInfo(@RequestParam("wordUuid") String wordUuid) {
+        return success(newWordService.getWordInfo(wordUuid));
     }
 }
