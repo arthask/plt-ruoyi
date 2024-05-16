@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.mapper.UserStudyRecordMapper">
+<mapper namespace="com.ruoyi.system.mapper.OldUserStudyRecordMapper">
     
     <resultMap type="UserStudyRecord" id="UserStudyRecordResult">
         <result property="id"    column="id"    />
@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
-            <if test="wordId != null "> and word_id = #{wordId}</if>
+            <if test="wordUuid != null "> and word_uuid = #{wordId}</if>
             <if test="word != null  and word != ''"> and word = #{word}</if>
             <if test="studyTime != null "> and study_time = #{studyTime}</if>
         </where>

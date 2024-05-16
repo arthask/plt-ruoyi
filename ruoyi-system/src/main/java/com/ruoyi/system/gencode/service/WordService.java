@@ -28,5 +28,5 @@ public interface WordService extends IService<Word> {
 
     WordShowData getOneWord(Long userId, String lexiconUUID, int index);
 
-    WordShowData getWordInfo(Long wordId);
+    WordShowData getWordInfo(String wordUuid);
 }

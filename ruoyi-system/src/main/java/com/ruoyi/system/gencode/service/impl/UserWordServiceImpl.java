@@ -1,6 +1,7 @@
 package com.ruoyi.system.gencode.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.enums.PeriodEnum;
 import com.ruoyi.common.utils.DateUtils;
@@ -36,9 +37,9 @@ import java.util.stream.Collectors;
  * </p>
  *
  * @author author
- * @since 2024-05-02
+ * @since 2024-05-16
  */
-@Service("userWordService")
+@Service
 public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> implements UserWordService {
     @Autowired
     private UserWordMapper userWordMapper;
@@ -61,7 +62,7 @@ public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> i
         Assert.notNull(word, "请求参数错误");
         // 检查一下是否有重复的
         QueryWrapper<UserWord> userWordQueryWrapper = new QueryWrapper<>();
-        userWordQueryWrapper.eq("word_id", word.getId());
+        userWordQueryWrapper.eq("word_uuid", word.getUuid());
         UserWord repeatWord = userWordMapper.selectOne(userWordQueryWrapper);
         if (Objects.nonNull(repeatWord)) {
             repeatWord.setCollectFlag(1);
@@ -70,7 +71,7 @@ public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> i
         UserWord userWord = new UserWord()
                 .setCollectFlag(1)
                 .setWord(word.getWord())
-                .setWordId(word.getId())
+                .setWordUuid(word.getUuid())
                 .setUserId(userId)
                 .setUserName(userName);
         setPeriodAndNextTime(userWord, 1);
@@ -88,7 +89,7 @@ public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> i
     public int insertUserWord(UserWord userWord) {
         // 检查一下是否有重复的
         QueryWrapper<UserWord> userWordQueryWrapper = new QueryWrapper<>();
-        userWordQueryWrapper.eq("word_id", userWord.getId());
+        userWordQueryWrapper.eq("word_uuid", userWord.getWordUuid());
         UserWord repeatWord = userWordMapper.selectOne(userWordQueryWrapper);
         if (Objects.nonNull(repeatWord)) {
             setPeriodAndNextTime(repeatWord, repeatWord.getPeriod() + 1);
@@ -96,6 +97,7 @@ public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> i
         }
         setPeriodAndNextTime(userWord, 1);
         userWord.setCollectFlag(0);
+        userWord.setUuid(UUID.randomUUID().toString().replace("-",""));
         return userWordMapper.insert(userWord);
     }
 

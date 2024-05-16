@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.UserStudyRecord;
-import com.ruoyi.system.mapper.UserStudyRecordMapper;
+import com.ruoyi.system.mapper.OldUserStudyRecordMapper;
 import com.ruoyi.system.service.IUserStudyRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ import java.util.List;
  * @author ruoyi
  * @date 2024-01-10
  */
-@Service
+@Service("oldUserStudyRecordService")
 public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
     @Autowired
-    private UserStudyRecordMapper userStudyRecordMapper;
+    private OldUserStudyRecordMapper oldUserStudyRecordMapper;
 
     /**
      * 查询用户学习记录
@@ -32,7 +32,7 @@ public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
      */
     @Override
     public UserStudyRecord selectUserStudyRecordById(Long id) {
-        return userStudyRecordMapper.selectUserStudyRecordById(id);
+        return oldUserStudyRecordMapper.selectUserStudyRecordById(id);
     }
 
     /**
@@ -43,7 +43,7 @@ public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
      */
     @Override
     public List<UserStudyRecord> selectUserStudyRecordList(UserStudyRecord userStudyRecord) {
-        return userStudyRecordMapper.selectUserStudyRecordList(userStudyRecord);
+        return oldUserStudyRecordMapper.selectUserStudyRecordList(userStudyRecord);
     }
 
     /**
@@ -55,7 +55,7 @@ public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
     @Override
     public int insertUserStudyRecord(UserStudyRecord userStudyRecord) {
         userStudyRecord.setCreateTime(DateUtils.getNowDate());
-        return userStudyRecordMapper.insertUserStudyRecord(userStudyRecord);
+        return oldUserStudyRecordMapper.insertUserStudyRecord(userStudyRecord);
     }
 
     /**
@@ -67,7 +67,7 @@ public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
     @Override
     public int updateUserStudyRecord(UserStudyRecord userStudyRecord) {
         userStudyRecord.setUpdateTime(DateUtils.getNowDate());
-        return userStudyRecordMapper.updateUserStudyRecord(userStudyRecord);
+        return oldUserStudyRecordMapper.updateUserStudyRecord(userStudyRecord);
     }
 
     /**
@@ -78,7 +78,7 @@ public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
      */
     @Override
     public int deleteUserStudyRecordByIds(Long[] ids) {
-        return userStudyRecordMapper.deleteUserStudyRecordByIds(ids);
+        return oldUserStudyRecordMapper.deleteUserStudyRecordByIds(ids);
     }
 
     /**
@@ -89,7 +89,7 @@ public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
      */
     @Override
     public int deleteUserStudyRecordById(Long id) {
-        return userStudyRecordMapper.deleteUserStudyRecordById(id);
+        return oldUserStudyRecordMapper.deleteUserStudyRecordById(id);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class UserStudyRecordServiceImpl implements IUserStudyRecordService {
             Date date = DateUtils.parseDate(year + "-" + monthStr + "-" + day + " " + "00:00:00", DateUtils.YYYY_MM_DD_HH_MM_SS);
             DateTime begin = DateUtil.beginOfDay(date);
             DateTime end = DateUtil.endOfDay(date);
-            return userStudyRecordMapper.listWordOfDay(userId, DateUtil.format(begin, DateUtils.YYYY_MM_DD_HH_MM_SS),
+            return oldUserStudyRecordMapper.listWordOfDay(userId, DateUtil.format(begin, DateUtils.YYYY_MM_DD_HH_MM_SS),
                     DateUtil.format(end, DateUtils.YYYY_MM_DD_HH_MM_SS));
         } catch (ParseException e) {
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.business;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -7,11 +8,14 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.UserStudyRecord;
+import com.ruoyi.system.gencode.service.UserStudyRecordService;
+import com.ruoyi.system.gencode.service.UserWordService;
 import com.ruoyi.system.service.IUserStudyRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +29,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/system/record")
 public class UserStudyRecordController extends BaseController {
-    @Autowired
+    @Resource(name = "oldUserStudyRecordService")
     private IUserStudyRecordService userStudyRecordService;
+
+    @Autowired
+    private UserStudyRecordService newUserStudyRecordService;
 
     /**
      * 查询用户学习记录列表
@@ -35,21 +42,12 @@ public class UserStudyRecordController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(UserStudyRecord userStudyRecord) {
         startPage();
-        List<UserStudyRecord> list = userStudyRecordService.selectUserStudyRecordList(userStudyRecord);
-        return getDataTable(list);
+        QueryWrapper<com.ruoyi.system.gencode.entity.UserStudyRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("study_time");
+        List<com.ruoyi.system.gencode.entity.UserStudyRecord> result = newUserStudyRecordService.list(queryWrapper);
+        return getDataTable(result);
     }
 
-    /**
-     * 导出用户学习记录列表
-     */
-    @PreAuthorize("@ss.hasPermi('system:record:export')")
-    @Log(title = "用户学习记录", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, UserStudyRecord userStudyRecord) {
-        List<UserStudyRecord> list = userStudyRecordService.selectUserStudyRecordList(userStudyRecord);
-        ExcelUtil<UserStudyRecord> util = new ExcelUtil<UserStudyRecord>(UserStudyRecord.class);
-        util.exportExcel(response, list, "用户学习记录数据");
-    }
 
     /**
      * 获取用户学习记录详细信息
@@ -66,11 +64,10 @@ public class UserStudyRecordController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:record:add')")
     @Log(title = "用户学习记录", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody UserStudyRecord userStudyRecord) {
+    public AjaxResult add(@RequestBody com.ruoyi.system.gencode.entity.UserStudyRecord userStudyRecord) {
         userStudyRecord.setUserName(getUsername());
         userStudyRecord.setUserId(getUserId());
-        userStudyRecord.setStudyTime(new Date());
-        return toAjax(userStudyRecordService.insertUserStudyRecord(userStudyRecord));
+        return toAjax(newUserStudyRecordService.insertUserStudyRecord(userStudyRecord));
     }
 
     /**

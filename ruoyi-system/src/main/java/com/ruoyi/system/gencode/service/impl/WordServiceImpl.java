@@ -140,9 +140,11 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
     }
 
     @Override
-    public WordShowData getWordInfo(Long wordId) {
+    public WordShowData getWordInfo(String wordUuid) {
+        QueryWrapper<Word> wordQuery = new QueryWrapper<>();
+        wordQuery.eq("uuid", wordUuid);
         // 查询词库标签
-        Word word = getById(wordId);
+        Word word = getOne(wordQuery);
         Assert.notNull(word, "未查询到单词数据");
         WordShowData wordShowData = new WordShowData();
         BeanUtils.copyProperties(word, wordShowData);

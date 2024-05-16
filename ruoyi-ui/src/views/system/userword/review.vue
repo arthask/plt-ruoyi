@@ -24,8 +24,8 @@ export default {
       okTxt: '',
       notInputtedTxt: '',
       oneWord: {
-        id: 0,
         word: "",
+        uuid: "",
         phonetic: "",
         translation: "",
         pos: "",
@@ -34,7 +34,7 @@ export default {
       currentLexiconUUID: "11cf6577-4d92-4cab-802a-c7c812ae3754",
       // 学习记录
       record: {
-        wordId: '',
+        wordUuid: '',
         word: ''
       },
       // 遮罩层
@@ -78,7 +78,7 @@ export default {
         (this.currentInputTxt[this.currentInputTxt.length - 1] === this.oneWordTxt[this.currentInputTxt.length - 1])) {
         this.clearPanelData();
         this.okTxt = this.oneWordTxt;
-        this.record.wordId = this.oneWord.id;
+        this.record.wordUuid = this.oneWord.uuid;
         this.record.word = this.oneWord.word;
         // 我的单词+1
         await addUserWord(this.record).then(() => {
@@ -143,7 +143,7 @@ export default {
       });
     },
     async getWordDetail(row) {
-      await getWordInfo({wordId: row.wordId}).then(res => {
+      await getWordInfo({wordUuid: row.wordUuid}).then(res => {
         this.showWordDetail = true;
         this.detail.name = res.data.word
         this.detail.translation = res.data.translation
@@ -173,10 +173,10 @@ export default {
 
 <template>
     <el-container>
-      <el-aside width="28%" style="background-color: white">
-        <el-table v-loading="loading" :data="recordList">
-          <el-table-column label="单词" align="center" prop="word"/>
-          <el-table-column label="学习日期" align="center" prop="studyTime"/>
+      <el-aside width="29%" style="background-color: white">
+        <el-table v-loading="loading" :data="recordList" :stripe="true">
+          <el-table-column label="单词" min-width="120px" align="center" prop="word"/>
+          <el-table-column label="学习日期" min-width="150px" align="center" prop="studyTime"/>
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
