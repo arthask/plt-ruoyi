@@ -138,4 +138,26 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
         }
         return wordShowData;
     }
+
+    @Override
+    public WordShowData getWordInfo(Long wordId) {
+        // 查询词库标签
+        Word word = getById(wordId);
+        Assert.notNull(word, "未查询到单词数据");
+        WordShowData wordShowData = new WordShowData();
+        BeanUtils.copyProperties(word, wordShowData);
+        // 根据单词查询词库uuid
+        QueryWrapper<LexiconWord> lexiconWordQueryWrapper = new QueryWrapper<>();
+        lexiconWordQueryWrapper.eq("word_uuid", word.getUuid());
+        List<LexiconWord> lexiconWords = lexiconWordService.list(lexiconWordQueryWrapper);
+        if (CollectionUtils.isEmpty(lexiconWords)) {
+            return wordShowData;
+        }
+        List<Label> labelOfLexicon = lexiconService.getLabelOfLexicon(lexiconWords.get(0).getLexiconUuid());
+        if (!CollectionUtils.isEmpty(labelOfLexicon)) {
+            List<String> labelNames = labelOfLexicon.stream().map(Label::getName).collect(Collectors.toList());
+            wordShowData.setLabelList(labelNames);
+        }
+        return wordShowData;
+    }
 }

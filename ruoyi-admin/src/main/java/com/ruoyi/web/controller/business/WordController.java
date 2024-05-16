@@ -124,4 +124,14 @@ public class WordController extends BaseController {
     public AjaxResult searchWordByCN(@RequestParam("searchCn") String searchCn) {
         return success(newWordService.searchWordByCN(searchCn));
     }
+
+    /**
+     * 从内置词库中查找单词
+     * @param wordId
+     * @return
+     */
+    @GetMapping("/getWordInfo")
+    public AjaxResult getWordInfo(@RequestParam("wordId") Long wordId) {
+        return success(newWordService.getWordInfo(wordId));
+    }
 }

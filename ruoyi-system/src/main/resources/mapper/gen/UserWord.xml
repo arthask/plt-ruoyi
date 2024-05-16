@@ -20,5 +20,14 @@
     <sql id="Base_Column_List">
         id, word_id, word, user_id, user_name, period, collect_flag, create_time, update_time, next_study_time
     </sql>
+    <select id="getNeedReviewWord" resultType="com.ruoyi.system.gencode.entity.Word">
+        select w.* from user_word uw
+                            left join word w on uw.word_id = w.id
+        where uw.next_study_time  <![CDATA[<=]]> #{timeStr}
+          and uw.period <![CDATA[<=]]> 8
+          and uw.user_id = #{userId}
+        order by uw.next_study_time ASC
+        limit 1;
+    </select>
 
 </mapper>

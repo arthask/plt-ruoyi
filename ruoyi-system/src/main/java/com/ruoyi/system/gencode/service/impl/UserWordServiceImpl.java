@@ -4,22 +4,31 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.enums.PeriodEnum;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.dto.WordShowData;
+import com.ruoyi.system.gencode.entity.Label;
+import com.ruoyi.system.gencode.entity.LexiconWord;
 import com.ruoyi.system.gencode.entity.UserWord;
 import com.ruoyi.system.gencode.entity.Word;
 import com.ruoyi.system.gencode.mapper.UserWordMapper;
+import com.ruoyi.system.gencode.service.LexiconService;
+import com.ruoyi.system.gencode.service.LexiconWordService;
 import com.ruoyi.system.gencode.service.UserWordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.gencode.service.WordService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -36,6 +45,12 @@ public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> i
 
     @Autowired
     private WordService wordService;
+
+    @Autowired
+    private LexiconWordService lexiconWordService;
+
+    @Autowired
+    private LexiconService lexiconService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -82,6 +97,29 @@ public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> i
         setPeriodAndNextTime(userWord, 1);
         userWord.setCollectFlag(0);
         return userWordMapper.insert(userWord);
+    }
+
+    @Override
+    public WordShowData getNeedReviewWord(Long userId) {
+        Word needReviewWord = userWordMapper.getNeedReviewWord(DateUtil.now(), userId);
+        if (Objects.isNull(needReviewWord)) {
+            return null;
+        }
+        WordShowData wordShowData = new WordShowData();
+        BeanUtils.copyProperties(needReviewWord, wordShowData);
+        // 根据单词查询词库uuid
+        QueryWrapper<LexiconWord> lexiconWordQueryWrapper = new QueryWrapper<>();
+        lexiconWordQueryWrapper.eq("word_uuid", needReviewWord.getUuid());
+        List<LexiconWord> lexiconWords = lexiconWordService.list(lexiconWordQueryWrapper);
+        if (CollectionUtils.isEmpty(lexiconWords)) {
+            return wordShowData;
+        }
+        List<Label> labelOfLexicon = lexiconService.getLabelOfLexicon(lexiconWords.get(0).getLexiconUuid());
+        if (!CollectionUtils.isEmpty(labelOfLexicon)) {
+            List<String> labelNames = labelOfLexicon.stream().map(Label::getName).collect(Collectors.toList());
+            wordShowData.setLabelList(labelNames);
+        }
+        return wordShowData;
     }
 
     /**
