@@ -67,3 +67,12 @@ export function searchWordByCN(query) {
     params: query
   })
 }
+
+// 搜索单词
+export function getWordInfo(query) {
+  return request({
+    url: '/system/word/getWordInfo',
+    method: 'get',
+    params: query
+  })
+}

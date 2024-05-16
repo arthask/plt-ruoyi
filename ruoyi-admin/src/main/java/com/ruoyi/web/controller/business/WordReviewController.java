@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.business;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.system.gencode.service.UserWordService;
 import com.ruoyi.system.service.review.IWordReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,12 @@ public class WordReviewController extends BaseController {
     @Autowired
     private IWordReviewService wordReviewService;
 
+    @Autowired
+    private UserWordService newUserWordService;
+
     @GetMapping("/getReviewWord")
     public AjaxResult getReviewWord() {
-        return AjaxResult.success(wordReviewService.getReviewWord(this.getUserId()));
+        return AjaxResult.success(newUserWordService.getNeedReviewWord(this.getUserId()));
     }
 
     @GetMapping("/getReviewWordByIndex/{index}")

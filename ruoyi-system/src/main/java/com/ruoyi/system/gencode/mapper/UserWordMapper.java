@@ -1,8 +1,13 @@
 package com.ruoyi.system.gencode.mapper;
 
+
 import com.ruoyi.system.gencode.entity.UserWord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ruoyi.system.gencode.entity.Word;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +19,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserWordMapper extends BaseMapper<UserWord> {
-
+    Word getNeedReviewWord(@Param("timeStr") String timeStr,
+                           @Param("userId") Long userId);
 }

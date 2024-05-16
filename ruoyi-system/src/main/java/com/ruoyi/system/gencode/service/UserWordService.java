@@ -1,5 +1,6 @@
 package com.ruoyi.system.gencode.service;
 
+import com.ruoyi.system.domain.dto.WordShowData;
 import com.ruoyi.system.gencode.entity.UserWord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -28,4 +29,7 @@ public interface UserWordService extends IService<UserWord> {
      * @return 结果
      */
     int insertUserWord(UserWord userWord);
+
+
+    WordShowData getNeedReviewWord(Long userId);
 }

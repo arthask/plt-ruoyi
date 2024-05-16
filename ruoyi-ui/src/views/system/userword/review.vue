@@ -1,8 +1,9 @@
 <script>
 import {addUserWord} from "@/api/system/userword";
-import {addRecord} from "@/api/system/record";
-import {getOneWord} from "@/api/system/word";
+import {addRecord, listRecord} from "@/api/system/record";
+import {getOneWord, getWord, getWordInfo} from "@/api/system/word";
 import {getTotalAndNotStudyNum} from "@/api/statistics/statistics";
+import {getReviewWord} from "@/api/review/review";
 
 export default {
   name: "review",
@@ -13,25 +14,9 @@ export default {
       showDetail: false,
       detail: {
         name: '',
-        translation: ''
+        translation: '',
+        labelNames:[]
       },
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
       showWordInfo: true,
       currentInputTxt: '',
       wordIndex: 0,
@@ -46,7 +31,24 @@ export default {
         pos: "",
         labelList: [],
       },
-      currentLexiconUUID: "11cf6577-4d92-4cab-802a-c7c812ae3754"
+      currentLexiconUUID: "11cf6577-4d92-4cab-802a-c7c812ae3754",
+      // 学习记录
+      record: {
+        wordId: '',
+        word: ''
+      },
+      // 遮罩层
+      loading: true,
+      // 总条数
+      total: 0,
+      // 用户学习记录表格数据
+      recordList: [],
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+      showWordDetail: false,
     }
   },
   async mounted() {
@@ -58,6 +60,7 @@ export default {
       this.remainNum = res.data.notStudy;
       this.starStudy()
     });
+    await this.getStudyRecord();
   },
   methods: {
     studyEnd: function () {
@@ -68,10 +71,9 @@ export default {
       });
     },
     async starStudy() {
-      await this.getOneWord(this.wordIndex);
+      await this.getReviewWord(this.wordIndex);
     },
     async userInputs() {
-      console.log("====================" + this.currentInputTxt)
       if ((this.currentInputTxt.length === this.oneWordTxt.length) &&
         (this.currentInputTxt[this.currentInputTxt.length - 1] === this.oneWordTxt[this.currentInputTxt.length - 1])) {
         this.clearPanelData();
@@ -101,7 +103,8 @@ export default {
           this.studyEnd();
           return;
         }
-        await this.getOneWord(this.wordIndex);
+        await this.getReviewWord(this.wordIndex);
+        await this.getStudyRecord();
         return;
       }
       for (let i = 0; i < this.currentInputTxt.length; i++) {
@@ -114,44 +117,6 @@ export default {
           break;
         }
       }
-    },
-    async nextWord() {
-      this.clearPanelData()
-      let currentIndex = this.wordIndex + 1;
-      console.log("================currentIndex:" + currentIndex)
-      if (currentIndex >= this.remainNum) {
-        this.$notify({
-          type: "success",
-          message: "请停下来，已经没有啦！"
-        });
-        this.wordIndex = this.remainNum - 2;
-        if (this.wordIndex < 0) {
-          this.wordIndex = 0;
-        }
-        return;
-      }
-      await this.getOneWord(currentIndex);
-      this.wordIndex++;
-    },
-    async getOneWord(index) {
-      if (this.remainNum === 0) {
-        this.studyEnd();
-        return;
-      }
-      this.clearPanelData();
-      await getOneWord(this.currentLexiconUUID, index).then(response => {
-        if (!response.data) {
-          this.showWordInfo = false;
-          return;
-        }
-        this.oneWord = response.data;
-        this.oneWordTxt = this.oneWord.word;
-        this.notInputtedTxt = this.oneWordTxt;
-        if (this.showWordInfo) {
-          this.okTxt = '';
-          this.playOneWordAudio(this.oneWordTxt)
-        }
-      });
     },
     // 播放音频
     playAudio(language, word) {
@@ -169,77 +134,113 @@ export default {
       this.currentInputTxt = '';
       this.notInputtedTxt = '';
     },
+    async getStudyRecord() {
+      this.loading = true;
+      await listRecord(this.queryParams).then(response => {
+        this.recordList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+    },
+    async getWordDetail(row) {
+      await getWordInfo({wordId: row.wordId}).then(res => {
+        this.showWordDetail = true;
+        this.detail.name = res.data.word
+        this.detail.translation = res.data.translation
+        this.detail.labelNames = [... res.data.labelList]
+      })
+    },
+    async getReviewWord(index) {
+      console.log("================index:" + index + " wordIndex:" + this.wordIndex)
+      this.clearPanelData();
+      await getReviewWord().then(response => {
+        if (!response.data) {
+          this.showWordInfo = false;
+          return;
+        }
+        this.oneWord = response.data;
+        this.oneWordTxt = this.oneWord.word;
+        this.notInputtedTxt = this.oneWordTxt;
+        if (this.showWordInfo) {
+          this.okTxt = '';
+          this.playOneWordAudio(this.oneWordTxt)
+        }
+      });
+    },
   }
 }
 </script>
 
 <template>
-  <el-container>
-    <el-header>
-    </el-header>
     <el-container>
-      <el-aside width="350px">
-        <el-table
-          :data="tableData"
-          style="width: 100%; height: 100%">
-          <el-table-column
-            prop="date"
-            label="日期"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="姓名"
-            >
-          </el-table-column>
-          <el-table-column prop="address" label="地址">
+      <el-aside width="28%" style="background-color: white">
+        <el-table v-loading="loading" :data="recordList">
+          <el-table-column label="单词" align="center" prop="word"/>
+          <el-table-column label="学习日期" align="center" prop="studyTime"/>
+          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-search"
+                @click="getWordDetail(scope.row)"
+                v-hasPermi="['system:word:edit']"
+              >查看
+              </el-button>
+            </template>
           </el-table-column>
         </el-table>
+        <pagination
+          small
+          layout="prev, pager, next"
+          v-show="total>0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getStudyRecord"
+        />
       </el-aside>
       <el-container>
+        <el-header></el-header>
         <el-main>
-          <el-carousel style="border-radius: 2px;"  height="500px" indicator-position="none" :autoplay="false" arrow="never">
-            <el-carousel-item v-for="item in 4" :key="item" >
-              <el-row type="flex" justify="end">
-                <el-col :span="4">
-                  <el-button type="primary" @click="nextWord()">下一个</el-button>
-                </el-col>
-              </el-row>
-              <el-row type="flex" justify="center" >
+          <el-carousel style="border-radius: 2px;" height="500px" indicator-position="none" :autoplay="false"
+                       arrow="never">
+            <el-carousel-item>
+              <el-row type="flex" justify="center">
                 <el-col :span="20">
                   <el-descriptions title="单词信息" border v-show="showWordInfo" :column="2">
-                  <el-descriptions-item label="单词">
-                    <span class="ok-content">{{ okTxt }}</span>
-                    <span class="error-content">{{ notInputtedTxt }}</span>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="标签">
-                    <el-tag size="small" v-for="item in oneWord.labelList"> {{ item }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="美式发音">
-                    <template slot="label">
-                      美式发音
-                    </template>
-                    <el-button
-                      size="mini"
-                      type="text"
-                      icon="el-icon-microphone"
-                      @click="playAudio(US,oneWord.word)"
-                    >播放
-                    </el-button>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="英式发音">
-                    <template slot="label">
-                      英式发音
-                    </template>
-                    <el-button
-                      size="mini"
-                      type="text"
-                      icon="el-icon-microphone"
-                      @click="playAudio(UK,oneWord.word)"
-                    >播放
-                    </el-button>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="释义">{{ oneWord.translation }}</el-descriptions-item>
+                    <el-descriptions-item label="单词">
+                      <span class="ok-content">{{ okTxt }}</span>
+                      <span class="error-content">{{ notInputtedTxt }}</span>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="标签">
+                      <el-tag size="small" v-for="item in oneWord.labelList"> {{ item }}</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="美式发音">
+                      <template slot="label">
+                        美式发音
+                      </template>
+                      <el-button
+                        size="mini"
+                        type="text"
+                        icon="el-icon-microphone"
+                        @click="playAudio(US,oneWord.word)"
+                      >播放
+                      </el-button>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="英式发音">
+                      <template slot="label">
+                        英式发音
+                      </template>
+                      <el-button
+                        size="mini"
+                        type="text"
+                        icon="el-icon-microphone"
+                        @click="playAudio(UK,oneWord.word)"
+                      >播放
+                      </el-button>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="释义">{{ oneWord.translation }}</el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions title="内容填写区" :colon="false" v-show="showWordInfo">
                     <el-descriptions-item>
@@ -249,7 +250,7 @@ export default {
                         placeholder="请输入内容"
                         v-model="currentInputTxt"
                         @input="userInputs"
-                        />
+                      />
                     </el-descriptions-item>
                   </el-descriptions>
                 </el-col>
@@ -257,11 +258,44 @@ export default {
             </el-carousel-item>
           </el-carousel>
         </el-main>
-        <el-footer>
-        </el-footer>
+        <el-footer></el-footer>
       </el-container>
+      <el-dialog title="" :visible.sync="showWordDetail">
+        <el-descriptions title="单词信息" border :column="2">
+          <el-descriptions-item label="单词">
+            {{ detail.name }}
+          </el-descriptions-item>
+          <el-descriptions-item label="标签">
+            <el-tag size="small" v-for="item in detail.labelNames"> {{ item }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="美式发音">
+            <template slot="label">
+              美式发音
+            </template>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-microphone"
+              @click="playAudio(US,detail.name)"
+            >播放
+            </el-button>
+          </el-descriptions-item>
+          <el-descriptions-item label="英式发音">
+            <template slot="label">
+              英式发音
+            </template>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-microphone"
+              @click="playAudio(UK,detail.name)"
+            >播放
+            </el-button>
+          </el-descriptions-item>
+          <el-descriptions-item label="释义">{{ detail.translation }}</el-descriptions-item>
+        </el-descriptions>
+      </el-dialog>
     </el-container>
-  </el-container>
 </template>
 
 <style scoped lang="scss">

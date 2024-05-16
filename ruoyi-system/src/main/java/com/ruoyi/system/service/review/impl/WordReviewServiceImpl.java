@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Service("oldWordReviewService")
 public class WordReviewServiceImpl implements IWordReviewService {
     @Autowired
     private OldUserWordMapper oldUserWordMapper;

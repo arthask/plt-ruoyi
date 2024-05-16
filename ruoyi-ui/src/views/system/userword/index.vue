@@ -432,18 +432,8 @@ export default {
       }, `word_${new Date().getTime()}.xlsx`)
     },
     review() {
-      this.$router.push("/review")
-      // this.$tab.openPage("复习", "/review");
-    },
-    // 开始学习
-    async beginWordStudy() {
-      await getNeedReviewAnHaveReviewNum().then(res => {
-        this.needReview = res.data.needReview;
-        this.haveReview = res.data.haveReview;
-        this.totalReviewNum = res.data.totalReviewNum;
-      });
-      // 更新统计数据
-      this.studyOpen = true;
+      // this.$router.push("/review")
+      this.$tab.openPage("复习", "/review");
     },
     async starStudy() {
       await this.getReviewWord(this.wordIndex);

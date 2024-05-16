@@ -28,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="word != null  and word != ''"> and word = #{word}</if>
             <if test="studyTime != null "> and study_time = #{studyTime}</if>
         </where>
+        order by study_time desc
     </select>
     
     <select id="selectUserStudyRecordById" parameterType="Long" resultMap="UserStudyRecordResult">

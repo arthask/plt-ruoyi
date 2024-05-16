@@ -27,4 +27,6 @@ public interface WordService extends IService<Word> {
     List<WordShowData> searchWordByCN(@Param("searchCn") String searchCn);
 
     WordShowData getOneWord(Long userId, String lexiconUUID, int index);
+
+    WordShowData getWordInfo(Long wordId);
 }
