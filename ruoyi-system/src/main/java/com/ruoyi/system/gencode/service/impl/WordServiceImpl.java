@@ -84,13 +84,13 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
                     .collect(Collectors.groupingBy(LabelRef::getLabelUuid));
             labelRefGroupByLexiconUUID.putAll(labelRefList.stream()
                     .collect(Collectors.groupingBy(LabelRef::getRefUuid)));
-
-            QueryWrapper<Label> labelQueryWrapper = new QueryWrapper<>();
-            labelQueryWrapper.in("uuid", labelRefGroupByLabelUUID.keySet());
-            List<Label> labelList = labelService.list(labelQueryWrapper);
-            labelGroupByUUID.putAll(labelList.stream()
-                    .collect(Collectors.groupingBy(Label::getUuid)));
-
+            if(!CollectionUtils.isEmpty(labelRefGroupByLabelUUID)) {
+                QueryWrapper<Label> labelQueryWrapper = new QueryWrapper<>();
+                labelQueryWrapper.in("uuid", labelRefGroupByLabelUUID.keySet());
+                List<Label> labelList = labelService.list(labelQueryWrapper);
+                labelGroupByUUID.putAll(labelList.stream()
+                        .collect(Collectors.groupingBy(Label::getUuid)));
+            }
             lexiconWordGroupByWordUUID.putAll(lexiconWords.stream()
                     .collect(Collectors.groupingBy(LexiconWord::getWordUuid)));
         }

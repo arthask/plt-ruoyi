@@ -1,7 +1,7 @@
 <script>
 import {addUserWord} from "@/api/system/userword";
 import {addRecord, listRecord} from "@/api/system/record";
-import {getOneWord, getWord, getWordInfo} from "@/api/system/word";
+import {getWordInfo} from "@/api/system/word";
 import {getTotalAndNotStudyNum} from "@/api/statistics/statistics";
 import {getReviewWord} from "@/api/review/review";
 
@@ -31,7 +31,6 @@ export default {
         pos: "",
         labelList: [],
       },
-      currentLexiconUUID: "11cf6577-4d92-4cab-802a-c7c812ae3754",
       // 学习记录
       record: {
         wordUuid: '',
@@ -173,7 +172,7 @@ export default {
 
 <template>
     <el-container>
-      <el-aside width="29%" style="background-color: white">
+      <el-aside width="34%" style="background-color: white">
         <el-table v-loading="loading" :data="recordList" :stripe="true">
           <el-table-column label="单词" min-width="120px" align="center" prop="word"/>
           <el-table-column label="学习日期" min-width="150px" align="center" prop="studyTime"/>
