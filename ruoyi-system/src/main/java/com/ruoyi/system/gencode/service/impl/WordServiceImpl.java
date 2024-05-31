@@ -84,7 +84,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
                     .collect(Collectors.groupingBy(LabelRef::getLabelUuid));
             labelRefGroupByLexiconUUID.putAll(labelRefList.stream()
                     .collect(Collectors.groupingBy(LabelRef::getRefUuid)));
-            if(!CollectionUtils.isEmpty(labelRefGroupByLabelUUID)) {
+            if (!CollectionUtils.isEmpty(labelRefGroupByLabelUUID)) {
                 QueryWrapper<Label> labelQueryWrapper = new QueryWrapper<>();
                 labelQueryWrapper.in("uuid", labelRefGroupByLabelUUID.keySet());
                 List<Label> labelList = labelService.list(labelQueryWrapper);
@@ -141,10 +141,8 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
 
     @Override
     public WordShowData getWordInfo(String wordUuid) {
-        QueryWrapper<Word> wordQuery = new QueryWrapper<>();
-        wordQuery.eq("uuid", wordUuid);
         // 查询词库标签
-        Word word = getOne(wordQuery);
+        Word word = getWordByUUID(wordUuid);
         Assert.notNull(word, "未查询到单词数据");
         WordShowData wordShowData = new WordShowData();
         BeanUtils.copyProperties(word, wordShowData);
@@ -161,5 +159,12 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
             wordShowData.setLabelList(labelNames);
         }
         return wordShowData;
+    }
+
+    @Override
+    public Word getWordByUUID(String uuid) {
+        QueryWrapper<Word> wordQuery = new QueryWrapper<>();
+        wordQuery.eq("uuid", uuid);
+        return getOne(wordQuery);
     }
 }

@@ -42,7 +42,7 @@ public class FastAutoGeneratorTest extends BaseGeneratorTest {
         String module = "gencode";   //模块包名
 
         //数据库表的设置
-        List<String> listTable = Arrays.asList("a");  //设置需要自动代码生成的表名
+        List<String> listTable = Arrays.asList("flashcard_package","flashcard");  //设置需要自动代码生成的表名
         List<String> listTableSuffix = Arrays.asList("_b");    //设置 过滤 表的后缀
         List<String> listTablePrefix = Arrays.asList("t_","c_"); //设置 过滤 表的后缀
         // 初始化数据库脚本

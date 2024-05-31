@@ -4,7 +4,7 @@
       <el-col :offset="1">
         <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="选择闪卡集">
-        <el-select v-model="value1" multiple placeholder="请选择">
+        <el-select v-model="value1" filterable multiple placeholder="请选择">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -18,12 +18,14 @@
     </el-row>
     <el-row>
       <el-col :span="18">
-        <vue-flashcard
+        <word-card
+          :headerFront="headerFront"
+          :footerFront="footerFront"
           :colorFront="colorFront"
           :colorTextFront="colorTextFront"
           :front="question"
           :back="answer">
-        </vue-flashcard>
+        </word-card>
       </el-col>
       <el-col :span="6">
         <div v-for="item in tag" :key="item.index" class="tag">
@@ -48,10 +50,10 @@
   </div>
 </template>
 <script>
-import vueFlashcard from 'vue-flashcard'
+import WordCard from './WordCard.vue'
 
 export default {
-  components: { vueFlashcard },
+  components: { WordCard },
   data() {
     return {
       options: [{
@@ -74,11 +76,14 @@ export default {
       form: {
         flashcardId: [],
       },
-      tag: [{name:'aa',index:1},{name:'bb',index:2},{name:'cc',index:3}],
-      colorFront: '#409EFF',
+      tag: [{name:'待定',index:1},{name:'会',index:2},{name:'不会',index:3}],
+      colorFront: '#E6A23C',
       colorTextFront: 'white',
       question: 'hello this is a flashcard',
       answer: 'with animation',
+      footerFront: "",
+      headerFront:"",
+
     }
   },
   methods: {
@@ -99,7 +104,7 @@ export default {
   border-radius: 10px;
   margin: 20px;
   padding: 17px;
-  background: #409EFF;
+  background: #F56C6C;
   width: 200px;
   height: 100px;
   cursor: pointer;

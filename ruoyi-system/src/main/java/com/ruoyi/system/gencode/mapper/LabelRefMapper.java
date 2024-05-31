@@ -1,8 +1,12 @@
 package com.ruoyi.system.gencode.mapper;
 
+import com.ruoyi.system.domain.dto.label.LabelInfo;
 import com.ruoyi.system.gencode.entity.LabelRef;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +18,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface LabelRefMapper extends BaseMapper<LabelRef> {
-
+    List<LabelInfo> getLabelInfoByRefUUID(@Param("refUUID") String refUUID);
 }
