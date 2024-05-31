@@ -12,52 +12,52 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 标签关联表
+ * 闪卡表
  * </p>
  *
  * @author author
- * @since 2024-04-12
+ * @since 2024-05-29
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("label_ref")
-public class LabelRef implements Serializable {
+@TableName("flashcard")
+public class Flashcard implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * uuid
+     * id
      */
-    @TableField("uuid")
-    private String uuid;
-
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * label_uuid
+     * 记录uuid
      */
-    @TableField("label_uuid")
-    private String labelUuid;
+    @TableField("uuid")
+    private String uuid;
 
     /**
-     * 关联uuid 单词uuid或者词库uuid
+     * front内容
      */
-    @TableField("ref_uuid")
-    private String refUuid;
+    @TableField("front")
+    private String front;
 
     /**
-     * 关联类型 0：代表词库 1：代表单词 2：卡包标签
+     * back内容
      */
-    @TableField("ref_type")
-    private Integer refType;
+    @TableField("back")
+    private String back;
 
     /**
-     * 创建人
+     * 卡片类型
      */
-    @TableField("create_user_id")
-    private Long createUserId;
+    @TableField("type")
+    private Integer type;
+
+    @TableField("user_id")
+    private Long userId;
 
     /**
      * 创建时间

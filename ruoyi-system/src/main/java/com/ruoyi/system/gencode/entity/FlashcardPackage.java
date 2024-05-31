@@ -6,62 +6,59 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 标签关联表
+ * 卡包表
  * </p>
  *
  * @author author
- * @since 2024-04-12
+ * @since 2024-05-29
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("label_ref")
-public class LabelRef implements Serializable {
+@TableName("flashcard_package")
+public class FlashcardPackage implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * uuid
+     * id
      */
-    @TableField("uuid")
-    private String uuid;
-
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * label_uuid
+     * 记录uuid
      */
-    @TableField("label_uuid")
-    private String labelUuid;
+    @TableField("uuid")
+    private String uuid;
 
     /**
-     * 关联uuid 单词uuid或者词库uuid
+     * 卡包名
      */
-    @TableField("ref_uuid")
-    private String refUuid;
+    @TableField("name")
+    private String name;
 
     /**
-     * 关联类型 0：代表词库 1：代表单词 2：卡包标签
+     * 卡包类型
      */
-    @TableField("ref_type")
-    private Integer refType;
+    @TableField("type")
+    private Integer type;
 
-    /**
-     * 创建人
-     */
-    @TableField("create_user_id")
-    private Long createUserId;
+    @TableField("user_id")
+    private Long userId;
 
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("create_time")
     private LocalDateTime createTime;
 

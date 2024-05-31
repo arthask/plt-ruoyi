@@ -18,5 +18,10 @@
     <sql id="Base_Column_List">
         uuid, id, label_uuid, ref_uuid, ref_type, create_user_id, create_time, update_time
     </sql>
+    <select id="getLabelInfoByRefUUID" resultType="com.ruoyi.system.domain.dto.label.LabelInfo">
+        select l.uuid,l.name from label_ref lr left join label l on lr.label_uuid = l.uuid
+        where lr.ref_uuid = #{refUUID}
+    </select>
+
 
 </mapper>

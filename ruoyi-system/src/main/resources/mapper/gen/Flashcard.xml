@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.gencode.mapper.FlashcardMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ruoyi.system.gencode.entity.Flashcard">
+        <id column="id" property="id" />
+        <result column="uuid" property="uuid" />
+        <result column="front" property="front" />
+        <result column="back" property="back" />
+        <result column="type" property="type" />
+        <result column="user_id" property="userId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, uuid, front, back, type, user_id, create_time, update_time
+    </sql>
+    <select id="getCardOfPackage" resultType="com.ruoyi.system.gencode.entity.Flashcard">
+        select f.* from package_card_ref pcr
+            left join flashcard f on pcr.card_uuid = f.uuid
+        where pcr.package_uuid = #{packageUUID}
+        limit #{offset},1;
+    </select>
+
+</mapper>
