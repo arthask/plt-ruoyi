@@ -18,7 +18,7 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="primary"
           plain
           icon="el-icon-plus"
           size="mini"
@@ -28,7 +28,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="success"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -66,13 +66,13 @@
     />
 
     <!-- 添加或修改用户单词对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body destroy-on-close>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="卡包名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入卡包名称"/>
         </el-form-item>
         <el-form-item label="卡包类型" prop="type">
-          <el-select v-model="form.type" placeholder="请选择卡包标签">
+          <el-select v-model="form.type" placeholder="请选择卡包类型">
             <el-option v-for="item in typeOptions"
                        :key="item.value"
                        :label="item.label"
@@ -80,7 +80,13 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="卡包标签" prop="label">
+        <el-form-item label="卡包标签">
+          <el-radio-group v-model="labelType" @input="changeType">
+            <el-radio :label="3">选择已有标签</el-radio>
+            <el-radio :label="6">新增标签</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="选择" prop="label" v-if="showSelect">
           <el-select v-model="form.label" placeholder="请选择卡包标签">
             <el-option v-for="item in labelOptions"
                        :key="item.value"
@@ -89,6 +95,8 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <LabelTag v-else>
+        </LabelTag>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -101,9 +109,12 @@
 <script>
 import {listPackages, getPackageInfo, add, del, update} from "@/api/system/flashcardpackage";
 
-
+import LabelTag from "@/components/Tag";
 export default {
   name: "flashcardpackage",
+  components:{
+    LabelTag
+  },
   data() {
     return {
       // 遮罩层
@@ -136,9 +147,9 @@ export default {
         value: '1',
         label: '单词卡包',
       }],
-      labelOptions: [
-
-      ],
+      labelOptions: [],
+      labelType: 3,
+      showSelect: true,
       // 表单校验
       rules: {
         name: [
@@ -242,6 +253,14 @@ export default {
       }).catch(() => {
       });
     },
+    changeType(type) {
+      if (type === 3) {
+        this.showSelect = true;
+      }
+      if (type === 6) {
+        this.showSelect = false;
+      }
+    }
   }
 };
 </script>
