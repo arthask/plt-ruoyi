@@ -1,21 +1,5 @@
 <template>
   <div style="margin-top:10px">
-    <el-row >
-      <el-col :offset="1">
-        <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="选择闪卡集">
-        <el-select v-model="value1" filterable multiple placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
     <el-row>
       <el-col :span="18">
         <word-card
@@ -28,6 +12,14 @@
         </word-card>
       </el-col>
       <el-col :span="6">
+        <el-select v-model="value1" filterable  placeholder="请选择闪卡集" style="margin:20px;padding: 0 17px;">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <div v-for="item in tag" :key="item.index" class="tag">
           {{ item.name }}
           <p>{{ item.index }}</p>
@@ -53,7 +45,7 @@
 import WordCard from './WordCard.vue'
 
 export default {
-  components: { WordCard },
+  components: {WordCard},
   data() {
     return {
       options: [{
@@ -76,13 +68,13 @@ export default {
       form: {
         flashcardId: [],
       },
-      tag: [{name:'待定',index:1},{name:'会',index:2},{name:'不会',index:3}],
+      tag: [{name: '待定', index: 1}, {name: '会', index: 2}, {name: '不会', index: 3}],
       colorFront: '#E6A23C',
       colorTextFront: 'white',
       question: 'hello this is a flashcard',
       answer: 'with animation',
       footerFront: "",
-      headerFront:"",
+      headerFront: "",
 
     }
   },
@@ -95,7 +87,7 @@ export default {
 </script>
 <style scoped>
 ::v-deep .flashcard {
-  height: 390px;
+  height: 430px;
   //margin: 10px;
   //padding: 0px;
 }
@@ -105,7 +97,7 @@ export default {
   margin: 20px;
   padding: 17px;
   background: #F56C6C;
-  width: 200px;
+  width: 80%;
   height: 100px;
   cursor: pointer;
   text-align: center;

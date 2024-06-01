@@ -4,7 +4,7 @@
       <el-button icon="el-icon-headset" circle>播放</el-button>
       <div @click="isToggle=!isToggle">
 
-        <el-row type="flex" justify="center" align="middle" style="height: 250px">
+        <el-row type="flex" justify="center" align="middle" style="height: 300px;width: 100%">
 <!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->
 <!--          <div class="card-content center">-->
             <p v-bind:style="{fontSize: textSizeFront,fontWeight: 'bold'}">{{front}}</p>
@@ -18,7 +18,7 @@
     <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}" v-show="isToggle" class="animated flipInX flashcard">
       <el-button icon="el-icon-headset" circle>播放</el-button>
       <div @click="isToggle=!isToggle">
-        <el-row type="flex" justify="center" align="middle" style="height: 250px">
+        <el-row type="flex" justify="center" align="middle" style="height: 300px;width: 100%">
           <!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->
           <!--          <div class="card-content center">-->
           <p v-bind:style="{fontSize: textSizeBack,fontWeight: 'bold'}">{{back}}</p>
