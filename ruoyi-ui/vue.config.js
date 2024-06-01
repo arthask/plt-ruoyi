@@ -91,22 +91,15 @@ module.exports = {
     ],
   },
   chainWebpack(config) {
-
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
-
     // set svg-sprite-loader
-    const svgRule = config.module.rule( 'svg' );
-
-    // Then you can either:
-    //
-    // * clear all loaders for existing 'svg' rule:
-    //
-    //		svgRule.uses.clear();
-    //
-    // * or exclude ckeditor directory from node_modules:
-    svgRule.exclude.add( path.join( __dirname, 'node_modules', '@ckeditor' ) );
+    config.module
+      .rule('svg')
+      .exclude.add(resolve('src/assets/icons'))
+      .add(path.join(__dirname, 'node_modules', '@ckeditor'))
+      .end()
 
     config.module
       .rule('icons')
