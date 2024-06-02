@@ -68,8 +68,8 @@ export default {
 
 <template>
   <el-form-item label="新增" prop="label">
-    <el-row>
-      <el-col :span="4" v-for="(tag, index) in dynamicTags" :key="index" :offset="1">
+    <el-row :gutter="20">
+      <el-col :span="20" v-for="(tag, index) in dynamicTags" :key="index">
         <el-input
           class="input-new-tag"
           v-if="editTags[index]"
@@ -92,7 +92,7 @@ export default {
           {{ tag.name }}
         </el-tag>
       </el-col>
-      <el-col :span="4" :offset="1">
+      <el-col :span="4">
         <el-input
           class="input-new-tag"
           v-if="inputVisible"
@@ -110,11 +110,8 @@ export default {
 
 <style scoped lang="scss">
 .input-new-tag {
-  //width: 70px;
-  height: 32px;
-  //margin-left: 10px;
-  vertical-align: bottom;
 }
+
 
 .el-tag + .el-tag {
   margin-left: 10px;
