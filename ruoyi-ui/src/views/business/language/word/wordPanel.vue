@@ -82,9 +82,9 @@
 </template>
 
 <script>
-import {getOneWord} from "@/api/system/word";
-import {addUserWord} from "@/api/system/userword";
-import {addRecord} from "@/api/system/record";
+import {getOneWord} from "@/api/bussiness/word";
+import {addUserWord} from "@/api/bussiness/userword";
+import {addRecord} from "@/api/bussiness/record";
 import {getTotalAndNotStudyNum} from "@/api/statistics/statistics";
 
 export default {
@@ -136,7 +136,7 @@ export default {
   },
   async mounted() {
     this.clearPanelData()
-    this.speakCommon.speechInit()
+    // this.speakCommon.speechInit()
     // 更新统计数据
     await getTotalAndNotStudyNum().then(res => {
       this.totalNum = res.data.total;

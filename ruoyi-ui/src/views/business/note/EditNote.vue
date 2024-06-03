@@ -1,6 +1,6 @@
 <script>
-import { getNoteInfo } from "@/api/system/note";
-import { updateNoteInfo } from "@/api/system/note";
+import { getNoteInfo } from "@/api/bussiness/note";
+import { updateNoteInfo } from "@/api/bussiness/note";
 import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {

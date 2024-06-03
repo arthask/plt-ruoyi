@@ -109,9 +109,9 @@
 }
 </style>
 <script>
-import {listLexicon, getLexicon, delLexicon} from "@/api/system/lexicon";
-import DataComponent from '@/views/system/lexicon/DataComponent.vue'
-import WordPanel from "@/views/system/word/wordPanel.vue";
+import {listLexicon, getLexicon, delLexicon} from "@/api/bussiness/lexicon";
+import DataComponent from '@/views/business/language/lexicon/DataComponent.vue'
+import WordPanel from "@/views/business/language/word/wordPanel.vue";
 export default {
   name: "Lexicon",
   components:{

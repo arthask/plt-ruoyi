@@ -118,7 +118,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
+            icon="el-icon-play"
             @click="playAudio(scope.row)"
             v-hasPermi="['system:word:edit']"
           >播放
@@ -198,10 +198,10 @@
 </template>
 
 <script>
-import {listWord, getWord, delWord, addWord, updateWord} from "@/api/system/word";
-import {importTemplate} from "@/api/system/word";
+import {listWord, getWord, delWord, addWord, updateWord} from "@/api/bussiness/word";
+import {importTemplate} from "@/api/bussiness/word";
 import {getToken} from "@/utils/auth";
-import WordPanel from "@/views/system/word/wordPanel.vue";
+import WordPanel from "@/views/business/language/word/wordPanel.vue";
 
 export default {
   name: "Word",

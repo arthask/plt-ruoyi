@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { listNote, getNote, delNote, addNote, updateNote } from "@/api/system/note";
+import { listNote, getNote, delNote, addNote, updateNote } from "@/api/bussiness/note";
 import  NoteComponent  from "./NoteComponent.vue";
 import  EditNote  from "./EditNote.vue";
 import  NoteInfo  from "./NoteInfo.vue";

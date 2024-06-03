@@ -77,7 +77,7 @@ export const constantRoutes = [
         path: '/review',
         name: '/review',
         meta: { title: '复习', affix: false },
-        component: () => import('@/views/system/userword/review'),
+        component: () => import('@/views/business/language/userword/review'),
       }
     ]
   },

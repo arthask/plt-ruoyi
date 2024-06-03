@@ -1,7 +1,7 @@
 <script>
-import {addUserWord} from "@/api/system/userword";
-import {addRecord, listRecord} from "@/api/system/record";
-import {getWordInfo} from "@/api/system/word";
+import {addUserWord} from "@/api/bussiness/userword";
+import {addRecord, listRecord} from "@/api/bussiness/record";
+import {getWordInfo} from "@/api/bussiness/word";
 import {getTotalAndNotStudyNum} from "@/api/statistics/statistics";
 import {getReviewWord} from "@/api/review/review";
 
@@ -52,7 +52,7 @@ export default {
   },
   async mounted() {
     this.clearPanelData()
-    this.speakCommon.speechInit()
+    // this.speakCommon.speechInit()
     // 更新统计数据
     await getTotalAndNotStudyNum().then(res => {
       this.totalNum = res.data.total;

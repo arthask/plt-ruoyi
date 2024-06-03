@@ -1,5 +1,5 @@
 <script>
-import {addLexicon, delLexicon, getLexicon, updateLexicon} from "@/api/system/lexicon";
+import {addLexicon, delLexicon, getLexicon, updateLexicon} from "@/api/bussiness/lexicon";
 
 export default {
   props: {

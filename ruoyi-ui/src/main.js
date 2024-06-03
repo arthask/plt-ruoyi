@@ -69,6 +69,7 @@ Vue.use(VueMeta)
 Vue.use(Chat)
 Vue.use( CKEditor );
 DictData.install()
+speakCommon.speechInit();
 
 /**
  * If you don't want to use mock-server

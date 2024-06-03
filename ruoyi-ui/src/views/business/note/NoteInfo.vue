@@ -1,5 +1,5 @@
 <script>
-import { getNoteInfo } from "@/api/system/note";
+import { getNoteInfo } from "@/api/bussiness/note";
 
 export default {
   props: {
