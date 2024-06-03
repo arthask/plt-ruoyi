@@ -1,6 +1,6 @@
 <script>
-import {addQuestion} from "@/api/system/question";
-import {updateNote} from "@/api/system/note";
+import {addQuestion} from "@/api/bussiness/question";
+import {updateNote} from "@/api/bussiness/note";
 import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {

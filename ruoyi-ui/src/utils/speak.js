@@ -9,7 +9,7 @@ export default {
       lang: "en-GB",
       rate: 1,
       pitch: 1,
-      voice: 'Google UK English Female',
+      voice: 'Google UK English Male',
       listeners: {
         'onvoiceschanged': (voices) => {
           console.log("Event voiceschanged", voices)

@@ -142,8 +142,8 @@
 
 <script>
 import { listScene, getScene, delScene, addScene, updateScene } from "@/api/conversation/scene";
-import ChatComponent from "@/views/system/scene/ChatComponent.vue";
-import EditScene from "@/views/system/scene/EditScene.vue";
+import ChatComponent from "@/views/business/scene/ChatComponent.vue";
+import EditScene from "@/views/business/scene/EditScene.vue";
 
 export default {
   name: "Scene",
@@ -201,7 +201,7 @@ export default {
   },
   created() {
     this.getList();
-    this.speakCommon.speechInit()
+    // this.speakCommon.speechInit()
   },
   methods: {
     /** 查询对话场景列表 */

@@ -1,45 +1,13 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户id" prop="userId">
+      <el-form-item label="noteId" prop="noteId">
         <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户id"
+          v-model="queryParams.question"
+          placeholder="请输入问题"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="用户名" prop="userName">
-        <el-input
-          v-model="queryParams.userName"
-          placeholder="请输入用户名"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="单词id" prop="wordId">
-        <el-input
-          v-model="queryParams.wordId"
-          placeholder="请输入单词id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="单词" prop="word">
-        <el-input
-          v-model="queryParams.word"
-          placeholder="请输入单词"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="学习时间" prop="studyTime">
-        <el-date-picker clearable
-          v-model="queryParams.studyTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择学习时间">
-        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -55,7 +23,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:record:add']"
+          v-hasPermi="['system:question:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -66,7 +34,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:record:edit']"
+          v-hasPermi="['system:question:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -77,7 +45,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:record:remove']"
+          v-hasPermi="['system:question:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -87,24 +55,18 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:record:export']"
+          v-hasPermi="['system:question:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="recordList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="questionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="用户id" align="center" prop="userId" />
-      <el-table-column label="用户名" align="center" prop="userName" />
-      <el-table-column label="单词id" align="center" prop="wordId" />
-      <el-table-column label="单词" align="center" prop="word" />
-      <el-table-column label="学习时间" align="center" prop="studyTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.studyTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="笔记名称" align="center" prop="noteId" />
+      <el-table-column label="问题" align="center" prop="question" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -112,14 +74,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:record:edit']"
+            v-hasPermi="['system:question:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:record:remove']"
+            v-hasPermi="['system:question:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -133,28 +95,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改用户学习记录对话框 -->
+    <!-- 添加或修改问题对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户id" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户id" />
+        <el-form-item label="noteId" prop="noteId">
+          <el-input v-model="form.noteId" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="用户名" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入用户名" />
+        <el-form-item label="问题" prop="question">
+          <el-input v-model="form.question" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="单词id" prop="wordId">
-          <el-input v-model="form.wordId" placeholder="请输入单词id" />
+        <el-form-item label="答案" prop="answer">
+          <el-input v-model="form.answer" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="单词" prop="word">
-          <el-input v-model="form.word" placeholder="请输入单词" />
-        </el-form-item>
-        <el-form-item label="学习时间" prop="studyTime">
-          <el-date-picker clearable
-            v-model="form.studyTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择学习时间">
-          </el-date-picker>
+        <el-form-item label="标签" prop="tag">
+          <el-input v-model="form.tag" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -166,10 +120,10 @@
 </template>
 
 <script>
-import { listRecord, getRecord, delRecord, addRecord, updateRecord } from "@/api/system/record";
+import { listQuestion, getQuestion, delQuestion, addQuestion, updateQuestion } from "@/api/bussiness/question";
 
 export default {
-  name: "Record",
+  name: "Question",
   data() {
     return {
       // 遮罩层
@@ -184,8 +138,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 用户学习记录表格数据
-      recordList: [],
+      // 问题表格数据
+      questionList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -194,36 +148,36 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        noteId: null,
+        question: null,
+        answer: null,
+        tag: null,
         userId: null,
-        userName: null,
-        wordId: null,
-        word: null,
-        studyTime: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        noteId: [
+          { required: true, message: "不能为空", trigger: "blur" }
+        ],
+        question: [
+          { required: true, message: "问题不能为空", trigger: "blur" }
+        ],
+        answer: [
+          { required: true, message: "答案不能为空", trigger: "blur" }
+        ],
+        tag: [
+          { required: true, message: "标签不能为空", trigger: "blur" }
+        ],
         userId: [
-          { required: true, message: "用户id不能为空", trigger: "blur" }
-        ],
-        userName: [
-          { required: true, message: "用户名不能为空", trigger: "blur" }
-        ],
-        wordId: [
-          { required: true, message: "单词id不能为空", trigger: "blur" }
-        ],
-        word: [
-          { required: true, message: "单词不能为空", trigger: "blur" }
-        ],
-        studyTime: [
-          { required: true, message: "学习时间不能为空", trigger: "blur" }
+          { required: true, message: "$comment不能为空", trigger: "blur" }
         ],
         createTime: [
           { required: true, message: "创建时间不能为空", trigger: "blur" }
         ],
         updateTime: [
-          { required: true, message: "更新时间时间不能为空", trigger: "blur" }
+          { required: true, message: "更新时间不能为空", trigger: "blur" }
         ]
       }
     };
@@ -232,11 +186,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询用户学习记录列表 */
+    /** 查询问题列表 */
     getList() {
       this.loading = true;
-      listRecord(this.queryParams).then(response => {
-        this.recordList = response.rows;
+      listQuestion(this.queryParams).then(response => {
+        this.questionList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -250,11 +204,11 @@ export default {
     reset() {
       this.form = {
         id: null,
+        noteId: null,
+        question: null,
+        answer: null,
+        tag: null,
         userId: null,
-        userName: null,
-        wordId: null,
-        word: null,
-        studyTime: null,
         createTime: null,
         updateTime: null
       };
@@ -280,16 +234,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加用户学习记录";
+      this.title = "添加问题";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getRecord(id).then(response => {
+      getQuestion(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改用户学习记录";
+        this.title = "修改问题";
       });
     },
     /** 提交按钮 */
@@ -297,13 +251,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateRecord(this.form).then(response => {
+            updateQuestion(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addRecord(this.form).then(response => {
+            addQuestion(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -315,8 +269,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除用户学习记录编号为"' + ids + '"的数据项？').then(function() {
-        return delRecord(ids);
+      this.$modal.confirm('是否确认删除问题编号为"' + ids + '"的数据项？').then(function() {
+        return delQuestion(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -324,9 +278,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/record/export', {
+      this.download('system/question/export', {
         ...this.queryParams
-      }, `record_${new Date().getTime()}.xlsx`)
+      }, `question_${new Date().getTime()}.xlsx`)
     }
   }
 };

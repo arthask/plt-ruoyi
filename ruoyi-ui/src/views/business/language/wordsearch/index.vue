@@ -82,13 +82,13 @@
 </template>
 
 <script>
-import { searchWordByCN} from "@/api/system/word";
-import {collect} from "@/api/system/userword";
+import { searchWordByCN} from "@/api/bussiness/word";
+import {collect} from "@/api/bussiness/userword";
 
 export default {
   name: 'searchWord',
   mounted() {
-    this.speakCommon.speechInit();
+    // this.speakCommon.speechInit();
   },
   data() {
     return {

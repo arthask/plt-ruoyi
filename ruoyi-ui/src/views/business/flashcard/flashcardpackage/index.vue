@@ -107,9 +107,9 @@
 </template>
 
 <script>
-import {listPackages, getPackageInfo, add, del, update} from "@/api/system/flashcardpackage";
+import {listPackages, getPackageInfo, add, del, update} from "@/api/bussiness/flashcardpackage";
 
-import LabelTag from "@/components/Tag";
+import LabelTag from "@/components/Tag/index.vue";
 export default {
   name: "flashcardpackage",
   components:{

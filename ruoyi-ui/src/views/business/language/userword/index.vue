@@ -226,9 +226,9 @@
 </template>
 
 <script>
-import {listWord, getWord, delWord, addUserWord, updateWord} from "@/api/system/userword";
+import {listWord, getWord, delWord, addUserWord, updateWord} from "@/api/bussiness/userword";
 import {getReviewWordByIndex} from "@/api/review/review";
-import {addRecord} from "@/api/system/record";
+import {addRecord} from "@/api/bussiness/record";
 import {getNeedReviewAnHaveReviewNum} from "@/api/statistics/statistics";
 
 
