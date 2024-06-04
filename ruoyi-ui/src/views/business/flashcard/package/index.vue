@@ -32,7 +32,7 @@
           plain
           icon="el-icon-edit"
           size="mini"
-          @click="handleUpdate"
+          @click="handleUpdate()"
         >修改
         </el-button>
       </el-col>
@@ -86,8 +86,8 @@
             <el-radio :label="6">新增标签</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="选择" prop="label" v-if="showSelect">
-          <el-select v-model="form.label" placeholder="请选择卡包标签">
+        <el-form-item label="选择" v-if="showSelect">
+          <el-select multiple v-model="form.labelInfos" placeholder="请选择卡包标签">
             <el-option v-for="item in labelOptions"
                        :key="item.value"
                        :label="item.label"
@@ -95,7 +95,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <LabelTag v-else>
+        <LabelTag v-else  @updateLabel="updateLabel">
         </LabelTag>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,7 +111,7 @@ import {listPackages, getPackageInfo, add, del, update} from "@/api/bussiness/fl
 
 import LabelTag from "@/components/Tag/index.vue";
 export default {
-  name: "flashcardpackage",
+  name: "card_package",
   components:{
     LabelTag
   },
@@ -142,9 +142,12 @@ export default {
         name: null
       },
       // 表单参数
-      form: {},
+      form: {
+        labelInfos:[
+        ]
+      },
       typeOptions: [{
-        value: '1',
+        value: 1,
         label: '单词卡包',
       }],
       labelOptions: [],
@@ -183,10 +186,9 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: null,
         name: null,
         type: null,
-        label: null,
+        labelInfos: [],
       };
       this.resetForm("form");
     },
@@ -202,7 +204,8 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
+      this.uuid
+      this.ids = selection.map(item => item.uuid)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -215,24 +218,35 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.uuid || this.ids
       getPackageInfo(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改卡包";
       });
     },
+    updateLabel(labelList, deleteLableList){
+      this.form.labelInfos = [...labelList]
+      // todo 删除的标签
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
+            let data = this.form;
+            data.labelList = [...this.dynamicTags]
+            data.deleteTags = [...this.deleteTags]
             update(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
+            // const formData = new FormData();
+            // formData.append("name", this.form.name)
+            // formData.append("type", this.form.type)
+            // formData.append("labelInfos", this.form.labelInfos)
             add(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;

@@ -4,6 +4,7 @@ import com.ruoyi.system.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.ruoyi.system.gencode.entity.FlashcardPackage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,7 +42,7 @@ public interface FlashcardPackageService extends IService<FlashcardPackage> {
      * 获取卡包列表
      * @return
      */
-    Map<String,String> getPackageList(String name);
+    List<Map<String,String>> getPackageList(String name);
 
     /**
      * 获取卡包详情

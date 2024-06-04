@@ -21,10 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -53,18 +50,30 @@ public class FlashcardPackageServiceImpl extends ServiceImpl<FlashcardPackageMap
         flashcardPackage.setUuid(packageUUID);
         flashcardPackage.setName(packageInfoDto.getName());
         flashcardPackage.setType(packageInfoDto.getType());
+        flashcardPackage.setUserId(userId);
         save(flashcardPackage);
         if (!CollectionUtils.isEmpty(packageInfoDto.getLabelInfos())) {
             List<LabelRef> labelRefs = new ArrayList<>();
+            List<Label> labels = new ArrayList<>();
             for (LabelInfo labelInfo : packageInfoDto.getLabelInfos()) {
+                // 新增标签
+                Label label = new Label();
+                label.setName(labelInfo.getName());
+                String labelUUID = UUID.randomUUID().toString().replace("-", "");
+                label.setUuid(labelUUID);
+                label.setCreateUserId(userId);
+                labels.add(label);
+                // 新增卡包和标签关联关系
                 LabelRef labelRef = new LabelRef();
-                labelRef.setLabelUuid(labelInfo.getUuid());
+                labelRef.setLabelUuid(labelUUID);
                 labelRef.setRefUuid(packageUUID);
+                labelRef.setCreateUserId(userId);
                 labelRef.setRefType(2);
                 labelRef.setUuid(UUID.randomUUID().toString().replace("-", ""));
                 labelRefs.add(labelRef);
             }
             labelRefService.saveBatch(labelRefs);
+            labelService.saveBatch(labels);
         }
         return Boolean.TRUE;
     }
@@ -95,7 +104,7 @@ public class FlashcardPackageServiceImpl extends ServiceImpl<FlashcardPackageMap
                     .collect(Collectors.toMap(Label::getUuid, Label::getName, (k1, k2) -> k1));
             QueryWrapper<LabelRef> labelRefQueryWrapper = new QueryWrapper<>();
 
-            labelMap.forEach((k,v) -> {
+            labelMap.forEach((k, v) -> {
                 if (!labelMapFromDb.containsKey(k)) {
                     String labelUUID = UUID.randomUUID().toString().replace("-", "");
                     Label addLabel = new Label();
@@ -132,17 +141,24 @@ public class FlashcardPackageServiceImpl extends ServiceImpl<FlashcardPackageMap
     }
 
     @Override
-    public Map<String, String> getPackageList(String name) {
+    public List<Map<String, String>> getPackageList(String name) {
         QueryWrapper<FlashcardPackage> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(name)) {
             queryWrapper.like("name", name);
         }
-         List<FlashcardPackage> flashcardPackages = list(queryWrapper);
+        List<FlashcardPackage> flashcardPackages = list(queryWrapper);
         if (CollectionUtils.isEmpty(flashcardPackages)) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
-        return flashcardPackages.stream()
-                .collect(Collectors.toMap(FlashcardPackage::getUuid, FlashcardPackage::getName, (k1, k2) -> k1));
+        List<Map<String, String>> result = new ArrayList<>();
+        flashcardPackages
+                .forEach(e -> {
+                    Map<String, String> entity = new HashMap<>();
+                    entity.put("uuid", e.getUuid());
+                    entity.put("name", e.getName());
+                    result.add(entity);
+                });
+        return result;
     }
 
     @Override

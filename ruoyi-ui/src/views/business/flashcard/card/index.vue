@@ -12,12 +12,12 @@
         </word-card>
       </el-col>
       <el-col :span="6">
-        <el-select v-model="value1" filterable  placeholder="请选择闪卡集" style="margin:20px;padding: 0 17px;">
+        <el-select v-model="packageList" filterable placeholder="请选择闪卡集" style="margin:20px;padding: 0 17px;">
           <el-option
             v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            :key="item.uuid"
+            :label="item.name"
+            :value="item.uuid">
           </el-option>
         </el-select>
         <div v-for="item in tag" :key="item.index" class="tag">
@@ -43,28 +43,14 @@
 </template>
 <script>
 import WordCard from './WordCard.vue'
+import {getPackageList, listPackages} from "@/api/bussiness/flashcardpackage";
 
 export default {
   components: {WordCard},
   data() {
     return {
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      value1: [],
+      options: [],
+      packageList: [],
       form: {
         flashcardId: [],
       },
@@ -77,6 +63,12 @@ export default {
       headerFront: "",
 
     }
+  },
+  created() {
+    getPackageList().then(res => {
+      this.options = res.data;
+      console.log(this.options)
+    })
   },
   methods: {
     load() {

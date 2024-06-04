@@ -16,6 +16,7 @@ export default {
       if (this.form.id != null) {
         this.deleteTags.push(deletedTag)
       }
+      this.updateLabel(this.dynamicTags, this.deleteTags)
     },
 
     showInput() {
@@ -33,6 +34,7 @@ export default {
           name: inputValue
         };
         this.dynamicTags.push(newTag);
+        this.updateLabel(this.dynamicTags, [])
       }
       this.inputValue = '';
     },
@@ -61,6 +63,9 @@ export default {
       for (let i = 0; i < this.editTags.length; i++) {
         this.editTags[i] = false
       }
+    },
+    updateLabel(labelList, deleteList) {
+      this.$emit('updateLabel', labelList, deleteList);
     }
   }
 }
