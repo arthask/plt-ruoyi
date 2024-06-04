@@ -10,7 +10,7 @@ export function listPackages(query) {
 
 export function getPackageInfo(id) {
   return request({
-    url: '/flashcardPackage/getPackageInfo' + id,
+    url: '/flashcardPackage/getPackageInfo/' + id,
     method: 'get'
   })
 }
@@ -35,5 +35,12 @@ export function del(uuid) {
   return request({
     url: '/flashcardPackage/delete/'+uuid,
     method: 'delete',
+  })
+}
+export function getPackageList(params) {
+  return request({
+    url: '/flashcardPackage/getPackageList',
+    method: 'get',
+    params: params
   })
 }

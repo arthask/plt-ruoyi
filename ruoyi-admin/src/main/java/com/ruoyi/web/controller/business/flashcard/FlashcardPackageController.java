@@ -46,8 +46,8 @@ public class FlashcardPackageController extends BaseController {
         return getDataTable(list);
     }
 
-    @GetMapping("/getPackageInfo")
-    public AjaxResult getPackageInfo(@RequestParam("packageUUID") String packageUUID){
+    @GetMapping("/getPackageInfo/{uuid}")
+    public AjaxResult getPackageInfo(@PathVariable("uuid") String packageUUID){
         return AjaxResult.success(flashcardPackageService.getPackageInfo(packageUUID));
     }
 
@@ -77,7 +77,7 @@ public class FlashcardPackageController extends BaseController {
      * 获取卡包列表
      */
     @GetMapping("/getPackageList")
-    public AjaxResult getPackageList(@RequestParam("name") String name) {
+    public AjaxResult getPackageList(@RequestParam(value = "name", required = false) String name) {
         return AjaxResult.success(flashcardPackageService.getPackageList(name));
     }
 }
