@@ -58,6 +58,6 @@ export function getClassifyCount(params) {
   return request({
     url: '/flashcardAttribute/getClassifyCount',
     method: 'get',
-    data: params
+    params: params
   })
 }
