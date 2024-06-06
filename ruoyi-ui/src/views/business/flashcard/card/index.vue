@@ -123,6 +123,7 @@ export default {
       this.nextCard();
     },
     getCount() {
+      console.log(this.packageUUID)
       let params = {
         packageUUID: this.packageUUID,
       }
