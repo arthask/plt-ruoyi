@@ -37,6 +37,7 @@ export function del(uuid) {
     method: 'delete',
   })
 }
+
 export function getPackageList(params) {
   return request({
     url: '/flashcardPackage/getPackageList',

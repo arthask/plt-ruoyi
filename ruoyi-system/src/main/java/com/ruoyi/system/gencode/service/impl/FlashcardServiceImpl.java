@@ -1,6 +1,7 @@
 package com.ruoyi.system.gencode.service.impl;
 
 import com.ruoyi.system.domain.dto.flashcard.card.AddCardDto;
+import com.ruoyi.system.domain.dto.flashcard.card.CardInfo;
 import com.ruoyi.system.gencode.entity.Flashcard;
 import com.ruoyi.system.gencode.entity.PackageCardRef;
 import com.ruoyi.system.gencode.entity.Word;
@@ -70,5 +71,10 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     @Override
     public Flashcard getCardOfPackage(String packageUUID,Integer offset) {
         return flashcardMapper.getCardOfPackage(packageUUID, offset);
+    }
+
+    @Override
+    public CardInfo getCardInfo(String cardUUID) {
+        return null;
     }
 }

@@ -12,6 +12,7 @@ import com.ruoyi.system.domain.vo.NoteInfoVo;
 import com.ruoyi.system.gencode.entity.Note;
 import com.ruoyi.system.gencode.service.NoteService;
 import com.ruoyi.system.service.INoteService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,9 @@ public class NoteController extends BaseController {
     public TableDataInfo list(Note note) {
         startPage();
         QueryWrapper<Note> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(note.getTitle())) {
+            queryWrapper.like("title", note.getTitle());
+        }
         queryWrapper.orderByDesc("create_time");
         List<Note> list = newNoteService.list(queryWrapper);
         return getDataTable(list);

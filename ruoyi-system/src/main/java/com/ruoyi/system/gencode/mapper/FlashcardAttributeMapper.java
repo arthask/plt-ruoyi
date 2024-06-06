@@ -2,6 +2,7 @@ package com.ruoyi.system.gencode.mapper;
 
 import com.ruoyi.system.gencode.entity.FlashcardAttribute;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,5 +23,6 @@ public interface FlashcardAttributeMapper extends BaseMapper<FlashcardAttribute>
      * @param packageUUID packageUUID
      * @return
      */
+    @MapKey("familiarity")
     Map<Integer, Long>  getClassifyCount(@Param("packageUUID") String packageUUID);
 }

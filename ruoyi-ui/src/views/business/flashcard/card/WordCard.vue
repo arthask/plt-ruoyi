@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-bind:style="{backgroundColor: colorFront, color: colorTextFront}" v-show="!isToggle" class="animated flipInX flashcard">
-      <el-button icon="el-icon-headset" circle>播放</el-button>
+      <el-button icon="el-icon-headset" circle @click="speakWord(front)">播放</el-button>
       <div @click="isToggle=!isToggle">
 
         <el-row type="flex" justify="center" align="middle" style="height: 300px;width: 100%">
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}" v-show="isToggle" class="animated flipInX flashcard">
-      <el-button icon="el-icon-headset" circle>播放</el-button>
+      <el-button icon="el-icon-headset" circle @click="speakWord(back)">播放</el-button>
       <div @click="isToggle=!isToggle">
         <el-row type="flex" justify="center" align="middle" style="height: 300px;width: 100%">
           <!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->
@@ -94,8 +94,10 @@ export default {
       type: String,
       default: 'Click to show Front'
     }
-
-
+  },methods:{
+    speakWord(content){
+      this.speakCommon.speak(content)
+    }
   }
 }
 </script>

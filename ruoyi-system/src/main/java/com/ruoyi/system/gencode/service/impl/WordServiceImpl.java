@@ -167,4 +167,21 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
         wordQuery.eq("uuid", uuid);
         return getOne(wordQuery);
     }
+
+    @Override
+    public List<WordShowData> searchWord(String word) {
+        QueryWrapper<Word> wordQuery = new QueryWrapper<>();
+        wordQuery.like("word", word);
+        List<Word> wordList = list(wordQuery);
+        if (CollectionUtils.isEmpty(wordList)) {
+            return Collections.emptyList();
+        }
+        List<WordShowData> wordShowDataList = new ArrayList<>();
+        wordList.forEach(e -> {
+            WordShowData wordShowData = new WordShowData();
+            BeanUtils.copyProperties(e, wordShowData);
+            wordShowDataList.add(wordShowData);
+        });
+        return wordShowDataList;
+    }
 }

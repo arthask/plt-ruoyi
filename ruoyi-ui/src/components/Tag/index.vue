@@ -1,5 +1,13 @@
 <script>
 export default {
+  props:{
+    tags:Array
+  },
+  watch:{
+    tags(newValue,oldValue) {
+      this.dynamicTags = newValue;
+    }
+  },
   name: "label_tag",
   data() {
     return {

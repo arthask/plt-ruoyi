@@ -24,7 +24,9 @@ public interface WordService extends IService<Word> {
      * @param searchCn 中文搜索内容
      * @return 匹配的单词
      */
-    List<WordShowData> searchWordByCN(@Param("searchCn") String searchCn);
+    List<WordShowData> searchWordByCN(String searchCn);
+
+    List<WordShowData> searchWord(String word);
 
     WordShowData getOneWord(Long userId, String lexiconUUID, int index);
 

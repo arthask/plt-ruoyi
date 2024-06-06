@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户id" prop="userId">
+      <el-form-item label="笔记标题" prop="title">
         <el-input
           v-model="queryParams.title"
           placeholder="请输入笔记标题"
@@ -18,14 +18,13 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
-          icon="el-icon-edit"
+          icon="el-icon-plus"
           size="mini"
-          :disabled="single"
-          @click="editNote"
-          v-hasPermi="['system:note:edit']"
-        >修改</el-button>
+          @click="addMyNote"
+          v-hasPermi="['system:note:add']"
+        >新增笔记</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -37,26 +36,6 @@
           @click="handleDelete"
           v-hasPermi="['system:note:remove']"
         >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:note:export']"
-        >导出</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="addMyNote"
-          v-hasPermi="['system:note:add']"
-        >新增笔记</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -228,16 +207,6 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getNote(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改笔记";
-      });
-    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
@@ -267,12 +236,6 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('system/note/export', {
-        ...this.queryParams
-      }, `note_${new Date().getTime()}.xlsx`)
     },
     addMyNote() {
       this.reset();

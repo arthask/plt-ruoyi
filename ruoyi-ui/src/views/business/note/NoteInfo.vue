@@ -58,7 +58,7 @@ export default {
   <div style="padding: 20px">
     <div class="ck-content">
       <el-row :gutter="20" type="flex" justify="center">
-        <el-col :span="10"><h1>{{this.summaryForm.title}}</h1></el-col:>
+        <el-col :span="10"><h1>{{this.summaryForm.title}}</h1></el-col>
       </el-row>
       <h2>问题</h2>
       <div v-for="(data, index) in answerForm.data">
