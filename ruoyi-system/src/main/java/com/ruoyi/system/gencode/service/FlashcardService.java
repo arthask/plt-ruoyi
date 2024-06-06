@@ -1,6 +1,8 @@
 package com.ruoyi.system.gencode.service;
 
 import com.ruoyi.system.domain.dto.flashcard.card.AddCardDto;
+import com.ruoyi.system.domain.dto.flashcard.card.CardInfo;
+import com.ruoyi.system.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.ruoyi.system.gencode.entity.Flashcard;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -27,4 +29,11 @@ public interface FlashcardService extends IService<Flashcard> {
      * @return
      */
     Flashcard getCardOfPackage(String packageUUID,Integer offset);
+
+    /**
+     * 获取卡片详情
+     * @param cardUUID 卡片uuid
+     * @return
+     */
+    CardInfo getCardInfo(String cardUUID);
 }

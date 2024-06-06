@@ -1,19 +1,28 @@
 <template>
   <div id="app">
-    <ckeditor :editor="editor" @input="onEditorInput" v-model="editorData" :config="editorConfig" :disabled="editorDisabled"></ckeditor>
+    <ckeditor :editor="editor" @input="onEditorInput" v-model="editorData" :config="editorConfig"
+              :disabled="editorDisabled"></ckeditor>
   </div>
 </template>
 
 <script>
 import {ClassicEditor} from '@ckeditor/ckeditor5-editor-classic'
-import { Bold, Code, Italic, Strikethrough, Subscript, Superscript, Underline } from '@ckeditor/ckeditor5-basic-styles';
+import {Bold, Code, Italic, Strikethrough, Subscript, Superscript, Underline} from '@ckeditor/ckeditor5-basic-styles';
 import {Essentials} from '@ckeditor/ckeditor5-essentials'
 import {Link} from '@ckeditor/ckeditor5-link'
 import {Paragraph} from '@ckeditor/ckeditor5-paragraph'
 import {SimpleUploadAdapter} from '@ckeditor/ckeditor5-upload';
-import { Table, TableCaption, TableCellProperties, TableColumnResize, TableProperties, TableToolbar } from '@ckeditor/ckeditor5-table';
-import { CodeBlock } from '@ckeditor/ckeditor5-code-block';
-import { Heading } from '@ckeditor/ckeditor5-heading';
+import {
+  Table,
+  TableCaption,
+  TableCellProperties,
+  TableColumnResize,
+  TableProperties,
+  TableToolbar
+} from '@ckeditor/ckeditor5-table';
+import {CodeBlock} from '@ckeditor/ckeditor5-code-block';
+import {Heading} from '@ckeditor/ckeditor5-heading';
+import {List, ListProperties, TodoList} from '@ckeditor/ckeditor5-list';
 import {
   AutoImage,
   Image,
@@ -94,7 +103,9 @@ export default {
           TableCaption, TableCellProperties, TableColumnResize,
           TableProperties,
           Code, CodeBlock,
-          Heading
+          Heading,
+          List,
+          ListProperties, TodoList
         ],
 
         toolbar: {
@@ -109,6 +120,8 @@ export default {
             'codeBlock',
             'insertTable',
             'insertImage',
+            'highlight',
+            'bulletedList', 'numberedList'
           ]
         },
         image: {
@@ -142,12 +155,19 @@ export default {
         },
         simpleUpload: {
           // The URL that the images are uploaded to.
-          uploadUrl: process.env.VUE_APP_BASE_API+'/common/upload',
+          uploadUrl: process.env.VUE_APP_BASE_API + '/common/upload',
         },
         table: {
           contentToolbar: [
             'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties', 'toggleTableCaption'
           ]
+        },
+        list: {
+          properties: {
+            styles: true,
+            startIndex: true,
+            reversed: true
+          }
         },
       }
     }

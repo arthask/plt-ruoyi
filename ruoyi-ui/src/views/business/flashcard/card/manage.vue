@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="卡包名" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入单词"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <!--    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">-->
+    <!--      <el-form-item label="卡包名" prop="name">-->
+    <!--        <el-input-->
+    <!--          v-model="queryParams.name"-->
+    <!--          placeholder="请输入单词"-->
+    <!--          clearable-->
+    <!--          @keyup.enter.native="handleQuery"-->
+    <!--        />-->
+    <!--      </el-form-item>-->
+    <!--      <el-form-item>-->
+    <!--        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
+    <!--        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
+    <!--      </el-form-item>-->
+    <!--    </el-form>-->
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -52,7 +52,8 @@
 
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="包名" align="center" prop="name"/>
+      <el-table-column label="正面" align="center" prop="front"/>
+      <el-table-column label="反面" align="center" prop="back"/>
       <el-table-column label="类型" align="center" prop="type"/>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
     </el-table>
@@ -68,9 +69,6 @@
     <!-- 添加或修改用户单词对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body destroy-on-close>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="卡包名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入卡包名称"/>
-        </el-form-item>
         <el-form-item label="卡包类型" prop="type">
           <el-select v-model="form.type" placeholder="请选择卡包类型">
             <el-option v-for="item in typeOptions"
@@ -80,23 +78,24 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="卡包标签">
-          <el-radio-group v-model="labelType" @input="changeType">
-            <el-radio :label="3">选择已有标签</el-radio>
-            <el-radio :label="6">新增标签</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="选择" v-if="showSelect">
-          <el-select multiple v-model="form.labelInfos" placeholder="请选择卡包标签">
-            <el-option v-for="item in labelOptions"
+        <el-form-item label="选择单词">
+          <el-select filterable remote :remote-method="queryWord" v-model="form.wordUUID" placeholder="请选择单词">
+            <el-option v-for="item in wordOptions"
                        :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
+                       :label="item.word"
+                       :value="item.uuid">
             </el-option>
           </el-select>
         </el-form-item>
-        <LabelTag v-else  @updateLabel="updateLabel">
-        </LabelTag>
+        <el-form-item label="选择卡包">
+          <el-select filterable v-model="form.packageUUID" placeholder="请选择卡包">
+            <el-option v-for="item in packageOptions"
+                       :key="item.value"
+                       :label="item.name"
+                       :value="item.uuid">
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -107,12 +106,14 @@
 </template>
 
 <script>
-import {listPackages, getPackageInfo, add, del, update} from "@/api/bussiness/flashcardpackage";
-
 import LabelTag from "@/components/Tag/index.vue";
+import {getCardInfo, listCards, add, del, update} from "@/api/bussiness/flashcard";
+import {searchWord, searchWordByCN} from "@/api/bussiness/word";
+import {getPackageList} from "@/api/bussiness/flashcardpackage";
+
 export default {
-  name: "card_package",
-  components:{
+  name: "card_manage",
+  components: {
     LabelTag
   },
   data() {
@@ -143,35 +144,44 @@ export default {
       },
       // 表单参数
       form: {
-        labelInfos:[
-        ]
+        type: null,
+        wordUUID: "",
+        packageUUID: ""
       },
       typeOptions: [{
         value: 1,
-        label: '单词卡包',
+        label: '单词卡片',
       }],
-      labelOptions: [],
+      wordOptions: [],
+      packageOptions: [],
       labelType: 3,
       showSelect: true,
       // 表单校验
       rules: {
-        name: [
-          {required: true, message: "卡包名不能为空", trigger: "blur"}
+        wordUUID: [
+          {required: true, message: "单词不能为空", trigger: "blur"}
+        ],
+        packageUUID: [
+          {required: true, message: "卡包不能为空", trigger: "blur"}
         ],
         type: [
-          {required: true, message: "卡包类型不能为空", trigger: "blur"}
+          {required: true, message: "卡片类型不能为空", trigger: "blur"}
         ]
       }
     };
   },
   created() {
     this.getList();
+    getPackageList().then(res => {
+      this.packageOptions = res.data;
+      console.log(this.options)
+    })
   },
   methods: {
     /** 查询用户单词列表 */
     getList() {
       this.loading = true;
-      listPackages(this.queryParams).then(response => {
+      listCards(this.queryParams).then(response => {
         this.dataList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -212,40 +222,29 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加卡包";
+      this.title = "添加卡片";
     },
     /** 修改按钮操作 */
     handleUpdate() {
       this.reset();
       const id = this.ids
-      getPackageInfo(id).then(response => {
+      getCardInfo(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改卡包";
+        this.title = "修改卡片";
       });
-    },
-    updateLabel(labelList, deleteLableList){
-      this.form.labelInfos = [...labelList]
-      // todo 删除的标签
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            let data = this.form;
-            data.labelList = [...this.dynamicTags]
-            data.deleteTags = [...this.deleteTags]
             update(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            // const formData = new FormData();
-            // formData.append("name", this.form.name)
-            // formData.append("type", this.form.type)
-            // formData.append("labelInfos", this.form.labelInfos)
             add(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -266,12 +265,19 @@ export default {
       }).catch(() => {
       });
     },
-    changeType(type) {
-      if (type === 3) {
-        this.showSelect = true;
-      }
-      if (type === 6) {
-        this.showSelect = false;
+    queryWord(query) {
+      if (query !== '') {
+        this.loading = true;
+        let params = {
+          word: query
+        }
+        searchWord(params).then(res => {
+          this.wordOptions = []
+          this.wordOptions = res.data
+          this.loading = false;
+        })
+      } else {
+        this.options = [];
       }
     }
   }

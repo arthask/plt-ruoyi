@@ -12,7 +12,9 @@
         </word-card>
       </el-col>
       <el-col :span="6">
-        <el-select v-model="packageList" filterable placeholder="请选择闪卡集" style="margin:20px;padding: 0 17px;">
+        <el-select v-model="packageList" filterable placeholder="请选择闪卡集"
+                   style="margin:20px;padding: 0 17px;"
+                   @change="getCardOfPackage">
           <el-option
             v-for="item in options"
             :key="item.uuid"
@@ -30,20 +32,21 @@
       <el-col :span="5">
       </el-col>
       <el-col :span="3">
-        <el-button type="primary" plain>不会</el-button>
+        <el-button type="primary" plain @click="study(0)">不会</el-button>
       </el-col>
       <el-col :span="3">
-        <el-button type="success" plain>跳过</el-button>
+        <el-button type="success" plain @click="study(2)">跳过</el-button>
       </el-col>
       <el-col :span="3">
-        <el-button type="info" plain>会</el-button>
+        <el-button type="info" plain @click="study(1)">会</el-button>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
 import WordCard from './WordCard.vue'
-import {getPackageList, listPackages} from "@/api/bussiness/flashcardpackage";
+import {getPackageList} from "@/api/bussiness/flashcardpackage";
+import {getCardOfPackage, getClassifyCount, studyCard} from "@/api/bussiness/flashcard";
 
 export default {
   components: {WordCard},
@@ -61,6 +64,9 @@ export default {
       answer: 'with animation',
       footerFront: "",
       headerFront: "",
+      packageUUID: "",
+      cardUUID: "",
+      offset: 0
 
     }
   },
@@ -73,6 +79,56 @@ export default {
   methods: {
     load() {
       this.count += 2
+    },
+    getCardOfPackage(uuid) {
+      this.packageUUID = uuid
+      let params = {
+        packageUUID: this.packageUUID,
+        offset: this.offset
+      }
+      getCardOfPackage(params).then(res => {
+        if (res.data.uuid) {
+          this.question = res.data.front
+          this.answer = res.data.back
+          this.cardUUID = res.data.uuid
+        } else {
+          this.offset = 0;
+        }
+      })
+    },
+    nextCard() {
+      this.offset++;
+      let params = {
+        packageUUID: this.packageUUID,
+        offset: this.offset
+      }
+      getCardOfPackage(params).then(res => {
+        if (res.data && res.data.uuid) {
+          this.question = res.data.front
+          this.answer = res.data.back
+          this.cardUUID = res.data.uuid
+        } else {
+          this.offset = -1;
+        }
+      })
+    },
+    study(familiarity) {
+      let params = {
+        cardUUID: this.cardUUID,
+        familiarity: familiarity
+      }
+      studyCard(params).then(res => {
+        this.getCount();
+      })
+      this.nextCard();
+    },
+    getCount() {
+      let params = {
+        packageUUID: this.packageUUID,
+      }
+      getClassifyCount(params).then(res => {
+        console.log("----" + res.data)
+      })
     }
   }
 }

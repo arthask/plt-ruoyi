@@ -15,8 +15,8 @@ import org.springframework.stereotype.Controller;
  * @author author
  * @since 2024-05-23
  */
-@Controller
-@RequestMapping("/gencode/flashcardAttribute")
+@RestController
+@RequestMapping("/flashcardAttribute")
 public class FlashcardAttributeController {
 
     @Autowired
