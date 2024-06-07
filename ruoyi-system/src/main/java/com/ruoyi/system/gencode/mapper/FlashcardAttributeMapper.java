@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +24,5 @@ public interface FlashcardAttributeMapper extends BaseMapper<FlashcardAttribute>
      * @param packageUUID packageUUID
      * @return
      */
-    @MapKey("familiarity")
-    Map<Integer, Long>  getClassifyCount(@Param("packageUUID") String packageUUID);
+    List<Map<Integer, Long>> getClassifyCount(@Param("packageUUID") String packageUUID);
 }

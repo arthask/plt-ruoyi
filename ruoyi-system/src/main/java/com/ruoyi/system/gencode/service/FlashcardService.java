@@ -31,9 +31,9 @@ public interface FlashcardService extends IService<Flashcard> {
     Flashcard getCardOfPackage(String packageUUID,Integer offset);
 
     /**
-     * 获取卡片详情
+     * 通过uuid获取卡片
      * @param cardUUID 卡片uuid
      * @return
      */
-    CardInfo getCardInfo(String cardUUID);
+    Flashcard getCardByUUId(String cardUUID);
 }

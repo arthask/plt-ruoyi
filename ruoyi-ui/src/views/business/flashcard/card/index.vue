@@ -22,9 +22,9 @@
             :value="item.uuid">
           </el-option>
         </el-select>
-        <div v-for="item in tag" :key="item.index" class="tag">
+        <div v-for="item in tag" :key="item.name" class="tag">
           {{ item.name }}
-          <p>{{ item.index }}</p>
+          <p>{{ item.count }}</p>
         </div>
       </el-col>
     </el-row>
@@ -57,7 +57,7 @@ export default {
       form: {
         flashcardId: [],
       },
-      tag: [{name: '待定', index: 1}, {name: '会', index: 2}, {name: '不会', index: 3}],
+      tag: [],
       colorFront: '#E6A23C',
       colorTextFront: 'white',
       question: 'hello this is a flashcard',
@@ -87,7 +87,7 @@ export default {
         offset: this.offset
       }
       getCardOfPackage(params).then(res => {
-        if (res.data.uuid) {
+        if (res.data && res.data.uuid) {
           this.question = res.data.front
           this.answer = res.data.back
           this.cardUUID = res.data.uuid
@@ -95,6 +95,7 @@ export default {
           this.offset = 0;
         }
       })
+      this.getCount()
     },
     nextCard() {
       this.offset++;
@@ -108,6 +109,8 @@ export default {
           this.answer = res.data.back
           this.cardUUID = res.data.uuid
         } else {
+          this.question = ""
+          this.answer = ""
           this.offset = -1;
         }
       })
@@ -128,7 +131,35 @@ export default {
         packageUUID: this.packageUUID,
       }
       getClassifyCount(params).then(res => {
-        console.log("----" + res.data)
+        this.tag = []
+        if (res.data && res.data.length > 0) {
+          res.data.forEach((value, key) => {
+            let item = {
+              name: "",
+              count: value.count
+            }
+            if (key === 0) {
+              item.name = "不会"
+            } else if (key === 1) {
+              item.name = "会"
+            } else if (key === 2) {
+              item.name = "待定"
+            }
+            this.tag.push(item)
+          });
+        } else {
+          this.tag = [{
+            name: "不会",
+            count: 0
+          }, {
+            name: "会",
+            count: 0
+          }, {
+            name: "待定",
+            count: 0
+          }
+          ];
+        }
       })
     }
   }

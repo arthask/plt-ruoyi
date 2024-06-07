@@ -3,6 +3,7 @@ package com.ruoyi.system.gencode.service;
 import com.ruoyi.system.gencode.entity.FlashcardAttribute;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ public interface FlashcardAttributeService extends IService<FlashcardAttribute> 
      * 获取分类数量
      * @return
      */
-    Map<Integer, Long> getClassifyCount(String packageUUID);
+    List<Map<Integer, Long>> getClassifyCount(String packageUUID);
 
 
 }

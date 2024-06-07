@@ -1,5 +1,6 @@
 package com.ruoyi.system.gencode.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.system.domain.dto.flashcard.card.AddCardDto;
 import com.ruoyi.system.domain.dto.flashcard.card.CardInfo;
 import com.ruoyi.system.gencode.entity.Flashcard;
@@ -74,7 +75,9 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     }
 
     @Override
-    public CardInfo getCardInfo(String cardUUID) {
-        return null;
+    public Flashcard getCardByUUId(String cardUUID) {
+        QueryWrapper<Flashcard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uuid", cardUUID);
+        return getOne(queryWrapper);
     }
 }
