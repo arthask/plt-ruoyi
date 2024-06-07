@@ -18,11 +18,12 @@
         id, uuid, card_uuid, familiarity, next_study_time, create_time, update_time
     </sql>
     <select id="getClassifyCount" resultType="java.util.Map">
-        select familiarity, count(*) from flashcard_package fp
-            left join package_card_ref pcr on fp.id = pcr.package_uuid
-            left join flashcard_attribute fa on pcr.card_uuid = fa.card_uuid
+        select familiarity, count(*) as count from 	flashcard_attribute fa
+            left join package_card_ref pcr on  pcr.card_uuid  = fa.card_uuid
+            left join flashcard_package fp on fp.uuid = pcr.package_uuid
         where fp.uuid = #{packageUUID}
         group by fa.familiarity
     </select>
+
 
 </mapper>
