@@ -29,18 +29,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:scene:edit']"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="danger"
           plain
           icon="el-icon-delete"
@@ -49,17 +37,6 @@
           @click="handleDelete"
           v-hasPermi="['system:scene:remove']"
         >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:scene:export']"
-        >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -108,13 +85,14 @@
     />
     <el-dialog :title="title"
                :visible.sync="showConversation" width="800px"
-               :center="true" destroy-on-close>
-      <conversation :sceneUUID="sceneUuid"></conversation>
+               :center="true"
+               :destroy-on-close="true">
+      <conversation :diag-content-list="contentList"></conversation>
     </el-dialog>
     <el-dialog :title="title"
                :visible.sync="showEditScene" width="800px"
                append-to-body
-               destroy-on-close>
+               :destroy-on-close="true">
       <edit-scene :sceneAndDialoguesData="sceneData" @closeAdd="closeAdd"></edit-scene>
     </el-dialog>
   </div>
@@ -187,6 +165,7 @@ export default {
           }
         ]
       },
+      contentList:[]
     };
   },
   created() {
@@ -211,10 +190,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: null,
         name: null,
-        tagId: null,
-        userId: null,
         createTime: null,
         updateTime: null
       };
@@ -255,7 +231,6 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
       const id = row.uuid || this.ids
       let params = {
         sceneUUID: id
@@ -266,29 +241,9 @@ export default {
         this.title = "修改对话场景";
       });
     },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateScene(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addScene(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
+      const ids = row.uuid || this.ids;
       this.$modal.confirm('是否确认删除对话场景编号为"' + ids + '"的数据项？').then(function () {
         return delScene(ids);
       }).then(() => {
@@ -306,7 +261,14 @@ export default {
     beginConversation(row) {
       this.showConversation = true;
       this.title = "对话详情";
-      this.sceneUuid = row.uuid
+      let params = {
+        sceneUUID: row.uuid
+      }
+      getScene(params).then(response => {
+        if(response.data.dialogueDataList && response.data.dialogueDataList.length > 0) {
+          this.contentList = response.data.dialogueDataList;
+        }
+      });
     },
     closeConversation() {
       this.showConversation = false;
@@ -317,7 +279,7 @@ export default {
     closeAdd() {
       this.showEditScene = false;
       this.getList();
-    },
+    }
   }
 };
 </script>

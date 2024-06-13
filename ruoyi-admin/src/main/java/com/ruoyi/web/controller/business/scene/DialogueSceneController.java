@@ -1,9 +1,11 @@
 package com.ruoyi.web.controller.business.scene;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.dto.GetReplyRequest;
 import com.ruoyi.system.domain.dto.scene.SceneData;
 import com.ruoyi.system.gencode.entity.DialogueScene;
@@ -14,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,5 +72,13 @@ public class DialogueSceneController extends BaseController {
     @GetMapping("/getDialogueSceneInfo")
     public AjaxResult getDialogueSceneInfo(@RequestParam("sceneUUID") String sceneUUID) {
         return AjaxResult.success(dialogueSceneService.getDialogueSceneInfo(sceneUUID));
+    }
+
+    /**
+     * 删除词库
+     */
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable String[] ids) {
+            return AjaxResult.success(dialogueSceneService.removeScene(ids));
     }
 }

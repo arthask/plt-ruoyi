@@ -7,9 +7,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.dto.GetReplyRequest;
 import com.ruoyi.system.domain.dto.scene.DialogueData;
 import com.ruoyi.system.domain.dto.scene.SceneData;
-import com.ruoyi.system.gencode.entity.Dialogue;
-import com.ruoyi.system.gencode.entity.DialogueScene;
-import com.ruoyi.system.gencode.entity.DialogueSceneRef;
+import com.ruoyi.system.gencode.entity.*;
 import com.ruoyi.system.gencode.mapper.DialogueMapper;
 import com.ruoyi.system.gencode.mapper.DialogueSceneMapper;
 import com.ruoyi.system.gencode.service.DialogueSceneRefService;
@@ -46,7 +44,6 @@ public class DialogueSceneServiceImpl extends ServiceImpl<DialogueSceneMapper, D
 
     @Autowired
     private DialogueSceneMapper dialogueSceneMapper;
-
 
     @Autowired
     private DialogueSceneRefService dialogueSceneRefService;
@@ -164,7 +161,8 @@ public class DialogueSceneServiceImpl extends ServiceImpl<DialogueSceneMapper, D
                     addDialogue.setSortNum(e.getSortNum());
                     addDialogue.setCreateUserId(sceneData.getUserId());
                     addDataList.add(addDialogue);
-                    String refUUID =  UUID.randomUUID().toString().replace("-", "");;
+                    String refUUID = UUID.randomUUID().toString().replace("-", "");
+                    ;
                     DialogueSceneRef dialogueSceneRef = new DialogueSceneRef();
                     dialogueSceneRef.setDialogueUuid(dialogueUUID);
                     dialogueSceneRef.setSceneUuid(dialogueSceneFromBb.getUuid());
@@ -205,9 +203,29 @@ public class DialogueSceneServiceImpl extends ServiceImpl<DialogueSceneMapper, D
         return sceneData;
     }
 
+    @Override
+    public String removeScene(String[] uuids) {
+        Assert.notEmpty(uuids, "请求参数错误");
+        // 删除场景
+        QueryWrapper<DialogueScene> dialogueSceneQueryWrapper = new QueryWrapper<>();
+        dialogueSceneQueryWrapper.in("uuid", Arrays.asList(uuids));
+        remove(dialogueSceneQueryWrapper);
+        // 删除场景与对话的关联关系
+        QueryWrapper<DialogueSceneRef> dialogueSceneRefQueryWrapper = new QueryWrapper<>();
+        dialogueSceneRefQueryWrapper.in("scene_uuid", Arrays.asList(uuids));
+        dialogueSceneRefService.remove(dialogueSceneRefQueryWrapper);
+        return "删除成功";
+    }
+
     private DialogueScene getDialogueSceneByUUID(String sceneUUID) {
         QueryWrapper<DialogueScene> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", sceneUUID);
         return getOne(queryWrapper);
+    }
+
+    private List<DialogueScene> getDialogueSceneByUUIDList(List<String> sceneUUIDList) {
+        QueryWrapper<DialogueScene> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("uuid", sceneUUIDList);
+        return list(queryWrapper);
     }
 }

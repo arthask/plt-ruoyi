@@ -13,7 +13,7 @@
         <el-col :span="10">
         </el-col>
       </el-row>
-      <el-row :gutter="20" type="flex" justify="space-around">
+      <el-row :gutter="20" type="flex" justify="space-around" v-if="item.reply">
         <el-col :span="10">
         </el-col>
         <el-col :span="4">
@@ -34,29 +34,19 @@
 </template>
 <script>
 
-
-import {getScene} from "@/api/conversation/scene";
-
 export default {
   props: {
-    sceneUUID: String
+    diagContentList: Array
   },
   watch: {
-    sceneUUID(newValue) {
+    diagContentList(newValue) {
       if (newValue) {
-        this.sUUID = newValue
+        this.contentList = newValue
       }
     }
   },
   created() {
-    this.sUUID = this.sceneUUID
-    let params = {
-      sceneUUID: this.sUUID
-    }
-    getScene(params).then(response => {
-      if (response.data && response.data.dialogueDataList.length > 0)
-        this.contentList = response.data.dialogueDataList;
-    });
+
   },
   components: {},
   computed: {
@@ -71,7 +61,6 @@ export default {
   },
   data() {
     return {
-      sUUID: null,
       contentList: []
     }
   },

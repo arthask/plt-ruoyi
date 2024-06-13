@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.business;
+package com.ruoyi.web.controller.business.language;
 
 import java.util.*;
 import java.util.stream.Collectors;
