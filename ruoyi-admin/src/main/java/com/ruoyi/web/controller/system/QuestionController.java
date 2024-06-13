@@ -81,4 +81,9 @@ public class QuestionController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(newQuestionService.removeBatchByIds(Arrays.asList(ids)));
     }
+
+    @GetMapping("/searchQuestion")
+    public AjaxResult searchQuestion(@RequestParam("question") String question) {
+        return success(newQuestionService.searchQuestion(question));
+    }
 }

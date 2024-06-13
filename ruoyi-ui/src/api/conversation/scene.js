@@ -3,34 +3,26 @@ import request from '@/utils/request'
 // 查询对话场景列表
 export function listScene(query) {
   return request({
-    url: '/system/scene/list',
+    url: '/dialogueScene/list',
     method: 'get',
     params: query
   })
 }
 
 // 查询对话场景详细
-export function getScene(id) {
+export function getScene(params) {
   return request({
-    url: '/system/scene/' + id,
-    method: 'get'
-  })
-}
-
-// 新增对话场景
-export function addScene(data) {
-  return request({
-    url: '/system/scene',
-    method: 'post',
-    data: data
+    url: '/dialogueScene/getDialogueSceneInfo',
+    method: 'get',
+    params: params
   })
 }
 
 // 修改对话场景
 export function updateScene(data) {
   return request({
-    url: '/system/scene',
-    method: 'put',
+    url: '/dialogueScene/updateDialogueScene',
+    method: 'post',
     data: data
   })
 }
@@ -38,7 +30,7 @@ export function updateScene(data) {
 // 删除对话场景
 export function delScene(id) {
   return request({
-    url: '/system/scene/' + id,
+    url: '/dialogueScene/' + id,
     method: 'delete'
   })
 }
@@ -46,17 +38,9 @@ export function delScene(id) {
 // 新增对话场景
 export function addDialogueScene(data) {
   return request({
-    url: '/system/scene/addDialogueScene',
+    url: '/dialogueScene/addDialogueScene',
     method: 'post',
     data: data
   })
 }
 
-// 查询对话场景详细
-export function getReplayInfo(query) {
-  return request({
-    url: '/system/scene/getReplayInfo',
-    method: 'get',
-    params: query
-  })
-}

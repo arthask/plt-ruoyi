@@ -4,6 +4,7 @@ import com.ruoyi.system.domain.dto.QuestionDto;
 import com.ruoyi.system.gencode.entity.Question;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,4 +24,18 @@ public interface QuestionService extends IService<Question> {
      * @return 结果
      */
     Map<String, Object> insertQuestion(QuestionDto questionDto, Long userId);
+
+    /**
+     * 使用uuid获取
+     * @param uuid uuid
+     * @return
+     */
+    Question getByUUID(String uuid);
+
+    /**
+     * 搜索问题
+     * @param question 问题
+     * @return
+     */
+    List<Question>  searchQuestion(String question);
 }

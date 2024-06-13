@@ -95,7 +95,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <LabelTag v-else  @updateLabel="updateLabel">
+        <LabelTag v-else @updateLabel="updateLabel">
         </LabelTag>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -110,9 +110,10 @@
 import {listPackages, getPackageInfo, add, del, update} from "@/api/bussiness/flashcardpackage";
 
 import LabelTag from "@/components/Tag/index.vue";
+
 export default {
   name: "card_package",
-  components:{
+  components: {
     LabelTag
   },
   data() {
@@ -143,12 +144,14 @@ export default {
       },
       // 表单参数
       form: {
-        labelInfos:[
-        ]
+        labelInfos: []
       },
       typeOptions: [{
         value: 1,
         label: '单词卡包',
+      }, {
+        value: 1,
+        label: '问题卡包',
       }],
       labelOptions: [],
       labelType: 3,
@@ -224,7 +227,7 @@ export default {
         this.title = "修改卡包";
       });
     },
-    updateLabel(labelList, deleteLableList){
+    updateLabel(labelList, deleteLableList) {
       this.form.labelInfos = [...labelList]
       // todo 删除的标签
     },

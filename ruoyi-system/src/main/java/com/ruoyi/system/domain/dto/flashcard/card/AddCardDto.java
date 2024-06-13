@@ -11,6 +11,10 @@ public class AddCardDto {
      */
     private String wordUUID;
     /**
+     * 问题UUID
+     */
+    private String questionUUID;
+    /**
      * 卡包UUID
      */
     private String packageUUID;
@@ -26,6 +30,15 @@ public class AddCardDto {
 
     public String getWordUUID() {
         return wordUUID;
+    }
+
+    public String getQuestionUUID() {
+        return questionUUID;
+    }
+
+    public AddCardDto setQuestionUUID(String questionUUID) {
+        this.questionUUID = questionUUID;
+        return this;
     }
 
     public AddCardDto setWordUUID(String wordUUID) {
