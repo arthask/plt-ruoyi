@@ -5,13 +5,11 @@ import com.ruoyi.system.domain.dto.flashcard.card.AddCardDto;
 import com.ruoyi.system.domain.dto.flashcard.card.CardInfo;
 import com.ruoyi.system.gencode.entity.Flashcard;
 import com.ruoyi.system.gencode.entity.PackageCardRef;
+import com.ruoyi.system.gencode.entity.Question;
 import com.ruoyi.system.gencode.entity.Word;
 import com.ruoyi.system.gencode.mapper.FlashcardMapper;
-import com.ruoyi.system.gencode.service.FlashcardPackageService;
-import com.ruoyi.system.gencode.service.FlashcardService;
+import com.ruoyi.system.gencode.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.system.gencode.service.PackageCardRefService;
-import com.ruoyi.system.gencode.service.WordService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +30,9 @@ import java.util.UUID;
 public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard> implements FlashcardService {
     @Autowired
     private WordService wordService;
+
+    @Autowired
+    private QuestionService questionService;
 
     @Autowired
     private PackageCardRefService packageCardRefService;
@@ -56,6 +57,18 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
             flashcard.setUuid(flashcardUUUID);
             flashcard.setFront(word.getWord());
             flashcard.setBack(word.getTranslation());
+            flashcard.setType(addCardDto.getType());
+        }
+        if (addCardDto.getType() == 2) {
+            // 问题类型卡片
+            String questionUUID = addCardDto.getQuestionUUID();
+            Question question = questionService.getByUUID(questionUUID);
+            if(Objects.isNull(question)) {
+                return Boolean.FALSE;
+            }
+            flashcard.setUuid(flashcardUUUID);
+            flashcard.setFront(question.getQuestion());
+            flashcard.setBack(question.getAnswer());
             flashcard.setType(addCardDto.getType());
         }
         save(flashcard);

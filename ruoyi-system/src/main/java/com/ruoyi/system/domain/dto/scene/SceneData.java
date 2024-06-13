@@ -1,8 +1,12 @@
-package com.ruoyi.system.domain.dto;
+package com.ruoyi.system.domain.dto.scene;
 
 import java.util.List;
 
 public class SceneData {
+    /**
+     * uuid
+     */
+    private String uuid;
     /**
      * 用户id
      */
@@ -12,11 +16,6 @@ public class SceneData {
      */
     private String name;
 
-    /**
-     * tag id
-     */
-    private Long tagId;
-
     private List<DialogueData> dialogueDataList;
 
     public String getName() {
@@ -25,14 +24,6 @@ public class SceneData {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
     }
 
     public List<DialogueData> getDialogueDataList() {
@@ -49,5 +40,14 @@ public class SceneData {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public SceneData setUuid(String uuid) {
+        this.uuid = uuid;
+        return this;
     }
 }

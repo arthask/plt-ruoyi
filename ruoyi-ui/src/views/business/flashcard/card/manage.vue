@@ -69,8 +69,8 @@
     <!-- 添加或修改用户单词对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body destroy-on-close>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="卡包类型" prop="type">
-          <el-select v-model="form.type" placeholder="请选择卡包类型">
+        <el-form-item label="卡片类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择卡片类型">
             <el-option v-for="item in typeOptions"
                        :key="item.value"
                        :label="item.label"
@@ -83,6 +83,15 @@
             <el-option v-for="item in wordOptions"
                        :key="item.value"
                        :label="item.word"
+                       :value="item.uuid">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择问题">
+          <el-select filterable remote :remote-method="searchQuestion" v-model="form.questionUUID" placeholder="请选择问题">
+            <el-option v-for="item in questionOptions"
+                       :key="item.value"
+                       :label="item.question"
                        :value="item.uuid">
             </el-option>
           </el-select>
@@ -146,13 +155,18 @@ export default {
       form: {
         type: null,
         wordUUID: "",
+        questionUUID: "",
         packageUUID: ""
       },
       typeOptions: [{
         value: 1,
         label: '单词卡片',
+      }, {
+        value: 1,
+        label: '问题卡片',
       }],
       wordOptions: [],
+      questionOptions: [],
       packageOptions: [],
       labelType: 3,
       showSelect: true,
@@ -274,6 +288,21 @@ export default {
         searchWord(params).then(res => {
           this.wordOptions = []
           this.wordOptions = res.data
+          this.loading = false;
+        })
+      } else {
+        this.options = [];
+      }
+    },
+    searchQuestion(query) {
+      if (query !== '') {
+        this.loading = true;
+        let params = {
+          word: query
+        }
+        searchQuestion(params).then(res => {
+          this.questionOptions = []
+          this.questionOptions = res.data
           this.loading = false;
         })
       } else {

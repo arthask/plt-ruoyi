@@ -1,6 +1,14 @@
-package com.ruoyi.system.domain.dto;
+package com.ruoyi.system.domain.dto.scene;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DialogueData {
+    @JsonIgnore
+    private Long id;
+    /**
+     * uuid
+     */
+    private String uuid;
     /**
      * 发送内容
      */
@@ -14,7 +22,7 @@ public class DialogueData {
     /**
      * 在对话中的排序号
      */
-    private Long sortNum;
+    private Integer sortNum;
 
     public String getSenderContent() {
         return senderContent;
@@ -32,11 +40,29 @@ public class DialogueData {
         this.reply = reply;
     }
 
-    public Long getSortNum() {
+    public Integer getSortNum() {
         return sortNum;
     }
 
-    public void setSortNum(Long sortNum) {
+    public void setSortNum(Integer sortNum) {
         this.sortNum = sortNum;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public DialogueData setUuid(String uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public DialogueData setId(Long id) {
+        this.id = id;
+        return this;
     }
 }

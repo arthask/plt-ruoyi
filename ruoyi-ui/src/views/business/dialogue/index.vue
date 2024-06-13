@@ -80,11 +80,10 @@
     <el-table v-loading="loading" :data="dialogueList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="场景id" align="center" prop="sceneId" />
-      <el-table-column label="发送内容" align="center" prop="senderContent" />
+      <el-table-column label="问题" align="center" prop="senderContent" />
       <el-table-column label="回复" align="center" prop="reply" />
       <el-table-column label="排序号" align="center" prop="sortNum" />
-      <el-table-column label="创建人" align="center" prop="createUserId" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -116,17 +115,13 @@
     <!-- 添加或修改对话对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="场景id" prop="sceneId">
-          <el-input v-model="form.sceneId" placeholder="请输入场景id" />
-        </el-form-item>
-        <el-form-item label="发送内容">
-<!--          <editor v-model="form.senderContent" :min-height="192"/>-->
+        <el-form-item label="问题">
           <ck-editor v-model="form.senderContent" :min-height="192"></ck-editor>
         </el-form-item>
         <el-form-item label="回复" prop="reply">
           <el-input v-model="form.reply" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="在对话中的排序号" prop="sortNum">
+        <el-form-item label="排序号" prop="sortNum">
           <el-input v-model="form.sortNum" placeholder="请输入在对话中的排序号" />
         </el-form-item>
         <el-form-item label="创建人" prop="createUserId">

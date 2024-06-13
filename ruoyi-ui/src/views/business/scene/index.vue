@@ -1,18 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="tag id" prop="tagId">
+      <el-form-item label="场景名称" prop="name">
         <el-input
-          v-model="queryParams.tagId"
-          placeholder="请输入tag id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="用户id" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户id"
+          v-model="queryParams.name"
+          placeholder="请输入场景名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -32,7 +24,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:scene:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -43,7 +36,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:scene:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -54,7 +48,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:scene:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -64,17 +59,16 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:scene:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="sceneList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="tag id" align="center" prop="tagId" />
-      <el-table-column label="用户id" align="center" prop="userId" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="名称" align="center" prop="name"/>
+      <el-table-column label="创建时间" align="center" prop="createTime"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -83,21 +77,24 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:scene:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:scene:remove']"
-          >删除</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-chat-line-round"
             @click="beginConversation(scope.row)"
             v-hasPermi="['system:scene:edit']"
-          >对话</el-button>
+          >对话
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['system:scene:remove']"
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -109,45 +106,28 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改对话场景对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="tag id" prop="tagId">
-          <el-input v-model="form.tagId" placeholder="请输入tag id" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入${comment}" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
+    <el-dialog :title="title"
+               :visible.sync="showConversation" width="800px"
+               :center="true" destroy-on-close>
+      <conversation :sceneUUID="sceneUuid"></conversation>
     </el-dialog>
-    <chat-component
-      :scene-uuid = "sceneUuid"
-      v-show="showConversation"
-      @closeConversation="closeConversation"
-      @speak="speak">
-    </chat-component>
-    <el-dialog :title="title" :visible.sync="showEditScene" width="800px" append-to-body>
-      <edit-scene @closeAdd="closeAdd"></edit-scene>
+    <el-dialog :title="title"
+               :visible.sync="showEditScene" width="800px"
+               append-to-body
+               destroy-on-close>
+      <edit-scene :sceneAndDialoguesData="sceneData" @closeAdd="closeAdd"></edit-scene>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listScene, getScene, delScene, addScene, updateScene } from "@/api/conversation/scene";
-import ChatComponent from "@/views/business/scene/ChatComponent.vue";
+import {listScene, getScene, delScene, addScene, updateScene} from "@/api/conversation/scene";
 import EditScene from "@/views/business/scene/EditScene.vue";
+import Conversation from "@/views/business/scene/Conversation.vue";
 
 export default {
   name: "Scene",
-  components: {ChatComponent, EditScene},
+  components: {Conversation, EditScene},
   data() {
     return {
       // 遮罩层
@@ -173,30 +153,40 @@ export default {
         pageNum: 1,
         pageSize: 10,
         name: null,
-        tagId: null,
-        userId: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         name: [
-          { required: true, message: "名称不能为空", trigger: "blur" }
+          {required: true, message: "名称不能为空", trigger: "blur"}
         ],
         userId: [
-          { required: true, message: "$comment不能为空", trigger: "blur" }
+          {required: true, message: "$comment不能为空", trigger: "blur"}
         ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          {required: true, message: "创建时间不能为空", trigger: "blur"}
         ],
         updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
+          {required: true, message: "更新时间不能为空", trigger: "blur"}
         ]
       },
-      conversationTitle:'对话',
+      conversationTitle: '对话',
       showConversation: false,
-      showEditScene:false,
-      sceneUuid:''
+      showEditScene: false,
+      sceneUuid: '',
+      sceneData: {
+        name: '',
+        uuid: '',
+        dialogueDataList: [
+          {
+            senderContent: "",
+            reply: "",
+            uuid: null,
+            sortNum: 1
+          }
+        ]
+      },
     };
   },
   created() {
@@ -242,21 +232,37 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.ids = selection.map(item => item.uuid)
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.showEditScene = true;
+      this.title = "新增对话场景";
+      this.sceneData = {
+        name: '',
+        uuid: '',
+        dialogueDataList: [
+          {
+            senderContent: "",
+            reply: "",
+            uuid: null,
+            sortNum: 1
+          }
+        ]
+      }
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getScene(id).then(response => {
-        this.form = response.data;
-        this.open = true;
+      const id = row.uuid || this.ids
+      let params = {
+        sceneUUID: id
+      }
+      getScene(params).then(response => {
+        this.sceneData = response.data;
+        this.showEditScene = true;
         this.title = "修改对话场景";
       });
     },
@@ -283,12 +289,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除对话场景编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除对话场景编号为"' + ids + '"的数据项？').then(function () {
         return delScene(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -298,13 +305,13 @@ export default {
     },
     beginConversation(row) {
       this.showConversation = true;
+      this.title = "对话详情";
       this.sceneUuid = row.uuid
-      console.log(this.sceneUuid)
     },
     closeConversation() {
       this.showConversation = false;
     },
-    speak(content){
+    speak(content) {
       this.speakCommon.speak(content)
     },
     closeAdd() {

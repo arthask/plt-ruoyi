@@ -6,62 +6,60 @@
           <el-input v-model="sceneData.name"></el-input>
         </el-form-item>
       </el-row>
-      <el-row>
-        <el-form-item label="场景分类">
-          <el-input v-model="sceneData.tag"></el-input>
-        </el-form-item>
-      </el-row>
     </el-form>
     <el-row :gutter="20" type="flex" justify="center">
       <h2>对话设置</h2>
     </el-row>
-    <el-row :gutter="20" type="flex" justify="center">
-      <el-col :span="2">
-        编号
-        <el-input style="margin-top: 10px" v-for="n in senderContentList.length" :value="n" readonly></el-input>
+    <el-row type="flex" justify="start">
+      <el-button style="margin-top: 10px" @click.prevent="handleAdd">添加</el-button>
+    </el-row>
+    <el-row :gutter="20" v-for="(item,index) in contentList"
+            :key="index">
+      <el-col :span="10">
+        <el-input style="margin-top: 10px" v-model="item.senderContent" placeholder="请输入问题"></el-input>
       </el-col>
       <el-col :span="10">
-        问题
-        <VueDraggable
-          v-model="senderContentList"
-          animation="500"
-          ghostClass="ghost"
-          @end="onEnd"
-        >
-          <el-input style="margin-top: 10px" v-for="(item,index) in senderContentList"
-                    :key="`${new Date() + '-'+index}`"
-                    v-model="item.senderContent" placeholder="请输入内容"></el-input>
-        </VueDraggable>
+        <el-input style="margin-top: 10px" v-model="item.reply" placeholder="请输入回复"></el-input>
       </el-col>
-      <el-col :span="10">
-        回复
-        <VueDraggable
-          v-model="replyContentList"
-          animation="500"
-          ghostClass="ghost"
-        >
-          <el-input style="margin-top: 10px" v-for="(item,index) in replyContentList"
-                    :key="`${new Date() + index}`"
-                    v-model="item.reply" placeholder="请输入内容"></el-input>
-        </VueDraggable>
-
+      <el-col :span="4">
+        <el-button style="margin-top: 10px" @click.prevent="remove(index)">删除</el-button>
       </el-col>
     </el-row>
     <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
       <el-col :span="10"></el-col>
       <el-col :span="4">
-        <el-button type="primary" @click="add">立即创建</el-button>
+        <el-button type="primary" @click="submit">提交</el-button>
       </el-col>
     </el-row>
-
   </div>
 </template>
 <script>
 
-import * as VueDraggable from "vuedraggable";
-import {addDialogueScene} from "@/api/conversation/scene"
+import {VueDraggable} from "vue-draggable-plus";
+import {addDialogueScene, updateScene} from "@/api/conversation/scene"
 
 export default {
+  props: {
+    sceneAndDialoguesData: {
+      type: Object
+    },
+  },
+  watch: {
+    sceneAndDialoguesData(newValue) {
+      if (newValue) {
+        this.sceneData = newValue
+        if (this.sceneData.dialogueDataList && this.sceneData.dialogueDataList.length > 0) {
+          this.contentList = this.sceneData.dialogueDataList
+        }
+      }
+    }
+  },
+  created() {
+    this.sceneData = this.sceneAndDialoguesData
+    if (this.sceneData.dialogueDataList && this.sceneData.dialogueDataList.length > 0) {
+      this.contentList = this.sceneData.dialogueDataList
+    }
+  },
   components: {
     VueDraggable
   },
@@ -69,48 +67,79 @@ export default {
     return {
       sceneData: {
         name: '',
-        tag: 1,
+        uuid: '',
+        dialogueDataList: []
       },
-      senderContentList: [
-        {senderContent: "hello", sort: 1},
-        {senderContent: "hello2", sort: 2},
+      contentList: [
         {
-          senderContent: "nice to meet you1",
-          sortNum: 1
+          senderContent: "",
+          reply: "",
+          sortNum: null,
+          uuid: null
         },
-        {senderContent: "nice to meet you1", sort: 1}
-      ],
-      replyContentList: [
-        {reply: "nice to meet you", sort: 1},
-        {
-          reply: "nice to meet you1",
-          sort: 1
-        },
-        {reply: "nice to meet you1", sort: 1}, {reply: "nice to meet you1", sort: 1}
       ]
     }
   },
   methods: {
-    async add() {
-      for (let i = 0; i < this.senderContentList.length; i++) {
-        this.senderContentList[i].sortNum = i + 1
-        this.senderContentList[i].reply = this.replyContentList[i].reply
+    submit() {
+      for (let i = 0; i < this.contentList.length; i++) {
+        this.contentList[i].sortNum = i + 1
       }
-      var data = {
-        name: this.sceneData.name,
-        tagId: this.sceneData.tag,
-        dialogueDataList: this.senderContentList
+      if (this.sceneData.uuid) {
+        const data = {
+          name: this.sceneData.name,
+          uuid: this.sceneData.uuid,
+          dialogueDataList: this.contentList
+        };
+        updateScene(data).then(res => {
+          this.$modal.msgSuccess("修改成功");
+          this.$emit("closeAdd")
+          this.reset()
+        })
+      } else {
+        const data = {
+          name: this.contentList[0].senderContent,
+          dialogueDataList: this.contentList
+        };
+        addDialogueScene(data).then(res => {
+          this.$modal.msgSuccess("新增成功");
+          this.$emit("closeAdd")
+          this.reset()
+        })
       }
-      await addDialogueScene(data).then(res => {
-        this.$modal.msgSuccess("新增成功");
-        this.$emit("closeAdd")
-      })
+
     },
     onEnd(event) {
-      console.log(this.senderContentList)
-      for (let i = 0; i < this.senderContentList.length; i++) {
-        this.senderContentList[i].sortNum = i + 1;
+      console.log(this.contentList)
+      for (let i = 0; i < this.contentList.length; i++) {
+        this.contentList[i].sortNum = i + 1;
       }
+    },
+    handleAdd() {
+      this.contentList.push({
+        senderContent: "",
+        reply: "",
+        sortNum: null,
+        uuid: null
+      },)
+    },
+    remove(index) {
+      if (this.contentList.length === 1) {
+        this.$modal.msgWarning("再删除就没有了呢");
+        return
+      }
+      this.contentList.splice(index, 1)
+    },
+    reset() {
+      this.sceneData.name = null
+      this.uuid = null
+      this.dialogueDataList = []
+      this.contentList = [{
+        senderContent: "",
+        reply: "",
+        sortNum: null,
+        uuid: null
+      }]
     }
   }
 }
