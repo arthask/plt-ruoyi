@@ -15,5 +15,38 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface FlashcardMapper extends BaseMapper<Flashcard> {
-    Flashcard getCardOfPackage(@Param("packageUUID") String packageUUID,@Param("offset") Integer offset);
+    /**
+     * 获取卡包中的一张卡片
+     *
+     * @param packageUUID 卡包uuid
+     * @param offset      第几张卡片，下标从0开始
+     * @return
+     */
+    Flashcard getCardOfPackage(@Param("packageUUID") String packageUUID, @Param("offset") Integer offset);
+
+    /**
+     * 获取卡包中的卡片数量
+     *
+     * @param packageUUID 卡包uuid
+     * @return
+     */
+    Long getCardCountOfPackage(@Param("packageUUID") String packageUUID);
+
+    /**
+     * 获取卡包中指定类型的的一张卡片
+     *
+     * @param packageUUID 卡包uuid
+     * @param offset      第几张卡片，下标从0开始
+     * @return
+     */
+    Flashcard getCardByType(@Param("packageUUID") String packageUUID, @Param("type") Integer type,
+                            @Param("offset") Integer offset);
+
+    /**
+     * 获取卡包中的卡片数量
+     *
+     * @param packageUUID 卡包uuid
+     * @return
+     */
+    Long getCardCountByType(@Param("packageUUID") String packageUUID, @Param("type") Integer type);
 }

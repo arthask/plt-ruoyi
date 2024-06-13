@@ -4,11 +4,11 @@
          :key="item.uuid"
          style="margin-top: 10px">
       <el-row :gutter="20" type="flex" justify="space-around">
-        <el-col :span="10">
+        <el-col :span="12">
           <div class="chat-bubble-left" @click="playAudio(item.senderContent)">{{ item.senderContent }}
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="2">
         </el-col>
         <el-col :span="10">
         </el-col>
@@ -16,9 +16,9 @@
       <el-row :gutter="20" type="flex" justify="space-around" v-if="item.reply">
         <el-col :span="10">
         </el-col>
-        <el-col :span="4">
+        <el-col :span="2">
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <div class="chat-bubble-right" @click="playAudio(item.reply)">{{ item.reply }}
           </div>
         </el-col>

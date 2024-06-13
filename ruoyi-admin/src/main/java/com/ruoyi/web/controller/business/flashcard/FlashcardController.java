@@ -62,7 +62,6 @@ public class FlashcardController extends BaseController {
         return AjaxResult.success();
     }
 
-
     /**
      * 获取卡包中的一张闪卡
      */
@@ -70,5 +69,12 @@ public class FlashcardController extends BaseController {
     public AjaxResult getCardOfPackage(@RequestParam("packageUUID") String packageUUID,
                                        @RequestParam("offset") Integer offset) {
         return AjaxResult.success(flashcardService.getCardOfPackage(packageUUID, offset));
+    }
+
+    @GetMapping("/searchClassifyCard")
+    public AjaxResult searchClassifyCard(@RequestParam("packageUUID") String packageUUID,
+                                         @RequestParam("offset") Integer offset,
+                                         @RequestParam("type") Integer type) {
+        return AjaxResult.success(flashcardService.searchClassifyCard(packageUUID, type, offset));
     }
 }

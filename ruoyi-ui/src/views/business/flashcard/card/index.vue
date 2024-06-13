@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top:10px">
     <el-row>
-      <el-col :span="18">
+      <el-col :span="18" v-if="showCard">
         <word-card
           :headerFront="headerFront"
           :footerFront="footerFront"
@@ -22,13 +22,15 @@
             :value="item.uuid">
           </el-option>
         </el-select>
-        <div v-for="item in tag" :key="item.name" class="tag">
-          {{ item.name }}
-          <p>{{ item.count }}</p>
+        <div v-if="showCard">
+          <div v-for="item in tag" :key="item.name" class="tag" @click="searchClassifyCard(item.type)">
+            {{ item.name }}
+            <p>{{ item.count }}</p>
+          </div>
         </div>
       </el-col>
     </el-row>
-    <el-row :gutter="20" type="flex">
+    <el-row :gutter="20" type="flex" justify="left" v-if="showCard">
       <el-col :span="5">
       </el-col>
       <el-col :span="3">
@@ -46,7 +48,8 @@
 <script>
 import WordCard from './WordCard.vue'
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
-import {getCardOfPackage, getClassifyCount, studyCard} from "@/api/bussiness/flashcard";
+import {getCardOfPackage, getClassifyCount, searchClassifyCard, studyCard} from "@/api/bussiness/flashcard";
+import {type} from "chalk";
 
 export default {
   components: {WordCard},
@@ -58,62 +61,92 @@ export default {
         flashcardId: [],
       },
       tag: [],
-      colorFront: '#E6A23C',
+      colorFront: 'rgba(140,0,255,0.75)',
       colorTextFront: 'white',
       question: 'hello this is a flashcard',
       answer: 'with animation',
       footerFront: "",
       headerFront: "",
-      packageUUID: "",
+      packageUUID: null,
       cardUUID: "",
-      offset: 0
+      offset: 0,
+      cardCount: 0,
+      type: null
+    }
+  },
+  computed: {
+    showCard: {
+      get() {
+        if (!this.packageUUID) {
+          return false
+        }
+        return this.cardUUID;
 
+      },
+      cache: false,
     }
   },
   created() {
     getPackageList().then(res => {
       this.options = res.data;
-      console.log(this.options)
     })
   },
   methods: {
     load() {
       this.count += 2
     },
-    getCardOfPackage(uuid) {
-      this.packageUUID = uuid
+    searchCardByType() {
       let params = {
         packageUUID: this.packageUUID,
+        type: this.type,
         offset: this.offset
       }
-      getCardOfPackage(params).then(res => {
+      searchClassifyCard(params).then(res => {
         if (res.data && res.data.uuid) {
           this.question = res.data.front
           this.answer = res.data.back
           this.cardUUID = res.data.uuid
-        } else {
-          this.offset = 0;
+          this.cardCount = res.data.packageInfoDto.cardCount
         }
       })
-      this.getCount()
+    }, getCard() {
+      if (this.type) {
+        this.searchCardByType();
+      } else {
+        let params = {
+          packageUUID: this.packageUUID,
+          offset: this.offset
+        }
+        getCardOfPackage(params).then(res => {
+          this.cardUUID = ""
+          if (res.data && res.data.uuid) {
+            this.question = res.data.front
+            this.answer = res.data.back
+            this.cardUUID = res.data.uuid
+            this.cardCount = res.data.packageInfoDto.cardCount
+          }
+          this.getCount()
+        })
+      }
+    },
+    getCardOfPackage(uuid) {
+      this.offset = 0;
+      if (!uuid) {
+        return;
+      }
+      this.packageUUID = uuid
+      this.getCard();
     },
     nextCard() {
-      this.offset++;
-      let params = {
-        packageUUID: this.packageUUID,
-        offset: this.offset
+      if (this.offset + 1 >= this.cardCount) {
+        this.$modal.msgWarning("已经到最后了呢");
+        return;
       }
-      getCardOfPackage(params).then(res => {
-        if (res.data && res.data.uuid) {
-          this.question = res.data.front
-          this.answer = res.data.back
-          this.cardUUID = res.data.uuid
-        } else {
-          this.question = ""
-          this.answer = ""
-          this.offset = -1;
-        }
-      })
+      if (!this.packageUUID) {
+        return;
+      }
+      this.offset++;
+      this.getCard();
     },
     study(familiarity) {
       let params = {
@@ -126,7 +159,6 @@ export default {
       this.nextCard();
     },
     getCount() {
-      console.log(this.packageUUID)
       let params = {
         packageUUID: this.packageUUID,
       }
@@ -136,31 +168,25 @@ export default {
           res.data.forEach((value, key) => {
             let item = {
               name: "",
-              count: value.count
+              count: value.count,
+              type: value.familiarity
             }
-            if (key === 0) {
+            if (value.familiarity === 0) {
               item.name = "不会"
-            } else if (key === 1) {
+            } else if (value.familiarity === 1) {
               item.name = "会"
-            } else if (key === 2) {
+            } else if (value.familiarity === 2) {
               item.name = "待定"
             }
             this.tag.push(item)
           });
-        } else {
-          this.tag = [{
-            name: "不会",
-            count: 0
-          }, {
-            name: "会",
-            count: 0
-          }, {
-            name: "待定",
-            count: 0
-          }
-          ];
         }
       })
+    },
+    searchClassifyCard(type) {
+      this.type = type
+      this.offset = 0;
+      this.searchCardByType()
     }
   }
 }
@@ -176,11 +202,16 @@ export default {
   border-radius: 10px;
   margin: 20px;
   padding: 17px;
-  background: #F56C6C;
+  background: rgba(140, 0, 255, 0.62);
   width: 80%;
   height: 100px;
-  cursor: pointer;
   text-align: center;
   color: white;
+}
+
+.tag:hover {
+  cursor: pointer; /* 鼠标样式变为手型 */
+  transform: scale(1.1); /* 放大效果 */
+  background: rgba(140, 0, 255, 0.76);
 }
 </style>
