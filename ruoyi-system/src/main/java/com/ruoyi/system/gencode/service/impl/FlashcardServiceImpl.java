@@ -3,6 +3,7 @@ package com.ruoyi.system.gencode.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.system.domain.dto.flashcard.card.AddCardDto;
 import com.ruoyi.system.domain.dto.flashcard.card.CardInfo;
+import com.ruoyi.system.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.ruoyi.system.gencode.entity.Flashcard;
 import com.ruoyi.system.gencode.entity.PackageCardRef;
 import com.ruoyi.system.gencode.entity.Question;
@@ -11,6 +12,7 @@ import com.ruoyi.system.gencode.mapper.FlashcardMapper;
 import com.ruoyi.system.gencode.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,8 +85,17 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     }
 
     @Override
-    public Flashcard getCardOfPackage(String packageUUID,Integer offset) {
-        return flashcardMapper.getCardOfPackage(packageUUID, offset);
+    public CardInfo getCardOfPackage(String packageUUID,Integer offset) {
+        CardInfo cardInfo = new CardInfo();
+        Flashcard cardOfPackage = flashcardMapper.getCardOfPackage(packageUUID, offset);
+        if (Objects.nonNull(cardOfPackage)) {
+            BeanUtils.copyProperties(cardOfPackage, cardInfo);
+        }
+        Long cardCountOfPackage = flashcardMapper.getCardCountOfPackage(packageUUID);
+        PackageInfoDto packageInfoDto = new PackageInfoDto();
+        packageInfoDto.setCardCount(cardCountOfPackage);
+        cardInfo.setPackageInfoDto(packageInfoDto);
+        return cardInfo;
     }
 
     @Override
@@ -92,5 +103,19 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
         QueryWrapper<Flashcard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", cardUUID);
         return getOne(queryWrapper);
+    }
+
+    @Override
+    public CardInfo searchClassifyCard(String packageUUID, Integer type, Integer offset) {
+        CardInfo cardInfo = new CardInfo();
+        Flashcard cardOfPackage = flashcardMapper.getCardByType(packageUUID, type, offset);
+        if (Objects.nonNull(cardOfPackage)) {
+            BeanUtils.copyProperties(cardOfPackage, cardInfo);
+        }
+        Long cardCountOfPackage = flashcardMapper.getCardCountByType(packageUUID, type);
+        PackageInfoDto packageInfoDto = new PackageInfoDto();
+        packageInfoDto.setCardCount(cardCountOfPackage);
+        cardInfo.setPackageInfoDto(packageInfoDto);
+        return cardInfo;
     }
 }

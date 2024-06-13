@@ -61,3 +61,11 @@ export function getClassifyCount(params) {
     params: params
   })
 }
+
+export function searchClassifyCard(params) {
+  return request({
+    url: '/flashcard/searchClassifyCard',
+    method: 'get',
+    params: params
+  })
+}

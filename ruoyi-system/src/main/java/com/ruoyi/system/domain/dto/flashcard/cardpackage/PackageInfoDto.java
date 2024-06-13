@@ -14,6 +14,10 @@ public class PackageInfoDto {
      */
     private String name;
     /**
+     * 卡包中的卡片数量
+     */
+    private Long cardCount;
+    /**
      * 卡包类型
      */
     private Integer type;
@@ -55,6 +59,15 @@ public class PackageInfoDto {
 
     public PackageInfoDto setLabelInfos(List<LabelInfo> labelInfos) {
         this.labelInfos = labelInfos;
+        return this;
+    }
+
+    public Long getCardCount() {
+        return cardCount;
+    }
+
+    public PackageInfoDto setCardCount(Long cardCount) {
+        this.cardCount = cardCount;
         return this;
     }
 }

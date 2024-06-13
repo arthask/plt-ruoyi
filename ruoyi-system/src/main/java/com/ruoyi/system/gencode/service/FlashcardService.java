@@ -28,7 +28,7 @@ public interface FlashcardService extends IService<Flashcard> {
      * @param packageUUID 卡包uuid
      * @return
      */
-    Flashcard getCardOfPackage(String packageUUID,Integer offset);
+    CardInfo getCardOfPackage(String packageUUID,Integer offset);
 
     /**
      * 通过uuid获取卡片
@@ -36,4 +36,6 @@ public interface FlashcardService extends IService<Flashcard> {
      * @return
      */
     Flashcard getCardByUUId(String cardUUID);
+
+    CardInfo searchClassifyCard(String packageUUID,Integer type, Integer offset);
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.utils.uuid.UUID;
 import com.ruoyi.system.gencode.entity.Flashcard;
 import com.ruoyi.system.gencode.entity.FlashcardAttribute;
+import com.ruoyi.system.gencode.entity.Question;
 import com.ruoyi.system.gencode.mapper.FlashcardAttributeMapper;
 import com.ruoyi.system.gencode.service.FlashcardAttributeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -36,8 +37,10 @@ public class FlashcardAttributeServiceImpl extends ServiceImpl<FlashcardAttribut
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void studyCard(String cardUUID, Integer familiarity) {
-        Flashcard card = flashcardService.getCardByUUId(cardUUID);
-        if (Objects.isNull(card)) {
+        QueryWrapper<FlashcardAttribute> flashcardAttributeQueryWrapper = new QueryWrapper<>();
+        flashcardAttributeQueryWrapper.eq("card_uuid", cardUUID);
+        FlashcardAttribute attribute = getOne(flashcardAttributeQueryWrapper);
+        if (Objects.isNull(attribute)) {
             // 标记卡片
             FlashcardAttribute flashcardAttribute = new FlashcardAttribute();
             flashcardAttribute.setCardUuid(cardUUID);
@@ -47,7 +50,7 @@ public class FlashcardAttributeServiceImpl extends ServiceImpl<FlashcardAttribut
         } else {
             // 修改熟练类型
             FlashcardAttribute flashcardAttribute = new FlashcardAttribute();
-            flashcardAttribute.setId(card.getId());
+            flashcardAttribute.setId(attribute.getId());
             flashcardAttribute.setFamiliarity(familiarity);
             flashcardAttribute.setUpdateTime(LocalDateTime.now());
             updateById(flashcardAttribute);

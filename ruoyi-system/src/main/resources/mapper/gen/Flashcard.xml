@@ -24,5 +24,25 @@
         where pcr.package_uuid = #{packageUUID}
         limit #{offset},1;
     </select>
+    <select id="getCardCountOfPackage" resultType="java.lang.Long">
+        select count(*) from package_card_ref pcr
+                            left join flashcard f on pcr.card_uuid = f.uuid
+        where pcr.package_uuid = #{packageUUID}
+    </select>
+    <select id="getCardByType" resultType="com.ruoyi.system.gencode.entity.Flashcard">
+        select f.* from package_card_ref pcr
+                            left join flashcard f on pcr.card_uuid = f.uuid
+                            left join flashcard_attribute fa on f.uuid = fa.card_uuid
+        where pcr.package_uuid = #{packageUUID}
+            and fa.familiarity = #{type}
+            limit #{offset},1;
+    </select>
+    <select id="getCardCountByType" resultType="java.lang.Long">
+        select count(*) from package_card_ref pcr
+                            left join flashcard f on pcr.card_uuid = f.uuid
+                            left join flashcard_attribute fa on f.uuid = fa.card_uuid
+        where pcr.package_uuid = #{packageUUID}
+          and fa.familiarity = #{type}
+    </select>
 
 </mapper>
