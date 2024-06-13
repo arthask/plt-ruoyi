@@ -38,4 +38,11 @@ public interface DialogueSceneService extends IService<DialogueScene> {
      * @return
      */
     SceneData getDialogueSceneInfo(String sceneUUID);
+
+    /**
+     * 删除场景对话
+     * @param uuids
+     * @return
+     */
+    String removeScene(String[] uuids);
 }

@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.statistics;
+package com.ruoyi.web.controller.business.statistics;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;

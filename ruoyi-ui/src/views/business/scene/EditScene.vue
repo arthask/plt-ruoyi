@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="form" :model="sceneData" label-width="80px">
+    <el-form ref="form" :model="sceneData" label-width="80px" v-if="showName">
       <el-row>
         <el-form-item label="场景名称">
           <el-input v-model="sceneData.name"></el-input>
@@ -60,6 +60,13 @@ export default {
       this.contentList = this.sceneData.dialogueDataList
     }
   },
+  computed: {
+    showName() {
+      if (this.sceneData.uuid) {
+        return true
+      }
+    }
+  },
   components: {
     VueDraggable
   },
@@ -85,11 +92,17 @@ export default {
       for (let i = 0; i < this.contentList.length; i++) {
         this.contentList[i].sortNum = i + 1
       }
+      var validList = this.contentList.filter(e => {
+        if (e.senderContent || e.reply) {
+          return true;
+        }
+        return false
+      });
       if (this.sceneData.uuid) {
         const data = {
           name: this.sceneData.name,
           uuid: this.sceneData.uuid,
-          dialogueDataList: this.contentList
+          dialogueDataList: validList
         };
         updateScene(data).then(res => {
           this.$modal.msgSuccess("修改成功");
@@ -98,16 +111,15 @@ export default {
         })
       } else {
         const data = {
-          name: this.contentList[0].senderContent,
-          dialogueDataList: this.contentList
-        };
+          name: validList[0].senderContent,
+          dialogueDataList: validList
+        }
         addDialogueScene(data).then(res => {
           this.$modal.msgSuccess("新增成功");
           this.$emit("closeAdd")
           this.reset()
         })
       }
-
     },
     onEnd(event) {
       console.log(this.contentList)

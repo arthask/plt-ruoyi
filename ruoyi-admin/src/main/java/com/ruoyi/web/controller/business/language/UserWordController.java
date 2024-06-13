@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.business;
+package com.ruoyi.web.controller.business.language;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.annotation.Log;
