@@ -17,7 +17,7 @@
     <sql id="Base_Column_List">
         id, uuid, card_uuid, familiarity, next_study_time, create_time, update_time
     </sql>
-    <select id="getClassifyCount" resultType="java.util.Map">
+    <select id="getClassifyCount" resultType="com.ruoyi.system.domain.dto.flashcard.cardattribute.ClassifyCountVo">
         select familiarity, count(*) as count from 	flashcard_attribute fa
             left join package_card_ref pcr on  pcr.card_uuid  = fa.card_uuid
             left join flashcard_package fp on fp.uuid = pcr.package_uuid

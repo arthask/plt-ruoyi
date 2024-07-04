@@ -1,5 +1,6 @@
 package com.ruoyi.system.gencode.mapper;
 
+import com.ruoyi.system.domain.dto.flashcard.cardattribute.ClassifyCountVo;
 import com.ruoyi.system.gencode.entity.FlashcardAttribute;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.MapKey;
@@ -24,5 +25,5 @@ public interface FlashcardAttributeMapper extends BaseMapper<FlashcardAttribute>
      * @param packageUUID packageUUID
      * @return
      */
-    List<Map<Integer, Long>> getClassifyCount(@Param("packageUUID") String packageUUID);
+    List<ClassifyCountVo> getClassifyCount(@Param("packageUUID") String packageUUID);
 }

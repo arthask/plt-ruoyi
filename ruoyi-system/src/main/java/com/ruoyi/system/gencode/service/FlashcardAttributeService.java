@@ -1,5 +1,6 @@
 package com.ruoyi.system.gencode.service;
 
+import com.ruoyi.system.domain.dto.flashcard.cardattribute.ClassifyCountVo;
 import com.ruoyi.system.gencode.entity.FlashcardAttribute;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -27,7 +28,7 @@ public interface FlashcardAttributeService extends IService<FlashcardAttribute> 
      * 获取分类数量
      * @return
      */
-    List<Map<Integer, Long>> getClassifyCount(String packageUUID);
+    List<ClassifyCountVo> getClassifyCount(String packageUUID);
 
 
 }

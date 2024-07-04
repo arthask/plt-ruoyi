@@ -2,6 +2,7 @@ package com.ruoyi.system.gencode.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.utils.uuid.UUID;
+import com.ruoyi.system.domain.dto.flashcard.cardattribute.ClassifyCountVo;
 import com.ruoyi.system.gencode.entity.Flashcard;
 import com.ruoyi.system.gencode.entity.FlashcardAttribute;
 import com.ruoyi.system.gencode.entity.Question;
@@ -12,11 +13,12 @@ import com.ruoyi.system.gencode.service.FlashcardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -58,7 +60,28 @@ public class FlashcardAttributeServiceImpl extends ServiceImpl<FlashcardAttribut
     }
 
     @Override
-    public List<Map<Integer, Long>> getClassifyCount(String packageUUID) {
-        return flashcardAttributeMapper.getClassifyCount(packageUUID);
+    public List<ClassifyCountVo> getClassifyCount(String packageUUID) {
+        List<ClassifyCountVo> classifyCountVos = flashcardAttributeMapper.getClassifyCount(packageUUID);
+        List<ClassifyCountVo> result = new ArrayList<>();
+        for (int i =0 ; i < 3; i++) {
+            ClassifyCountVo classifyCountVo = new ClassifyCountVo();
+            classifyCountVo.setCount(0L);
+            classifyCountVo.setFamiliarity(i);
+            classifyCountVo.setNameByFamiliarity(i);
+            result.add(classifyCountVo);
+        }
+        if (CollectionUtils.isEmpty(classifyCountVos)) {
+            return result;
+        }
+        Map<Integer, ClassifyCountVo> classifyCountVoMap = result.stream()
+                .collect(Collectors.toMap(ClassifyCountVo::getFamiliarity, Function.identity()));
+
+        classifyCountVos.forEach(e -> {
+            if (classifyCountVoMap.containsKey(e.getFamiliarity())) {
+                ClassifyCountVo classifyCountVo = classifyCountVoMap.get(e.getFamiliarity());
+                classifyCountVo.setCount(e.getCount());
+            }
+        });
+        return result;
     }
 }
