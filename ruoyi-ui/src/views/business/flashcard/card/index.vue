@@ -49,7 +49,6 @@
 import WordCard from './WordCard.vue'
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
 import {getCardOfPackage, getClassifyCount, searchClassifyCard, studyCard} from "@/api/bussiness/flashcard";
-import {type} from "chalk";
 
 export default {
   components: {WordCard},
@@ -92,9 +91,6 @@ export default {
     })
   },
   methods: {
-    load() {
-      this.count += 2
-    },
     searchCardByType() {
       let params = {
         packageUUID: this.packageUUID,
@@ -107,9 +103,12 @@ export default {
           this.answer = res.data.back
           this.cardUUID = res.data.uuid
           this.cardCount = res.data.packageInfoDto.cardCount
+        } else {
+          this.$modal.msgWarning("没有这个类型的卡片了呢！");
         }
       })
-    }, getCard() {
+    },
+    getCard() {
       if (this.type) {
         this.searchCardByType();
       } else {
@@ -125,12 +124,13 @@ export default {
             this.cardUUID = res.data.uuid
             this.cardCount = res.data.packageInfoDto.cardCount
           }
-          this.getCount()
         })
       }
+      this.getCount()
     },
     getCardOfPackage(uuid) {
       this.offset = 0;
+      this.type = null;
       if (!uuid) {
         return;
       }
@@ -165,21 +165,26 @@ export default {
       getClassifyCount(params).then(res => {
         this.tag = []
         if (res.data && res.data.length > 0) {
-          res.data.forEach((value, key) => {
+          res.data.forEach((value) => {
             let item = {
-              name: "",
+              name: value.name,
               count: value.count,
               type: value.familiarity
             }
-            if (value.familiarity === 0) {
-              item.name = "不会"
-            } else if (value.familiarity === 1) {
-              item.name = "会"
-            } else if (value.familiarity === 2) {
-              item.name = "待定"
-            }
             this.tag.push(item)
           });
+        } else {
+          this.tag = [{
+            name: "不会",
+            count: 0
+          }, {
+            name: "会",
+            count: 0
+          }, {
+            name: "待定",
+            count: 0
+          }
+          ];
         }
       })
     },
