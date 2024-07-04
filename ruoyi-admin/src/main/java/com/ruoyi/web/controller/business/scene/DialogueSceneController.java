@@ -75,7 +75,7 @@ public class DialogueSceneController extends BaseController {
     }
 
     /**
-     * 删除词库
+     * 删除对话场景
      */
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {

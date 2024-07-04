@@ -173,18 +173,6 @@ export default {
             }
             this.tag.push(item)
           });
-        } else {
-          this.tag = [{
-            name: "不会",
-            count: 0
-          }, {
-            name: "会",
-            count: 0
-          }, {
-            name: "待定",
-            count: 0
-          }
-          ];
         }
       })
     },
