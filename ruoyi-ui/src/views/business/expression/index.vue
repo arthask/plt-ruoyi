@@ -1,8 +1,17 @@
 <script>
-import {listExpression, getExpression, addExpression} from "@/api/bussiness/expression";
+import {
+  listExpression,
+  getExpression,
+  addExpression,
+  updateExpression,
+  delExpression
+} from "@/api/bussiness/expression";
+import ExpressionDetail from "@/views/business/expression/ExpressionDetail.vue";
+
 
 export default {
   name: "Expression.vue",
+  components: {ExpressionDetail},
   data() {
     return {
       // 遮罩层
@@ -31,12 +40,21 @@ export default {
       },
       // 表单参数
       form: {
+        uuid: '',
         content: '',
-        expressionDetailData: {
+        expressionDetailData: [{
+          uuid: '',
           content: ''
-        }
+        }]
       },
-      showAdd: false,
+      addContent: '',
+      appendContent: '',
+      showEditor: false,
+      showAppend: false,
+      showDialog: false,
+      showHistory: false,
+      expressionUUID: '',
+      details: []
     };
   },
   created() {
@@ -60,11 +78,12 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        uuid: '',
         content: '',
-          expressionDetailData: {
-          content: ''
-        }
+        expressionDetailData: []
       }
+      this.appendContent = ''
+      this.addContent = ''
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -86,53 +105,140 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()
-      this.showAdd = true;
+      this.showDialog = true;
       this.title = "新增表达";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.reset()
+      this.showDialog = true;
+      this.showEditor = true;
+      this.title = "编辑表达";
       const id = row.uuid || this.ids
       let params = {
-        sceneUUID: id
+        expressionUUID: id
       }
       getExpression(params).then(response => {
-        this.sceneData = response.data;
-        this.showEditScene = true;
-        this.title = "修改表达";
+        this.form.uuid = response.data.uuid
+        this.form.content = response.data.content
+        if (response.data.expressionDetailData && response.data.expressionDetailData.length > 0) {
+          this.form.expressionDetailData = response.data.expressionDetailData
+        }
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.uuid || this.ids;
       this.$modal.confirm('是否确认删除选中数据项？').then(function () {
-        return delScene(ids);
+        return delExpression(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
       });
     },
-    closeAdd() {
-      this.showAdd = false;
+    closeDialog() {
+      this.showDialog = false;
+      this.showAppend = false
+      this.showHistory = false
+      this.showEditor = false
       this.getList();
     },
-    onSubmit() {
+    doUpdateExpression() {
+      let params = {
+        uuid: this.form.uuid,
+        content: this.form.content,
+        expressionDetailData: this.form.expressionDetailData
+      }
+      updateExpression(params).then(res => {
+        if (res.data === true) {
+          this.$modal.msgSuccess("修改成功");
+          this.showDialog = false
+          this.showEditor = false
+          this.reset()
+          this.getList()
+        } else {
+          this.$modal.msgSuccess("修改失败！");
+        }
+      })
+    }, doAddExpression() {
       let params = {
         content: this.form.content,
         expressionDetailData: [
           {
-            content: this.form.expressionDetailData.content
+            content: this.addContent
           }
         ]
       }
       addExpression(params).then(res => {
         if (res.data === true) {
           this.$modal.msgSuccess("添加成功");
-          this.showAdd = false
+          this.showDialog = false
           this.reset()
           this.getList()
+        } else {
+          this.$modal.msgSuccess("添加失败");
         }
       })
+    }, doAppendExpression() {
+      let params = {
+        uuid: this.form.uuid,
+        content: this.form.content,
+        expressionDetailData: [
+          {
+            content: this.appendContent
+          }
+        ]
+      }
+      addExpression(params).then(res => {
+        if (res.data === true) {
+          this.$modal.msgSuccess("添加成功");
+          this.showDialog = false
+          this.showAppend = false
+          this.reset()
+          this.getList()
+        } else {
+          this.$modal.msgSuccess("添加失败！");
+        }
+      })
+    }, onSubmit() {
+      if (this.form.uuid) {
+        if (this.showAppend) {
+          this.doAppendExpression();
+        } else {
+          this.doUpdateExpression();
+        }
+      } else {
+        this.doAddExpression();
+      }
+    },
+    handleAppend(row) {
+      this.reset()
+      const id = row.uuid || this.ids
+      let params = {
+        expressionUUID: id
+      }
+      getExpression(params).then(response => {
+        this.form.uuid = response.data.uuid
+        this.form.content = response.data.content
+      })
+      this.showDialog = true;
+      this.title = "追加表达";
+      this.showAppend = true;
+    },
+    handleShowHistory(row) {
+      this.showHistory = true
+      let params = {
+        expressionUUID: row.uuid
+      }
+      getExpression(params).then(response => {
+        if (response.data.expressionDetailData && response.data.expressionDetailData.length > 0) {
+          this.details = response.data.expressionDetailData
+        }
+      });
+    },
+    closeHistory() {
+      this.showHistory = false
     }
   }
 }
@@ -196,9 +302,14 @@ export default {
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-chat-line-round"
-            @click=""
+            @click="handleAppend(scope.row)"
           >添加表达
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleShowHistory(scope.row)"
+          >查看历史
           </el-button>
           <el-button
             size="mini"
@@ -219,26 +330,44 @@ export default {
       @pagination="getList"
     />
     <el-dialog :title="title"
-               :visible.sync="showAdd" width="800px"
+               :visible.sync="showDialog" width="800px"
                :center="true"
                :destroy-on-close="true">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="想说">
-          <el-input type="textarea" v-model="form.content" rows="3" resize="none"></el-input>
+
+          <el-input type="textarea" v-if="showAppend" disabled v-model="form.content" rows="3" resize="none"></el-input>
+          <el-input type="textarea" v-else v-model="form.content" rows="3" resize="none"></el-input>
         </el-form-item>
-        <el-form-item label="怎么说">
-          <el-input type="textarea" v-model="form.expressionDetailData.content" rows="4" resize="none"></el-input>
+        <el-form-item v-if="showEditor"
+                      v-for="(item, index) in form.expressionDetailData"
+                      :key="item.uuid"
+                      label="表达">
+          <el-input type="textarea" v-model="item.content" rows="4" resize="none"></el-input>
+        </el-form-item>
+        <el-form-item label="怎么说" v-show="!showEditor">
+          <el-input type="textarea" v-if="showAppend" v-model="appendContent" rows="4" resize="none"></el-input>
+          <el-input type="textarea" v-else v-model="addContent" rows="4"
+                    resize="none"></el-input>
         </el-form-item>
       </el-form>
       <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
         <el-col :span="10"></el-col>
         <el-col :span="4">
-          <el-button type="primary" @click="onSubmit">立即创建</el-button>
+          <el-button type="primary" @click="onSubmit">提交</el-button>
         </el-col>
         <el-col :span="4">
-          <el-button type="primary" @click="closeAdd">取消</el-button>
+          <el-button type="primary" @click="closeDialog">取消</el-button>
         </el-col>
       </el-row>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="showHistory" width="800px"
+      :center="true"
+      :destroy-on-close="true"
+      :before-close="closeHistory"
+    >
+      <expression-detail :items="details" ></expression-detail>
     </el-dialog>
   </div>
 </template>

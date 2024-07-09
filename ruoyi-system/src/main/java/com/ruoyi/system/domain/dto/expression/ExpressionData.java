@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.dto.expression;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class ExpressionData {
     /**
      * 用户id
      */
+    @JsonIgnore
     private Long userId;
     /**
      * 表达内容
