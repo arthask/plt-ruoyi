@@ -20,7 +20,7 @@ export function getExpression(params) {
 
 
 // 删除对话场景
-export function delScene(id) {
+export function delExpression(id) {
   return request({
     url: '/expression/' + id,
     method: 'delete'
@@ -31,6 +31,15 @@ export function delScene(id) {
 export function addExpression(data) {
   return request({
     url: '/expression/add',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改对话场景
+export function updateExpression(data) {
+  return request({
+    url: '/expression/update',
     method: 'post',
     data: data
   })

@@ -33,13 +33,14 @@
     <sql id="Base_Column_List">
         id, uuid, content, user_id, create_time, update_time
     </sql>
-    <select id="getInfo" resultType="com.ruoyi.system.domain.dto.expression.ExpressionData">
+    <select id="getInfo" resultMap="ExpressionDataResultMap">
         select e.uuid, e.content, e.user_id,
-               ed.uuid as detail_uuid,ed.content_detail,ed.create_time, ed.update_time,
+               ed.uuid as detail_uuid,ed.content_detail,ed.create_time, ed.update_time
         from expression e
             left join expression_detail_ref edr on e.uuid = edr.expression_uuid
-            left join expression_detail ed on edr.expression_uuid = ed.uuid
+            left join expression_detail ed on edr.expression_detail_uuid = ed.uuid
         where e.uuid = #{expressionUUID}
+        order by ed.create_time desc, ed.update_time desc
     </select>
 
 </mapper>
