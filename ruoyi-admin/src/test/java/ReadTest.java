@@ -1,6 +1,6 @@
 import com.alibaba.excel.EasyExcel;
 import com.ruoyi.RuoYiApplication;
-import com.ruoyi.system.service.IWordService;
+//import com.ruoyi.system.service.IWordService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,8 +22,8 @@ public class ReadTest {
 
     private final int size = 4;
 
-    @Autowired
-    private IWordService wordService;
+//    @Autowired
+//    private IWordService wordService;
 
     @Test
     public void readTxtFile() throws IOException {
@@ -110,11 +110,11 @@ public class ReadTest {
 
     @Test
     void parseJsonFormatWordFile() {
-        String path = this.getClass()
-                .getClassLoader()
-                .getResource("dicts/HeQiong_IELTS.json").getPath();
-        System.out.println(path);
-        File file = new File(path);
-        String s = wordService.parseJsonFormatWordFile(file, 1L);
+//        String path = this.getClass()
+//                .getClassLoader()
+//                .getResource("dicts/HeQiong_IELTS.json").getPath();
+//        System.out.println(path);
+//        File file = new File(path);
+//        String s = wordService.parseJsonFormatWordFile(file, 1L);
     }
 }

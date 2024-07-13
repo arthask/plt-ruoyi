@@ -54,7 +54,7 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="正面" align="center" prop="front"/>
       <el-table-column label="反面" align="center" prop="back"/>
-      <el-table-column label="类型" align="center" prop="type"/>
+      <el-table-column label="类型" align="center" :formatter="formatType" prop="type"/>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
     </el-table>
 
@@ -162,7 +162,7 @@ export default {
         value: 1,
         label: '单词卡片',
       }, {
-        value: 1,
+        value: 2,
         label: '问题卡片',
       }],
       wordOptions: [],
@@ -300,15 +300,24 @@ export default {
         let params = {
           word: query
         }
-        searchQuestion(params).then(res => {
-          this.questionOptions = []
-          this.questionOptions = res.data
-          this.loading = false;
-        })
+        // searchQuestion(params).then(res => {
+        //   this.questionOptions = []
+        //   this.questionOptions = res.data
+        //   this.loading = false;
+        // })
       } else {
         this.options = [];
       }
-    }
+    },
+    formatType(row, column) {
+      // 获取当前行的金额值
+      const type = row[column.property];
+      if (type  === 1) {
+        return "单词卡片"
+      } else if (type === 2) {
+        return "问题卡片"
+      }
+    },
   }
 };
 </script>

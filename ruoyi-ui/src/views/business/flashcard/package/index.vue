@@ -53,8 +53,18 @@
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="包名" align="center" prop="name"/>
-      <el-table-column label="类型" align="center" prop="type"/>
+      <el-table-column label="类型" align="center"  :formatter="formatType" prop="type"/>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            @click="addCardOfPackage(scope.row)"
+          >添加卡片
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
@@ -150,7 +160,7 @@ export default {
         value: 1,
         label: '单词卡包',
       }, {
-        value: 1,
+        value: 2,
         label: '问题卡包',
       }],
       labelOptions: [],
@@ -276,6 +286,18 @@ export default {
       if (type === 6) {
         this.showSelect = false;
       }
+    },
+    formatType(row, column) {
+      // 获取当前行的金额值
+      const type = row[column.property];
+      if (type  === 1) {
+        return "单词卡包"
+      } else if (type === 2) {
+        return "问题卡包"
+      }
+    },
+    addCardOfPackage() {
+
     }
   }
 };
