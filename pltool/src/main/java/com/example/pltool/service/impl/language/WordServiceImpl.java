@@ -1,4 +1,4 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.language;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
@@ -9,6 +9,9 @@ import com.example.pltool.mapper.WordMapper;
 import com.example.pltool.service.*;
 import com.example.pltool.domain.dto.language.word.WordShowData;
 
+import com.example.pltool.service.language.LexiconService;
+import com.example.pltool.service.language.LexiconWordService;
+import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.file.ParseUtils;
 import org.springframework.beans.BeanUtils;

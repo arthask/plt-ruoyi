@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.dto.language.lexicon.LexiconData;
 import com.example.pltool.domain.dto.language.lexicon.LexiconShowData;
 import com.example.pltool.domain.entity.Lexicon;
-import com.example.pltool.service.LexiconService;
+import com.example.pltool.service.language.LexiconService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

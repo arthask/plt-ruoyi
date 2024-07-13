@@ -13,7 +13,7 @@ import com.example.pltool.mapper.FlashcardMapper;
 import com.example.pltool.service.FlashcardService;
 import com.example.pltool.service.PackageCardRefService;
 import com.example.pltool.service.QuestionService;
-import com.example.pltool.service.WordService;
+import com.example.pltool.service.language.WordService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

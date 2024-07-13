@@ -7,7 +7,7 @@ import com.example.pltool.mapper.UserStudyRecordMapper;
 import com.example.pltool.mapper.UserWordMapper;
 import com.example.pltool.mapper.WordMapper;
 import com.example.pltool.service.IStatisticsService;
-import com.example.pltool.service.LexiconService;
+import com.example.pltool.service.language.LexiconService;
 import com.example.pltool.domain.vo.StatisticsCountVo;
 import com.example.pltool.domain.vo.UserWordPeriodVo;
 import com.ruoyi.common.utils.DateUtils;

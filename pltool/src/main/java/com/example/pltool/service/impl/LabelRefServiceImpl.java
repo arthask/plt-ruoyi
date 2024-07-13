@@ -3,7 +3,9 @@ package com.example.pltool.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.example.pltool.domain.dto.label.LabelInfo;
+import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.domain.entity.LabelRef;
+import com.example.pltool.domain.entity.Word;
 import com.example.pltool.mapper.LabelRefMapper;
 import com.example.pltool.service.LabelRefService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,19 @@ import java.util.List;
 public class LabelRefServiceImpl extends ServiceImpl<LabelRefMapper, LabelRef> implements LabelRefService {
     @Autowired
     private LabelRefMapper labelRefMapper;
+
     @Override
     public List<LabelInfo> getLabelInfoByRefUUID(String refUUID) {
         return labelRefMapper.getLabelInfoByRefUUID(refUUID);
+    }
+
+    @Override
+    public List<WordCollectionData> getAllWordCollection(Integer type) {
+       return labelRefMapper.getAllCollectionByType(type);
+    }
+
+    @Override
+    public List<Word> getWordsOfCollection(String labelUUID) {
+        return labelRefMapper.getWordsOfCollection(labelUUID);
     }
 }

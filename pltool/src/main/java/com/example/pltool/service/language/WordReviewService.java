@@ -1,4 +1,4 @@
-package com.example.pltool.service;
+package com.example.pltool.service.language;
 
 import com.example.pltool.domain.entity.Word;
 import com.example.pltool.domain.vo.WordVo;

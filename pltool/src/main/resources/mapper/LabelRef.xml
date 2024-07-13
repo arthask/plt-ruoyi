@@ -22,6 +22,18 @@
         select l.uuid,l.name from label_ref lr left join label l on lr.label_uuid = l.uuid
         where lr.ref_uuid = #{refUUID}
     </select>
+    <select id="getAllCollectionByType"
+            resultType="com.example.pltool.domain.dto.language.wordcollection.WordCollectionData">
+        select  distinct l.name, l.uuid as labelUUID, lr.create_time from label_ref lr
+            left join label l on lr.label_uuid = l.uuid
+        where lr.ref_type = #{type}
+        and l.uuid is not null
+    </select>
+    <select id="getWordsOfCollection" resultType="com.example.pltool.domain.entity.Word">
+        select w.uuid,w.word,w.create_time from label_ref lr
+            left join word w on lr.ref_uuid = w.uuid
+        where lr.label_uuid = #{uuid}
+    </select>
 
 
 </mapper>

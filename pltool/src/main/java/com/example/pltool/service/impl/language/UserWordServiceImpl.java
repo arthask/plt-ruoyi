@@ -1,4 +1,4 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.language;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
@@ -9,10 +9,10 @@ import com.example.pltool.domain.entity.LexiconWord;
 import com.example.pltool.domain.entity.UserWord;
 import com.example.pltool.domain.entity.Word;
 import com.example.pltool.mapper.UserWordMapper;
-import com.example.pltool.service.LexiconService;
-import com.example.pltool.service.LexiconWordService;
-import com.example.pltool.service.UserWordService;
-import com.example.pltool.service.WordService;
+import com.example.pltool.service.language.LexiconService;
+import com.example.pltool.service.language.LexiconWordService;
+import com.example.pltool.service.language.UserWordService;
+import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.enums.PeriodEnum;
 import com.example.pltool.domain.dto.language.word.WordShowData;
 

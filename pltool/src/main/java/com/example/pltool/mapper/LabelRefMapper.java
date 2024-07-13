@@ -3,7 +3,9 @@ package com.example.pltool.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import com.example.pltool.domain.dto.label.LabelInfo;
+import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.domain.entity.LabelRef;
+import com.example.pltool.domain.entity.Word;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,4 +22,8 @@ import java.util.List;
 @Mapper
 public interface LabelRefMapper extends BaseMapper<LabelRef> {
     List<LabelInfo> getLabelInfoByRefUUID(@Param("refUUID") String refUUID);
+
+    List<WordCollectionData> getAllCollectionByType(@Param("type") Integer type);
+
+    List<Word> getWordsOfCollection(@Param("uuid") String uuid);
 }
