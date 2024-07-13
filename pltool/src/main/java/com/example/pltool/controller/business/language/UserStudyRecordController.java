@@ -2,7 +2,7 @@ package com.example.pltool.controller.business.language;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.entity.UserStudyRecord;
-import com.example.pltool.service.UserStudyRecordService;
+import com.example.pltool.service.language.UserStudyRecordService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;

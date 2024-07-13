@@ -1,7 +1,7 @@
 package com.example.pltool.controller.business.language;
 
 import com.example.pltool.domain.entity.UserWord;
-import com.example.pltool.service.UserWordService;
+import com.example.pltool.service.language.UserWordService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;

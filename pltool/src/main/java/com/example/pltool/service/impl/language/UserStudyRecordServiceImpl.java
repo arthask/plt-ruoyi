@@ -1,4 +1,4 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.language;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -6,7 +6,7 @@ import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.domain.entity.UserStudyRecord;
 import com.example.pltool.mapper.UserStudyRecordMapper;
-import com.example.pltool.service.UserStudyRecordService;
+import com.example.pltool.service.language.UserStudyRecordService;
 import com.ruoyi.common.utils.DateUtils;
 
 import org.springframework.stereotype.Service;

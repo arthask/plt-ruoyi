@@ -1,7 +1,10 @@
 <script>
+import {getWordCollection, listWordCollection, updateWordCollection} from "@/api/bussiness/wordcollection";
+import WordView from "@/views/business/language/wordcollection/wordView.vue";
+
 export default {
   name: "index.vue",
-  components: {},
+  components: {WordView},
   data() {
     return {
       // 遮罩层
@@ -20,21 +23,21 @@ export default {
       dataList: [],
       // 弹出层标题
       title: "",
-      // 是否显示弹出层
-      open: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        xxx: null,
+        name: null,
       },
       // 表单参数
       form: {
         uuid: '',
-
+        name: '',
       },
       showEditor: false,
       showDialog: false,
+      showView: false,
+      labelUUID: ''
     };
   },
   created() {
@@ -44,7 +47,7 @@ export default {
     /** 查询对话场景列表 */
     getList() {
       this.loading = true;
-      listXxx(this.queryParams).then(response => {
+      listWordCollection(this.queryParams).then(response => {
         this.dataList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -52,15 +55,18 @@ export default {
     },
     // 取消按钮
     cancel() {
-      this.open = false;
       this.reset();
     },
     // 表单重置
     reset() {
       this.form = {
         uuid: '',
-
+        name: '',
       }
+      this.title = ''
+      this.showDialog = false;
+      this.showEditor = false;
+      this.showView = false
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -75,7 +81,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.uuid)
+      this.ids = selection.map(item => item.labelUUID)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -90,25 +96,22 @@ export default {
       this.reset()
       this.showDialog = true;
       this.showEditor = true;
-      this.title = "编辑XXX";
-      const id = row.uuid || this.ids
+      this.title = "编辑名称";
+      const id = row.labelUUID || this.ids
       let params = {
-
+        uuid: id
       }
-      getXX(params).then(response => {
-
+      getWordCollection(params).then(response => {
+        this.form.name = response.data.name
+        this.form.uuid = response.data.labelUUID
       });
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.uuid || this.ids;
-      this.$modal.confirm('是否确认删除选中数据项？').then(function () {
-        return delExpression(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {
-      });
+    handleWatch(row) {
+      this.reset()
+      this.showView = true;
+      this.title = "查看单词集";
+      this.labelUUID = row.labelUUID
+      this.$refs.wordview.getList();
     },
     closeDialog() {
       this.showDialog = false
@@ -117,8 +120,10 @@ export default {
     },
     doUpdateXXX() {
       let params = {
+        labelUUID: this.form.uuid,
+        name: this.form.name
       }
-      updateXX(params).then(res => {
+      updateWordCollection(params).then(res => {
         if (res.data === true) {
           this.$modal.msgSuccess("修改成功");
           this.showDialog = false
@@ -130,18 +135,7 @@ export default {
         }
       })
     }, doAddXXX() {
-      let params = {
-      }
-      addXX(params).then(res => {
-        if (res.data === true) {
-          this.$modal.msgSuccess("添加成功");
-          this.showDialog = false
-          this.reset()
-          this.getList()
-        } else {
-          this.$modal.msgSuccess("添加失败");
-        }
-      })
+
     }, onSubmit() {
       if (this.form.uuid) {
         this.doUpdateXXX();
@@ -156,9 +150,9 @@ export default {
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="xxx" prop="content">
+      <el-form-item label="名称" prop="content">
         <el-input
-          v-model="queryParams.xxx"
+          v-model="queryParams.name"
           placeholder="请输入名称"
           clearable
           @keyup.enter.native="handleQuery"
@@ -171,32 +165,12 @@ export default {
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-        >新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-        >删除
-        </el-button>
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="名称" align="center" prop="name"/>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -207,18 +181,16 @@ export default {
             @click="handleUpdate(scope.row)"
           >修改
           </el-button>
-
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-          >删除
+            icon="el-icon-search"
+            @click="handleWatch(scope.row)"
+          >查看单词
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       v-show="total>0"
       :total="total"
@@ -231,7 +203,8 @@ export default {
                :center="true"
                :destroy-on-close="true">
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="xxx" v-show="!showEditor">
+        <el-form-item label="名称">
+          <el-input style="margin-top: 10px" v-model="form.name" placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
       <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
@@ -243,6 +216,13 @@ export default {
           <el-button type="primary" @click="closeDialog">取消</el-button>
         </el-col>
       </el-row>
+    </el-dialog>
+
+    <el-dialog :title="title"
+               :visible.sync="showView"
+               :center="true"
+               :destroy-on-close="true">
+      <word-view ref="wordview" :labelUUID="labelUUID"></word-view>
     </el-dialog>
   </div>
 </template>

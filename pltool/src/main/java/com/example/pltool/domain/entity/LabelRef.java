@@ -49,7 +49,8 @@ public class LabelRef implements Serializable {
     private String refUuid;
 
     /**
-     * 关联类型 0：代表词库 1：代表单词 2：卡包标签
+     * @see com.example.pltool.controller.business.constant.enums.RefTypeEnum
+     * 关联类型 0：代表词库 1：代表单词 2：卡包
      */
     @TableField("ref_type")
     private Integer refType;

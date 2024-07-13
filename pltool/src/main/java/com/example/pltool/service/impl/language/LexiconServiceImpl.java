@@ -1,4 +1,4 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.language;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
@@ -12,6 +12,9 @@ import com.example.pltool.domain.dto.language.lexicon.LexiconData;
 import com.example.pltool.domain.dto.language.lexicon.LexiconShowData;
 
 
+import com.example.pltool.service.language.LexiconService;
+import com.example.pltool.service.language.LexiconWordService;
+import com.example.pltool.service.language.WordService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -252,6 +255,9 @@ public class LexiconServiceImpl extends ServiceImpl<LexiconMapper, Lexicon> impl
         List<LabelRef> labelRefList = labelRefService.list(labelRefQueryWrapper);
         Map<String, List<LabelRef>> labelRefGroupByLabelUUID = labelRefList.stream()
                 .collect(Collectors.groupingBy(LabelRef::getLabelUuid));
+        if (CollectionUtils.isEmpty(labelRefGroupByLabelUUID.keySet())) {
+            return Collections.emptyList();
+        }
         QueryWrapper<Label> labelQueryWrapper = new QueryWrapper<>();
         labelQueryWrapper.in("uuid", labelRefGroupByLabelUUID.keySet());
         return labelService.list(labelQueryWrapper);

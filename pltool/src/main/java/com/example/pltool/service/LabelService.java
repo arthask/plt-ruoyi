@@ -14,4 +14,18 @@ import com.example.pltool.domain.entity.Label;
  */
 public interface LabelService extends IService<Label> {
 
+    /**
+     * 使用uuid获取标签信息
+     * @param uuid uuid
+     * @return
+     */
+    Label getLabelByUUID(String uuid);
+
+    /**
+     * 判断标签名是否重复
+     * @param name
+     * @return
+     */
+    boolean isDuplicateName(String name);
+
 }

@@ -1,4 +1,4 @@
-package com.example.pltool.service;
+package com.example.pltool.service.language;
 
 import cn.hutool.json.JSONArray;
 import com.baomidou.mybatisplus.extension.service.IService;

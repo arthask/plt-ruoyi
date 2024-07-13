@@ -1,10 +1,10 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.language;
 
 import cn.hutool.core.date.DateUtil;
 import com.example.pltool.domain.entity.Word;
 import com.example.pltool.mapper.UserWordMapper;
 import com.example.pltool.mapper.WordMapper;
-import com.example.pltool.service.WordReviewService;
+import com.example.pltool.service.language.WordReviewService;
 import com.example.pltool.domain.vo.WordVo;
 
 import org.springframework.beans.BeanUtils;
