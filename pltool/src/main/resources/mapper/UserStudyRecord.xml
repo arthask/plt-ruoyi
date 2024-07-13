@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.pltool.mapper.UserStudyRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.pltool.domain.entity.UserStudyRecord">
+        <id column="id" property="id" />
+        <result column="uuid" property="uuid" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="word_uuid" property="wordUuid" />
+        <result column="word" property="word" />
+        <result column="study_time" property="studyTime" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, uuid, user_id, user_name, word_uuid, word, study_time, create_time, update_time
+    </sql>
+
+    <select id="listWordOfDay" resultType="com.example.pltool.domain.entity.UserStudyRecord">
+        select
+            *
+        from
+            user_study_record
+        where
+            study_time >= #{beginStr} and study_time <![CDATA[<=]]> #{endStr}
+          and user_id = #{userId}
+    </select>
+
+    <select id="getStudyRecordCount" resultType="java.lang.Long">
+        select count(*) from user_study_record where user_id = #{userId}
+    </select>
+
+    <select id="getStudyRecordOfMonth" resultType="java.lang.Long">
+        select count(*) from user_study_record
+        where study_time >= #{beginStr} and study_time <![CDATA[<=]]> #{endStr}
+          and user_id = #{userId}
+        group by date_format(study_time,"%Y%m")
+    </select>
+    <select id="getActualValueOfDay" resultType="java.util.Map">
+        select
+            date_format(tmpday, "%Y%m%d") as day,
+        count(*) as count
+        from
+            (
+            select
+            date_format(study_time, "%Y%m%d") as tmpday,
+            word
+            from
+            user_study_record
+            where
+            study_time >= #{beginStr} and study_time <![CDATA[<=]]> #{endStr}
+            and user_id = #{userId}
+            group by
+            date_format(study_time, "%Y%m%d"),
+            word
+            ) as tmp
+        group by
+            tmpday
+    </select>
+
+</mapper>
