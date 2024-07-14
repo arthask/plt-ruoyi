@@ -46,4 +46,9 @@ public class WordCollectionController extends BaseController {
         wordCollectionData.setUserId(getUserId());
         return wordCollectionService.addWordToCollection(wordCollectionData);
     }
+
+    @GetMapping("/getAllLabels")
+    AjaxResult getAllLabels() {
+        return AjaxResult.success(wordCollectionService.getAllLabels(getUserId()));
+    }
 }

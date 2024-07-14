@@ -2,6 +2,7 @@ package com.example.pltool.service.impl.language;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.pltool.controller.business.constant.enums.RefTypeEnum;
+import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.domain.entity.Label;
 import com.example.pltool.domain.entity.LabelRef;
@@ -83,5 +84,10 @@ public class WordCollectionServiceImpl implements WordCollectionService {
             labelRefService.saveBatch(addLabelRefList);
         }
         return AjaxResult.success(true);
+    }
+
+    @Override
+    public List<LabelInfo> getAllLabels(Long userId) {
+        return labelService.getAllLabels(userId);
     }
 }

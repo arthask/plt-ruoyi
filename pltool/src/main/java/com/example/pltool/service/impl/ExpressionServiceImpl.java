@@ -45,7 +45,6 @@ public class ExpressionServiceImpl extends ServiceImpl<ExpressionMapper, Express
     @Override
     public boolean addExpressionData(ExpressionData expressionData) {
         String expressionUUID = expressionData.getUuid();
-        ;
         if (StringUtils.isBlank(expressionData.getUuid())) {
             expressionUUID = UUID.randomUUID().toString().replace("-", "");
             Expression expression = new Expression();
