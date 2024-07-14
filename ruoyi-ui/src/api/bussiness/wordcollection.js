@@ -35,3 +35,11 @@ export function getWordsOfCollection(query) {
     params: query
   })
 }
+
+export function getAllLabels(query) {
+  return request({
+    url: '/wordCollection/getAllLabels',
+    method: 'get',
+    params: query
+  })
+}

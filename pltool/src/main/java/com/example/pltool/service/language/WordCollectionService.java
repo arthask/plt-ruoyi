@@ -1,5 +1,6 @@
 package com.example.pltool.service.language;
 
+import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.domain.entity.Word;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -42,4 +43,10 @@ public interface WordCollectionService {
      * @return
      */
     AjaxResult addWordToCollection(WordCollectionData wordCollectionData);
+
+    /**
+     * 获取所有标签
+     * @return
+     */
+    List<LabelInfo> getAllLabels(Long userId);
 }

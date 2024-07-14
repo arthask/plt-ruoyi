@@ -8,7 +8,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/expression")
 public class ExpressionController extends BaseController {
-    @Autowired(required = false)
+    @Autowired
     private ExpressionService expressionService;
 
     /**

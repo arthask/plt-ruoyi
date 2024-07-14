@@ -87,6 +87,15 @@
         >导入
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          icon="el-icon-plus"
+          size="mini"
+          @click="handle2Collection"
+        >添加到单词集
+        </el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -394,6 +403,9 @@ export default {
     playAudio(word) {
       this.speakCommon.speak(word.word)
     },
+    handle2Collection() {
+
+    }
   }
 };
 </script>

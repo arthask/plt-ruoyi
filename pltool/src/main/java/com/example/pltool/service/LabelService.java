@@ -1,7 +1,10 @@
 package com.example.pltool.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.entity.Label;
+
+import java.util.List;
 
 
 /**
@@ -27,5 +30,11 @@ public interface LabelService extends IService<Label> {
      * @return
      */
     boolean isDuplicateName(String name);
+
+    /**
+     * 获取所有的标签
+     * @return
+     */
+    List<LabelInfo> getAllLabels(Long userId);
 
 }
