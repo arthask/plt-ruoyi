@@ -89,7 +89,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="info"
+          type="primary"
           icon="el-icon-plus"
           size="mini"
           @click="handle2Collection"
@@ -203,6 +203,17 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="添加到单词集"
+               v-if="showCollectionDialog"
+               :visible.sync="showCollectionDialog"
+               :center="true"
+               :destroy-on-close="true"
+               :before-close="closeCollection">
+      <word2-collection
+        :wordUUIDs="ids"
+        @closeDialog="closeCollection">
+      </word2-collection>
+    </el-dialog>
   </div>
 </template>
 
@@ -211,10 +222,11 @@ import {listWord, getWord, delWord, addWord, updateWord} from "@/api/bussiness/w
 import {importTemplate} from "@/api/bussiness/word";
 import {getToken} from "@/utils/auth";
 import WordPanel from "@/views/business/language/word/wordPanel.vue";
+import Word2Collection from "@/views/business/language/word/word2Collection.vue";
 
 export default {
   name: "Word",
-  components: {WordPanel},
+  components: {Word2Collection, WordPanel},
   data() {
     return {
       // 遮罩层
@@ -267,7 +279,9 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/system/word/importData"
       },
-    };
+      showCollectionDialog: false,
+      editCollectionDialog: false
+    }
   },
   created() {
     this.getList();
@@ -312,7 +326,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
+      this.ids = selection.map(item => item.uuid)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -379,11 +393,11 @@ export default {
         this.download(response.msg);
       });
     },
-// 文件上传中处理
+    // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;
     },
-// 文件上传成功处理
+    // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
       this.upload.open = false;
       this.upload.isUploading = false;
@@ -391,7 +405,7 @@ export default {
       this.$alert(response.msg, "导入结果", {dangerouslyUseHTMLString: true});
       this.getList();
     },
-// 提交上传文件
+    // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
     },
@@ -404,7 +418,14 @@ export default {
       this.speakCommon.speak(word.word)
     },
     handle2Collection() {
-
+      if(this.ids.length === 0) {
+        this.$modal.msgSuccess("请选择记录");
+        return
+      }
+      this.showCollectionDialog = true
+    },
+    closeCollection() {
+      this.showCollectionDialog = false
     }
   }
 };

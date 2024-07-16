@@ -37,11 +37,11 @@ public class FastAutoGeneratorTest extends BaseGeneratorTest {
      */
     public static void main(String[] args) {
         //基本信息
-        String parent = "com.ruoyi.system";   //父包名
-        String module = "gencode";   //模块包名
+        String parent = "com.example";   //父包名
+        String module = "pltool";   //模块包名
 
         //数据库表的设置
-        List<String> listTable = Arrays.asList("expression","expression_detail","expression_detail_ref");  //设置需要自动代码生成的表名
+        List<String> listTable = Arrays.asList("flashcard");  //设置需要自动代码生成的表名
         List<String> listTableSuffix = Arrays.asList("_b");    //设置 过滤 表的后缀
         List<String> listTablePrefix = Arrays.asList("t_","c_"); //设置 过滤 表的后缀
         // 初始化数据库脚本
@@ -51,7 +51,7 @@ public class FastAutoGeneratorTest extends BaseGeneratorTest {
 //            .dataSourceConfig((scanner, builder) -> builder.schema(scanner.apply("ry_vue")))
                 // 全局配置
                 .globalConfig((scanner, builder) -> builder
-                        .outputDir(System.getProperty("user.dir") + "/ruoyi-system/src/main/java")
+                        .outputDir(System.getProperty("user.dir") + "/pltool/src/main/java")
                         .author("author")
 //                        .enableKotlin()
 //                        .enableSwagger()
@@ -61,14 +61,14 @@ public class FastAutoGeneratorTest extends BaseGeneratorTest {
                 // 包配置
                 .packageConfig((scanner, builder) ->  builder.parent(parent) // 设置父包名
                         .moduleName(module)   //设置模块包名
-                        .entity("entity")   //pojo 实体类包名
-                        .service("service") //Service 包名
-                        .serviceImpl("service.impl") // ***ServiceImpl 包名
+                        .entity("domain.entity")   //pojo 实体类包名
+//                        .service("service") //Service 包名
+//                        .serviceImpl("service.impl") // ***ServiceImpl 包名
                         .mapper("mapper")   //Mapper 包名
                         .xml("mapper.xml")  //Mapper XML 包名
                         //配置 mapper.xml 路径信息：项目的 resources 目录下)
                         .pathInfo(Collections.singletonMap(OutputFile.mapper.xml,
-                                System.getProperty("user.dir")+"/ruoyi-system/src/main/resources/mapper/gen")))
+                                System.getProperty("user.dir")+"/pltool/src/main/resources/mapper")))
                 // 策略配置
                 .strategyConfig(builder -> {
                     builder
@@ -104,10 +104,10 @@ public class FastAutoGeneratorTest extends BaseGeneratorTest {
 //                            .enableRestStyle()  //开启生成 @RestController 控制器
 
                             //4.3、service 策略配置
-                            .serviceBuilder()
-                            .formatServiceFileName("%sService") //格式化 service 接口文件名称，%s进行匹配表名，如 UserService
-                            .formatServiceImplFileName("%sServiceImpl") //格式化 service 实现类文件名称，%s进行匹配表名，如 UserServiceImpl
-                            .enableFileOverride()
+//                            .serviceBuilder()
+//                            .formatServiceFileName("%sService") //格式化 service 接口文件名称，%s进行匹配表名，如 UserService
+//                            .formatServiceImplFileName("%sServiceImpl") //格式化 service 实现类文件名称，%s进行匹配表名，如 UserServiceImpl
+//                            .enableFileOverride()
                             //4.4、Mapper策略配置
                             .mapperBuilder()
                             .enableFileOverride()

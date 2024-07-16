@@ -43,3 +43,19 @@ export function getAllLabels(query) {
     params: query
   })
 }
+
+export function addWordToCollection(data) {
+  return request({
+    url: '/wordCollection/addWordToCollection',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getCollectionsOfPackage(query) {
+  return request({
+    url: '/wordCollection/getCollectionsOfPackage',
+    method: 'get',
+    params: query
+  })
+}

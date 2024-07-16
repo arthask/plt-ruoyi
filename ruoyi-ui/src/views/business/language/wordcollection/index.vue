@@ -40,7 +40,7 @@ export default {
       labelUUID: ''
     };
   },
-  created() {
+  mounted() {
     this.getList()
   },
   methods: {
@@ -111,7 +111,6 @@ export default {
       this.showView = true;
       this.title = "查看单词集";
       this.labelUUID = row.labelUUID
-      this.$refs.wordview.getList();
     },
     closeDialog() {
       this.showDialog = false
@@ -219,6 +218,7 @@ export default {
     </el-dialog>
 
     <el-dialog :title="title"
+               v-if="showView"
                :visible.sync="showView"
                :center="true"
                :destroy-on-close="true">
