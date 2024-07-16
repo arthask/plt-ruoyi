@@ -1,55 +1,67 @@
 <script>
-import {getAllLabels} from "@/api/bussiness/wordcollection";
-import {addExpression} from "@/api/bussiness/expression";
+import {addWordToCollection, getAllLabels} from "@/api/bussiness/wordcollection";
 
 export default {
   name: "word2Collection",
+  props: {
+    wordUUIDs: {
+      type: Array,
+      default: null,
+    },
+    labelUUID: {
+      type: String,
+      default: null
+    }
+  },
   data() {
     return {
       options: [],
       value: ''
     }
   },
+  mounted() {
+    this.getLabels()
+  },
   methods: {
-    getAllLabels() {
+    getLabels() {
       getAllLabels().then(res => {
-        this.options = res.data.data
+        this.options = res.data
       })
     },
     onSubmit() {
-      if (this.form.uuid) {
+      if (this.labelUUID) {
         this.doUpdateExpression();
       } else {
-        this.doAddExpression();
+        this.doAddWord2Collection();
       }
     },
-    doAddExpression() {
+    doAddWord2Collection() {
       let params = {
+        wordUUIDList: this.wordUUIDs,
+        labelUUID: this.value
       }
-      addExpression(params).then(res => {
+      addWordToCollection(params).then(res => {
         if (res.data === true) {
-          this.$modal.msgSuccess("添加成功");
-          this.reset()
-          this.getList()
+          if (res.msg) {
+            this.$message({
+              message: res.msg,
+              type: 'success'
+            });
+          } else {
+            this.$modal.msgSuccess("添加成功")
+          }
+          this.closeDialog()
         } else {
           this.$modal.msgSuccess("添加失败");
         }
       })
     },
     doUpdateExpression() {
-      let params = {
-      }
-      updateExpression(params).then(res => {
-        if (res.data === true) {
-          this.$modal.msgSuccess("修改成功");
-          this.getList()
-        } else {
-          this.$modal.msgSuccess("修改失败！");
-        }
-      })
+      let params = {}
     },
     closeDialog() {
-    },
+      this.$emit("closeDialog")
+    }
   }
 }
 </script>
@@ -59,18 +71,15 @@ export default {
     <el-select v-model="value" filterable placeholder="请选择">
       <el-option
         v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
+        :key="item.uuid"
+        :label="item.name"
+        :value="item.uuid">
       </el-option>
     </el-select>
     <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
       <el-col :span="10"></el-col>
       <el-col :span="4">
         <el-button type="primary" @click="onSubmit">提交</el-button>
-      </el-col>
-      <el-col :span="4">
-        <el-button type="primary" @click="closeDialog">取消</el-button>
       </el-col>
     </el-row>
   </div>

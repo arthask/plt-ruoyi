@@ -9,6 +9,7 @@ import com.example.pltool.domain.entity.Word;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,5 +26,9 @@ public interface LabelRefMapper extends BaseMapper<LabelRef> {
 
     List<WordCollectionData> getAllCollectionByType(@Param("type") Integer type);
 
+    List<WordCollectionData> getCollectionsOfPackage(@Param("type")Integer type, @Param("packageUUId")String packageUUId,@Param("userId") Long userId);
+
     List<Word> getWordsOfCollection(@Param("uuid") String uuid);
+
+    List<Word> getWordsOfCollectionUUIdList(@Param("labelUUIDList") List<String> labelUUIDList);
 }

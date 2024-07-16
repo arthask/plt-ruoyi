@@ -39,4 +39,9 @@ public interface LabelRefService extends IService<LabelRef> {
      */
     List<Word> getWordsOfCollection(String labelUUID);
 
+
+    List<Word> getWordsOfCollection(List<String> labelUUIDList);
+
+    List<WordCollectionData> getCollectionsOfPackage(Integer type, String packageUUId, Long userId);
+
 }

@@ -1,5 +1,7 @@
 package com.example.pltool.controller.business.language;
 
+import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
+import com.example.pltool.domain.dto.flashcard.cardpackage.RemoveCollectionOfPackage;
 import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.service.language.WordCollectionService;
 import com.ruoyi.common.core.controller.BaseController;
@@ -41,6 +43,12 @@ public class WordCollectionController extends BaseController {
         return getDataTable(wordCollectionService.getWordsOfCollection(labelUUID));
     }
 
+    @GetMapping("/getCollectionsOfPackage")
+    TableDataInfo getCollectionsOfPackage(@RequestParam("packageUUId") String packageUUId) {
+        startPage();
+        return getDataTable(wordCollectionService.getCollectionsOfPackage(packageUUId, getUserId()));
+    }
+
     @PostMapping("/addWordToCollection")
     AjaxResult addWordToCollection(@RequestBody WordCollectionData wordCollectionData) {
         wordCollectionData.setUserId(getUserId());
@@ -50,5 +58,16 @@ public class WordCollectionController extends BaseController {
     @GetMapping("/getAllLabels")
     AjaxResult getAllLabels() {
         return AjaxResult.success(wordCollectionService.getAllLabels(getUserId()));
+    }
+
+    @PostMapping("/addCollectionToPackage")
+    AjaxResult addCollectionToPackage(@RequestBody PackageCollectionData packageCollectionData) {
+        packageCollectionData.setUserId(getUserId());
+        return AjaxResult.success(wordCollectionService.addCollectionToPackage(packageCollectionData));
+    }
+
+    @PostMapping("/removeCollectionOfPackage")
+    AjaxResult removeCollectionOfPackage(@RequestBody RemoveCollectionOfPackage removeCollectionOfPackage) {
+        return AjaxResult.success(wordCollectionService.removeCollectionOfPackage(removeCollectionOfPackage));
     }
 }

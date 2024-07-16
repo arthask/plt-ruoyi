@@ -1,5 +1,7 @@
 package com.example.pltool.service.language;
 
+import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
+import com.example.pltool.domain.dto.flashcard.cardpackage.RemoveCollectionOfPackage;
 import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.domain.entity.Word;
@@ -38,6 +40,12 @@ public interface WordCollectionService {
     List<Word> getWordsOfCollection(String labelUUID);
 
     /**
+     * 获取卡包中的单词集
+     * @return
+     */
+    List<WordCollectionData> getCollectionsOfPackage(String packageUUId, Long userId);
+
+    /**
      * 往单词集中添加单词
      * @param wordCollectionData 单词集数据
      * @return
@@ -49,4 +57,8 @@ public interface WordCollectionService {
      * @return
      */
     List<LabelInfo> getAllLabels(Long userId);
+
+    AjaxResult addCollectionToPackage(PackageCollectionData packageCollectionData);
+
+    AjaxResult removeCollectionOfPackage(RemoveCollectionOfPackage removeCollectionOfPackage);
 }

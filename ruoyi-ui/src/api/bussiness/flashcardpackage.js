@@ -45,3 +45,12 @@ export function getPackageList(params) {
     params: params
   })
 }
+
+
+export function addCollectionToPackage(data) {
+  return request({
+    url: '/wordCollection/addCollectionToPackage',
+    method: 'post',
+    data: data
+  })
+}

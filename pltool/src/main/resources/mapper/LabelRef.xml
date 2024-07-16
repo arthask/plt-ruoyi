@@ -24,15 +24,33 @@
     </select>
     <select id="getAllCollectionByType"
             resultType="com.example.pltool.domain.dto.language.wordcollection.WordCollectionData">
-        select  distinct l.name, l.uuid as labelUUID, lr.create_time from label_ref lr
-            left join label l on lr.label_uuid = l.uuid
+        select l.uuid as labelUUID , l.name
+        from label_ref lr
+                 left join label l on lr.label_uuid = l.uuid
         where lr.ref_type = #{type}
-        and l.uuid is not null
+        group by l.uuid, l.name
     </select>
     <select id="getWordsOfCollection" resultType="com.example.pltool.domain.entity.Word">
-        select w.uuid,w.word,w.create_time from label_ref lr
+        select w.* from label_ref lr
             left join word w on lr.ref_uuid = w.uuid
         where lr.label_uuid = #{uuid}
+    </select>
+    <select id="getWordsOfCollectionUUIdList" resultType="com.example.pltool.domain.entity.Word">
+        select w.uuid, w.word, w.create_time
+        from label_ref lr
+        left join word w on lr.ref_uuid = w.uuid
+        where lr.label_uuid in
+        <foreach item="uuid" collection="labelUUIDList" open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+    </select>
+    <select id="getCollectionsOfPackage"
+            resultType="com.example.pltool.domain.dto.language.wordcollection.WordCollectionData">
+        select l.uuid as labelUUID , l.name
+        from label_ref lr
+                 left join label l on lr.label_uuid = l.uuid
+        where lr.ref_type = #{type} and lr.ref_uuid = #{packageUUId} and lr.create_user_id = #{userId}
+        group by l.uuid, l.name
     </select>
 
 

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author author
- * @since 2024-05-29
+ * @since 2024-07-16
  */
 @Getter
 @Setter
@@ -71,4 +71,10 @@ public class Flashcard implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 来源uuid
+     */
+    @TableField("source_uuid")
+    private String sourceUuid;
 }

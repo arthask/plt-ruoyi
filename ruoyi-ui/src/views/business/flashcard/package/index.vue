@@ -61,7 +61,13 @@
             size="mini"
             type="text"
             @click="addCardOfPackage(scope.row)"
-          >添加卡片
+          >绑定单词集
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="watchCollectionOfPackage(scope.row)"
+          >查看单词集
           </el-button>
         </template>
       </el-table-column>
@@ -113,6 +119,27 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="单词集与卡包绑定"
+               v-if="showCollectionDialog"
+               :visible.sync="showCollectionDialog"
+               :center="true"
+               :destroy-on-close="true"
+               :before-close="closeCollection">
+      <collection2-package
+        :packageUUID="packageUUID"
+        @closeDialog="closeCollection">
+      </collection2-package>
+    </el-dialog>
+    <el-dialog title="查看单词集"
+               v-if="showCollectionOfPackage"
+               :visible.sync="showCollectionOfPackage"
+               :center="true"
+               :destroy-on-close="true"
+               :before-close="closeWatchCollectionView">
+      <word-collection-view
+        :packageUUId="packageUUID">
+      </word-collection-view>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,10 +147,16 @@
 import {listPackages, getPackageInfo, add, del, update} from "@/api/bussiness/flashcardpackage";
 
 import LabelTag from "@/components/Tag/index.vue";
+import Word2Collection from "@/views/business/language/word/word2Collection.vue";
+import Collection2Package from "@/views/business/flashcard/package/collection2Package.vue";
+import WordCollectionView from "@/views/business/flashcard/package/wordCollectionView.vue";
 
 export default {
   name: "card_package",
   components: {
+    WordCollectionView,
+    Collection2Package,
+    Word2Collection,
     LabelTag
   },
   data() {
@@ -174,7 +207,10 @@ export default {
         type: [
           {required: true, message: "卡包类型不能为空", trigger: "blur"}
         ]
-      }
+      },
+      showCollectionDialog: false,
+      packageUUID: '',
+      showCollectionOfPackage: false
     };
   },
   created() {
@@ -296,8 +332,19 @@ export default {
         return "问题卡包"
       }
     },
-    addCardOfPackage() {
-
+    addCardOfPackage(row) {
+      this.packageUUID = row.uuid
+      this.showCollectionDialog = true
+    },
+    closeCollection() {
+      this.showCollectionDialog = false
+    },
+    watchCollectionOfPackage(row) {
+      this.packageUUID = row.uuid
+      this.showCollectionOfPackage = true
+    },
+    closeWatchCollectionView() {
+      this.showCollectionOfPackage = false;
     }
   }
 };

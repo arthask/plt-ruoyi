@@ -3,7 +3,9 @@ package com.example.pltool.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.CardInfo;
+import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.entity.Flashcard;
+import com.ruoyi.common.core.domain.AjaxResult;
 
 
 /**
@@ -38,4 +40,11 @@ public interface FlashcardService extends IService<Flashcard> {
     Flashcard getCardByUUId(String cardUUID);
 
     CardInfo searchClassifyCard(String packageUUID,Integer type, Integer offset);
+
+    /**
+     * 使用单词集添加闪卡
+     * @param packageCollectionData
+     * @return
+     */
+    AjaxResult batchAddCard(PackageCollectionData packageCollectionData);
 }
