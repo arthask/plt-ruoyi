@@ -3,6 +3,7 @@ package com.example.pltool.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.pltool.domain.entity.Flashcard;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  * </p>
  *
  * @author author
- * @since 2024-07-16
+ * @since 2024-07-18
  */
 @Mapper
 public interface FlashcardMapper extends BaseMapper<Flashcard> {

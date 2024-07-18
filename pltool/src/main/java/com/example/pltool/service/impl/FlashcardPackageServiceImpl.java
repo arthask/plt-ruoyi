@@ -3,15 +3,12 @@ package com.example.pltool.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import com.example.pltool.controller.business.constant.enums.RefTypeEnum;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.example.pltool.domain.dto.label.LabelInfo;
-import com.example.pltool.domain.entity.FlashcardPackage;
-import com.example.pltool.domain.entity.Label;
-import com.example.pltool.domain.entity.LabelRef;
+import com.example.pltool.domain.entity.*;
 import com.example.pltool.mapper.FlashcardPackageMapper;
-import com.example.pltool.service.FlashcardPackageService;
-import com.example.pltool.service.LabelRefService;
-import com.example.pltool.service.LabelService;
+import com.example.pltool.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,12 @@ public class FlashcardPackageServiceImpl extends ServiceImpl<FlashcardPackageMap
 
     @Autowired
     private LabelService labelService;
+
+    @Autowired
+    private PackageCardRefService packageCardRefService;
+
+    @Autowired
+    private FlashcardService flashcardService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -176,8 +179,21 @@ public class FlashcardPackageServiceImpl extends ServiceImpl<FlashcardPackageMap
         return packageInfoDto;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean removeByUUID(String uuid) {
+        // 解绑卡包中的单词集
+        QueryWrapper<LabelRef> labelRefQueryWrapper = new QueryWrapper<>();
+        labelRefQueryWrapper.eq("ref_uuid", uuid)
+                .eq("ref_type", RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue());
+        List<LabelRef> labelRefs = labelRefService.list(labelRefQueryWrapper);
+        labelRefService.remove(labelRefQueryWrapper);
+        // 解绑卡包中的卡片
+        QueryWrapper<PackageCardRef> packageCardRefQueryWrapper = new QueryWrapper<>();
+        packageCardRefQueryWrapper.eq("package_uuid", uuid);
+        packageCardRefService.remove(packageCardRefQueryWrapper);
+        // 目前卡包中的卡片由绑定单词集时生成，后续可以增加单个卡片
+        // 删除卡包
         Assert.notNull(uuid, "请求参数错误");
         QueryWrapper<FlashcardPackage> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", uuid);

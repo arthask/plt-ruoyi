@@ -4,12 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author author
- * @since 2024-07-16
+ * @since 2024-07-18
  */
 @Getter
 @Setter
@@ -77,4 +76,10 @@ public class Flashcard implements Serializable {
      */
     @TableField("source_uuid")
     private String sourceUuid;
+
+    /**
+     * 单词集uuid
+     */
+    @TableField("collection_uuid")
+    private String collectionUuid;
 }

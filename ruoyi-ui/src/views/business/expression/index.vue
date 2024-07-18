@@ -158,7 +158,7 @@ export default {
           this.reset()
           this.getList()
         } else {
-          this.$modal.msgSuccess("修改失败！");
+          this.$modal.msgError("修改失败！");
         }
       })
     }, doAddExpression() {
@@ -177,7 +177,7 @@ export default {
           this.reset()
           this.getList()
         } else {
-          this.$modal.msgSuccess("添加失败");
+          this.$modal.msgError("添加失败");
         }
       })
     }, doAppendExpression() {
@@ -198,7 +198,7 @@ export default {
           this.reset()
           this.getList()
         } else {
-          this.$modal.msgSuccess("添加失败！");
+          this.$modal.msgError("添加失败！");
         }
       })
     }, onSubmit() {

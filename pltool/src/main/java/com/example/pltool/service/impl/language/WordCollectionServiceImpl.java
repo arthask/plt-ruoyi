@@ -2,22 +2,23 @@ package com.example.pltool.service.impl.language;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.example.pltool.controller.business.constant.enums.CardTypeEnum;
 import com.example.pltool.controller.business.constant.enums.RefTypeEnum;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.dto.flashcard.cardpackage.RemoveCollectionOfPackage;
 import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
-import com.example.pltool.domain.entity.Label;
-import com.example.pltool.domain.entity.LabelRef;
-import com.example.pltool.domain.entity.Word;
+import com.example.pltool.domain.entity.*;
 import com.example.pltool.service.FlashcardService;
 import com.example.pltool.service.LabelRefService;
 import com.example.pltool.service.LabelService;
+import com.example.pltool.service.PackageCardRefService;
 import com.example.pltool.service.language.WordCollectionService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.uuid.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
@@ -36,6 +37,9 @@ public class WordCollectionServiceImpl implements WordCollectionService {
 
     @Autowired
     private FlashcardService flashcardService;
+
+    @Autowired
+    private PackageCardRefService packageCardRefService;
 
     @Override
     public boolean addWordCollectionData(WordCollectionData wordCollectionData) {
@@ -77,7 +81,7 @@ public class WordCollectionServiceImpl implements WordCollectionService {
     }
 
     @Override
-    public List<WordCollectionData> getCollectionsOfPackage(String packageUUId,Long userId) {
+    public List<WordCollectionData> getCollectionsOfPackage(String packageUUId, Long userId) {
         return labelRefService.getCollectionsOfPackage(RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue()
                 , packageUUId, userId);
     }
@@ -127,7 +131,7 @@ public class WordCollectionServiceImpl implements WordCollectionService {
             labelRefService.saveBatch(addLabelRefList);
         }
         if (filteredFlag) {
-            return AjaxResult.success("已过滤重复添加的单词",true);
+            return AjaxResult.success("已过滤重复添加的单词", true);
         }
         return AjaxResult.success(true);
     }
@@ -139,19 +143,53 @@ public class WordCollectionServiceImpl implements WordCollectionService {
 
     @Override
     public AjaxResult addCollectionToPackage(PackageCollectionData packageCollectionData) {
+        // 过滤掉重复绑定的数据
+        boolean repeatBindWordCollection = labelRefService.isRepeatBindWordCollection(packageCollectionData.getPackageUUID(),
+                packageCollectionData.getCollectionUUID(), packageCollectionData.getUserId());
+        if(repeatBindWordCollection) {
+            return AjaxResult.success("该单词集已绑定，请重新选择", true);
+        }
         return flashcardService.batchAddCard(packageCollectionData);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public AjaxResult removeCollectionOfPackage(RemoveCollectionOfPackage removeCollectionOfPackage) {
         // 删除卡包与单词集的关联关系
         QueryWrapper<LabelRef> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("ref_uuid", removeCollectionOfPackage.getPackageUUId());
-        queryWrapper.eq("ref_type",RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue());
+        queryWrapper.eq("ref_type", RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue());
+        queryWrapper.eq("create_user_id", removeCollectionOfPackage.getUserId());
         queryWrapper.in("label_uuid", removeCollectionOfPackage.getCollectionUUIdList());
         labelRefService.remove(queryWrapper);
+        // 查找单词集下单词对应的卡片uuid集合
+        QueryWrapper<Flashcard> cardQueryWrapper = new QueryWrapper<>();
+        cardQueryWrapper.in("collection_uuid", removeCollectionOfPackage.getCollectionUUIdList());
+        cardQueryWrapper.eq("type", CardTypeEnum.WORD.getValue());
+        cardQueryWrapper.eq("user_id", removeCollectionOfPackage.getUserId());
+        List<String> removeCardUUIdList = flashcardService.list(cardQueryWrapper)
+                .stream()
+                .map(Flashcard::getUuid)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(removeCardUUIdList)) {
+            return AjaxResult.success("删除成功，没有需要从卡包移除的卡片", true);
+        }
         // 删除卡包中单词集对应的卡片
+        QueryWrapper<PackageCardRef> packageCardQueryWrapper = new QueryWrapper<>();
+        packageCardQueryWrapper.eq("package_uuid", removeCollectionOfPackage.getPackageUUId());
+        packageCardQueryWrapper.in("card_uuid", removeCardUUIdList);
+        packageCardRefService.remove(packageCardQueryWrapper);
+        return AjaxResult.success(true);
+    }
 
-        return null;
+    @Override
+    public AjaxResult removeWordOfCollection(WordCollectionData wordCollectionData) {
+        QueryWrapper<LabelRef> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ref_type", RefTypeEnum.WORD.getValue());
+        queryWrapper.eq("label_uuid", wordCollectionData.getLabelUUID());
+        queryWrapper.in("ref_uuid", wordCollectionData.getWordUUIDList());
+        queryWrapper.eq("create_user_id", wordCollectionData.getUserId());
+        labelRefService.remove(queryWrapper);
+        return AjaxResult.success(true);
     }
 }

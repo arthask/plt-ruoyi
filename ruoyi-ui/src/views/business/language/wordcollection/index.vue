@@ -178,7 +178,7 @@ export default {
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          >修改
+          >修改名称
           </el-button>
           <el-button
             size="mini"
@@ -217,12 +217,12 @@ export default {
       </el-row>
     </el-dialog>
 
-    <el-dialog :title="title"
+    <el-dialog title="查看单词"
                v-if="showView"
                :visible.sync="showView"
                :center="true"
                :destroy-on-close="true">
-      <word-view ref="wordview" :labelUUID="labelUUID"></word-view>
+      <word-view :labelUUID="labelUUID"></word-view>
     </el-dialog>
   </div>
 </template>

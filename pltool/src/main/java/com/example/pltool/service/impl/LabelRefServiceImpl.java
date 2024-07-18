@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,13 +57,24 @@ public class LabelRefServiceImpl extends ServiceImpl<LabelRefMapper, LabelRef> i
     }
 
     @Override
-    public List<WordCollectionData> getCollectionsOfPackage(Integer type, String packageUUId,Long userId) {
+    public List<WordCollectionData> getCollectionsOfPackage(Integer type, String packageUUId, Long userId) {
         List<WordCollectionData> allCollectionByType = labelRefMapper.getCollectionsOfPackage(type, packageUUId, userId);
         // 获取创建时间
         if (CollectionUtils.isEmpty(allCollectionByType)) {
             return Collections.emptyList();
         }
         return setWordCollectionData(type, allCollectionByType);
+    }
+
+    @Override
+    public boolean isRepeatBindWordCollection(String packageUUId, String collectionUUId, Long userId) {
+        // 添加单词集与卡包的关联关系
+        QueryWrapper<LabelRef> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("label_uuid", collectionUUId)
+                .eq("ref_uuid", packageUUId)
+                .eq("ref_type", RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue())
+                .eq("create_user_id", userId);
+        return count(queryWrapper) > 0;
     }
 
     private List<WordCollectionData> setWordCollectionData(Integer type, List<WordCollectionData> allCollectionByType) {
@@ -85,7 +93,7 @@ public class LabelRefServiceImpl extends ServiceImpl<LabelRefMapper, LabelRef> i
         }
         Map<String, List<LabelRef>> groupByLabelUUId = labelRefs.stream()
                 .collect(Collectors.groupingBy(LabelRef::getLabelUuid));
-        groupByLabelUUId.forEach((k,v) -> {
+        groupByLabelUUId.forEach((k, v) -> {
             v.sort(Comparator.comparing(LabelRef::getCreateTime));
             LabelRef labelRef = v.get(0);
             collectionDataMap.get(k).setCreateTime(labelRef.getCreateTime());

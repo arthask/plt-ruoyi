@@ -33,7 +33,7 @@ export function update(data) {
 
 export function del(uuid) {
   return request({
-    url: '/flashcardPackage/delete/'+uuid,
+    url: '/flashcardPackage/delete/' + uuid,
     method: 'delete',
   })
 }
@@ -50,6 +50,13 @@ export function getPackageList(params) {
 export function addCollectionToPackage(data) {
   return request({
     url: '/wordCollection/addCollectionToPackage',
+    method: 'post',
+    data: data
+  })
+}
+export function removeCollectionOfPackage(data) {
+  return request({
+    url: '/wordCollection/removeCollectionOfPackage',
     method: 'post',
     data: data
   })

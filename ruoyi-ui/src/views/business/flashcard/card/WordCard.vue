@@ -1,27 +1,29 @@
 <template>
   <div>
-    <div v-bind:style="{backgroundColor: colorFront, color: colorTextFront}" v-show="!isToggle" class="animated flipInX flashcard">
-      <el-button icon="el-icon-headset" circle @click="speakWord(front)">播放</el-button>
+    <div v-bind:style="{backgroundColor: colorFront, color: colorTextFront}" v-show="!isToggle"
+         class="animated flipInX flashcard">
+      <i class="el-icon-headset" @click.stop.prevent="speakWord(front)"></i>
       <div @click="isToggle=!isToggle">
 
         <el-row type="flex" justify="center" align="middle" style="height: 300px;width: 100%">
-<!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->
-<!--          <div class="card-content center">-->
-            <p v-bind:style="{fontSize: textSizeFront,fontWeight: 'bold'}">{{front}}</p>
-<!--            <img v-if="imgFront!=''" :src="imgFront" width="200" height="200">-->
-<!--          </div>-->
-<!--          <div class="card-footer">{{footerFront}}</div>-->
+          <!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->
+          <!--          <div class="card-content center">-->
+          <p v-bind:style="{fontSize: textSizeFront,fontWeight: 'bold'}">{{ front }}</p>
+          <!--            <img v-if="imgFront!=''" :src="imgFront" width="200" height="200">-->
+          <!--          </div>-->
+          <!--          <div class="card-footer">{{footerFront}}</div>-->
         </el-row>
 
       </div>
     </div>
-    <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}" v-show="isToggle" class="animated flipInX flashcard">
-      <el-button icon="el-icon-headset" circle @click="speakWord(back)">播放</el-button>
+    <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}" v-show="isToggle"
+         class="animated flipInX flashcard">
+<!--      <i class="el-icon-headset" @click.stop.prevent="speakWord(back)"></i>-->
       <div @click="isToggle=!isToggle">
         <el-row type="flex" justify="center" align="middle" style="height: 300px;width: 100%">
           <!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->
           <!--          <div class="card-content center">-->
-          <p v-bind:style="{fontSize: textSizeBack,fontWeight: 'bold'}">{{back}}</p>
+          <p v-bind:style="{fontSize: textSizeBack,fontWeight: 'bold'}">{{ back }}</p>
           <!--            <img v-if="imgFront!=''" :src="imgFront" width="200" height="200">-->
           <!--          </div>-->
           <!--          <div class="card-footer">{{footerFront}}</div>-->
@@ -94,8 +96,8 @@ export default {
       type: String,
       default: 'Click to show Front'
     }
-  },methods:{
-    speakWord(content){
+  }, methods: {
+    speakWord(content) {
       this.speakCommon.speak(content)
     }
   }
