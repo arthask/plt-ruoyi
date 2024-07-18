@@ -147,7 +147,7 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
         if (packageCollectionData.getCardType() == 1) {
             // 单词类型卡片
             List<Word> wordsOfCollection = wordCollectionService.getWordsOfCollection(packageCollectionData.getCollectionUUID());
-            wordsOfCollection.forEach(word -> {
+            wordsOfCollection.stream().filter(Objects::nonNull).forEach(word -> {
                 Flashcard flashcard = new Flashcard();
                 flashcard.setUserId(packageCollectionData.getUserId());
                 String flashcardUUUID = UUID.randomUUID().toString().replace("-", "");
@@ -156,6 +156,7 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
                 flashcard.setBack(word.getTranslation());
                 flashcard.setType(CardTypeEnum.WORD.getValue());
                 flashcard.setSourceUuid(word.getUuid());
+                flashcard.setCollectionUuid(packageCollectionData.getCollectionUUID());
                 flashcards.add(flashcard);
                 if (StringUtils.isNotBlank(packageCollectionData.getPackageUUID())) {
                     PackageCardRef packageCardRef = new PackageCardRef();

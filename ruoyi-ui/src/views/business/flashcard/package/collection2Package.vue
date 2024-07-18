@@ -45,11 +45,15 @@ export default {
         packageUUID: this.packageUUID
       }
       addCollectionToPackage(params).then(res => {
-        if (res.data.data === true) {
-          this.$modal.msgSuccess("添加成功")
+        if (res.data === true) {
+          if (res.msg) {
+            this.$modal.msgSuccess(res.msg);
+          } else {
+            this.$modal.msgSuccess("添加成功")
+          }
           this.closeDialog()
         } else {
-          this.$modal.msgSuccess("添加失败");
+          this.$modal.msgError("添加失败");
         }
       })
     },

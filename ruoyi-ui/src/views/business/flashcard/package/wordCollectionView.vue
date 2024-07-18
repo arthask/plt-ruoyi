@@ -1,5 +1,6 @@
 <script>
 import {getCollectionsOfPackage} from "@/api/bussiness/wordcollection";
+import {removeCollectionOfPackage} from "@/api/bussiness/flashcardpackage";
 
 export default {
   name: "wordCollectionView",
@@ -12,7 +13,7 @@ export default {
   data() {
     return {
       ids: [],
-      loading : false,
+      loading: false,
       tableData: [],
       // 查询参数
       queryParams: {
@@ -29,13 +30,13 @@ export default {
   },
   methods: {
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.uuid)
+      this.ids = selection.map(item => item.labelUUID)
     },
-    getList(){
+    getList() {
       this.loading = true
       this.queryParams.packageUUId = this.packageUUId
       getCollectionsOfPackage(this.queryParams).then(response => {
-        if(response.rows) {
+        if (response.rows) {
           this.tableData = response.rows;
           this.total = response.total;
         }
@@ -43,7 +44,22 @@ export default {
       });
     },
     handleDelete() {
-
+      let params = {
+        packageUUId: this.packageUUId,
+        collectionUUIdList: this.ids
+      }
+      removeCollectionOfPackage(params).then(res => {
+        if (res.data === true) {
+          if (res.msg) {
+            this.$modal.msgSuccess(res.msg);
+          } else {
+            this.$modal.msgSuccess("删除成功！");
+          }
+          this.getList();
+        } else {
+          this.$modal.msgError("删除失败！");
+        }
+      })
     }
   }
 }

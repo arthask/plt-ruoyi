@@ -63,11 +63,18 @@ public class WordCollectionController extends BaseController {
     @PostMapping("/addCollectionToPackage")
     AjaxResult addCollectionToPackage(@RequestBody PackageCollectionData packageCollectionData) {
         packageCollectionData.setUserId(getUserId());
-        return AjaxResult.success(wordCollectionService.addCollectionToPackage(packageCollectionData));
+        return wordCollectionService.addCollectionToPackage(packageCollectionData);
+    }
+
+    @PostMapping("/removeWordOfCollection")
+    AjaxResult removeWordOfCollection(@RequestBody WordCollectionData wordCollectionData) {
+        wordCollectionData.setUserId(getUserId());
+        return wordCollectionService.removeWordOfCollection(wordCollectionData);
     }
 
     @PostMapping("/removeCollectionOfPackage")
     AjaxResult removeCollectionOfPackage(@RequestBody RemoveCollectionOfPackage removeCollectionOfPackage) {
-        return AjaxResult.success(wordCollectionService.removeCollectionOfPackage(removeCollectionOfPackage));
+        removeCollectionOfPackage.setUserId(getUserId());
+        return wordCollectionService.removeCollectionOfPackage(removeCollectionOfPackage);
     }
 }

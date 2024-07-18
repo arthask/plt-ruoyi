@@ -33,7 +33,7 @@
     <select id="getWordsOfCollection" resultType="com.example.pltool.domain.entity.Word">
         select w.* from label_ref lr
             left join word w on lr.ref_uuid = w.uuid
-        where lr.label_uuid = #{uuid}
+        where lr.label_uuid = #{uuid} and lr.ref_type = 2
     </select>
     <select id="getWordsOfCollectionUUIdList" resultType="com.example.pltool.domain.entity.Word">
         select w.uuid, w.word, w.create_time
@@ -43,6 +43,7 @@
         <foreach item="uuid" collection="labelUUIDList" open="(" separator="," close=")">
             #{uuid}
         </foreach>
+        and lr.ref_type = 2
     </select>
     <select id="getCollectionsOfPackage"
             resultType="com.example.pltool.domain.dto.language.wordcollection.WordCollectionData">

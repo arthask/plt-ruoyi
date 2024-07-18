@@ -61,4 +61,6 @@ public interface WordCollectionService {
     AjaxResult addCollectionToPackage(PackageCollectionData packageCollectionData);
 
     AjaxResult removeCollectionOfPackage(RemoveCollectionOfPackage removeCollectionOfPackage);
+
+    AjaxResult removeWordOfCollection(WordCollectionData wordCollectionData);
 }

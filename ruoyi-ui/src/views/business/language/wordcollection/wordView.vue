@@ -1,5 +1,6 @@
 <script>
-import {getWordsOfCollection, listWordCollection} from "@/api/bussiness/wordcollection";
+import {getWordsOfCollection, removeWordOfCollection} from "@/api/bussiness/wordcollection";
+import {removeCollectionOfPackage} from "@/api/bussiness/flashcardpackage";
 
 export default {
   name: "wordView",
@@ -12,7 +13,7 @@ export default {
   data() {
     return {
       ids: [],
-      loading : false,
+      loading: false,
       tableData: [],
       // 查询参数
       queryParams: {
@@ -35,16 +36,34 @@ export default {
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.uuid)
     },
-    getList(){
+    getList() {
       this.loading = true
       this.queryParams.labelUUID = this.labelUUID
       getWordsOfCollection(this.queryParams).then(response => {
-        if(response.rows) {
+        if (response.rows) {
           this.tableData = response.rows;
           this.total = response.total;
         }
         this.loading = false;
       });
+    },
+    handleDelete() {
+      let params = {
+        labelUUID: this.labelUUID,
+        wordUUIDList: this.ids
+      }
+      removeWordOfCollection(params).then(res => {
+        if (res.data === true) {
+          if (res.msg) {
+            this.$modal.msgSuccess(res.msg);
+          } else {
+            this.$modal.msgSuccess("删除成功！");
+          }
+          this.getList();
+        } else {
+          this.$modal.msgError("删除失败！");
+        }
+      })
     }
   }
 }
@@ -53,6 +72,18 @@ export default {
 
 <template>
   <div>
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          @click="handleDelete"
+        >从单词集中移除
+        </el-button>
+      </el-col>
+    </el-row>
     <el-table :data="tableData" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="单词" align="center" prop="word"/>

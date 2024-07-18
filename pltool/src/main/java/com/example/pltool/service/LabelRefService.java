@@ -44,4 +44,6 @@ public interface LabelRefService extends IService<LabelRef> {
 
     List<WordCollectionData> getCollectionsOfPackage(Integer type, String packageUUId, Long userId);
 
+    boolean isRepeatBindWordCollection(String packageUUId, String collectionUUId,Long userId);
+
 }

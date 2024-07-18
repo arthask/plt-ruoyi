@@ -59,3 +59,12 @@ export function getCollectionsOfPackage(query) {
     params: query
   })
 }
+
+
+export function removeWordOfCollection(data) {
+  return request({
+    url: '/wordCollection/removeWordOfCollection',
+    method: 'post',
+    data: data
+  })
+}

@@ -42,6 +42,7 @@ public class FlashcardPackageController extends BaseController {
         if (StringUtils.isNotBlank(name)) {
             queryWrapper.like("name", name);
         }
+        queryWrapper.orderByDesc("create_time");
         List<FlashcardPackage> list = flashcardPackageService.list(queryWrapper);
         return getDataTable(list);
     }

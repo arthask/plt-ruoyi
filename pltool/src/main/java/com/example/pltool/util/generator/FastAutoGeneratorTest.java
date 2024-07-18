@@ -64,7 +64,7 @@ public class FastAutoGeneratorTest extends BaseGeneratorTest {
                         .entity("domain.entity")   //pojo 实体类包名
 //                        .service("service") //Service 包名
 //                        .serviceImpl("service.impl") // ***ServiceImpl 包名
-                        .mapper("mapper")   //Mapper 包名
+//                        .mapper("mapper")   //Mapper 包名
                         .xml("mapper.xml")  //Mapper XML 包名
                         //配置 mapper.xml 路径信息：项目的 resources 目录下)
                         .pathInfo(Collections.singletonMap(OutputFile.mapper.xml,
