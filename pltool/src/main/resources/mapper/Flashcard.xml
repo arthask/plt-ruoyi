@@ -13,12 +13,11 @@
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="source_uuid" property="sourceUuid" />
-        <result column="collection_uuid" property="collectionUuid" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, uuid, front, back, type, user_id, create_time, update_time, source_uuid, collection_uuid
+        id, uuid, front, back, type, user_id, create_time, update_time, source_uuid
     </sql>
     <select id="getCardOfPackage" resultType="com.example.pltool.domain.entity.Flashcard">
         select f.* from package_card_ref pcr

@@ -163,13 +163,13 @@ public class WordCollectionServiceImpl implements WordCollectionService {
         queryWrapper.in("label_uuid", removeCollectionOfPackage.getCollectionUUIdList());
         labelRefService.remove(queryWrapper);
         // 查找单词集下单词对应的卡片uuid集合
-        QueryWrapper<Flashcard> cardQueryWrapper = new QueryWrapper<>();
-        cardQueryWrapper.in("collection_uuid", removeCollectionOfPackage.getCollectionUUIdList());
-        cardQueryWrapper.eq("type", CardTypeEnum.WORD.getValue());
-        cardQueryWrapper.eq("user_id", removeCollectionOfPackage.getUserId());
-        List<String> removeCardUUIdList = flashcardService.list(cardQueryWrapper)
+        QueryWrapper<LabelRef> cardQueryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ref_type", RefTypeEnum.CARD_COLLECTION.getValue());
+        queryWrapper.eq("create_user_id", removeCollectionOfPackage.getUserId());
+        queryWrapper.in("label_uuid", removeCollectionOfPackage.getCollectionUUIdList());
+        List<String> removeCardUUIdList = labelRefService.list(cardQueryWrapper)
                 .stream()
-                .map(Flashcard::getUuid)
+                .map(LabelRef::getRefUuid)
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(removeCardUUIdList)) {
             return AjaxResult.success("删除成功，没有需要从卡包移除的卡片", true);

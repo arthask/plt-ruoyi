@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  * </p>
  *
  * @author author
- * @since 2024-07-18
+ * @since 2024-07-19
  */
 @Mapper
 public interface FlashcardMapper extends BaseMapper<Flashcard> {

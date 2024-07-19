@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author author
- * @since 2024-07-18
+ * @since 2024-07-19
  */
 @Getter
 @Setter
@@ -76,10 +76,4 @@ public class Flashcard implements Serializable {
      */
     @TableField("source_uuid")
     private String sourceUuid;
-
-    /**
-     * 单词集uuid
-     */
-    @TableField("collection_uuid")
-    private String collectionUuid;
 }
