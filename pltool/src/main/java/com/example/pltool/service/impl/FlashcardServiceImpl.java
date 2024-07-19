@@ -142,6 +142,7 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
 
         List<Flashcard> flashcards = new ArrayList<>();
         List<PackageCardRef> packageCardRefs = new ArrayList<>();
+        List<LabelRef> cardWithCollection = new ArrayList<>();
         // 卡片去重
         // 根据类型 构造卡片内容
         if (packageCollectionData.getCardType() == 1) {
@@ -156,7 +157,6 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
                 flashcard.setBack(word.getTranslation());
                 flashcard.setType(CardTypeEnum.WORD.getValue());
                 flashcard.setSourceUuid(word.getUuid());
-                flashcard.setCollectionUuid(packageCollectionData.getCollectionUUID());
                 flashcards.add(flashcard);
                 if (StringUtils.isNotBlank(packageCollectionData.getPackageUUID())) {
                     PackageCardRef packageCardRef = new PackageCardRef();
@@ -165,6 +165,13 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
                     packageCardRef.setPackageUuid(packageCollectionData.getPackageUUID());
                     packageCardRefs.add(packageCardRef);
                 }
+                LabelRef labelRef = new LabelRef();
+                labelRef.setUuid(UUID.randomUUID().toString().replace("-", ""))
+                        .setLabelUuid(packageCollectionData.getCollectionUUID())
+                        .setRefUuid(flashcardUUUID)
+                        .setRefType(RefTypeEnum.CARD_COLLECTION.getValue())
+                        .setCreateUserId(packageCollectionData.getUserId());
+                cardWithCollection.add(labelRef);
             });
             // 单词集与卡包关联关系去重处理
             // 添加单词集与卡包的关联关系
@@ -174,13 +181,16 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
                     .setRefUuid(packageCollectionData.getPackageUUID())
                     .setRefType(RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue())
                     .setCreateUserId(packageCollectionData.getUserId());
-            labelRefService.save(labelRef);
+            cardWithCollection.add(labelRef);
         }
         if (!CollectionUtils.isEmpty(flashcards)) {
             saveBatch(flashcards);
         }
         if (!CollectionUtils.isEmpty(packageCardRefs)) {
             packageCardRefService.saveBatch(packageCardRefs);
+        }
+        if (!CollectionUtils.isEmpty(cardWithCollection)) {
+            labelRefService.saveBatch(cardWithCollection);
         }
 
         return AjaxResult.success(true);
