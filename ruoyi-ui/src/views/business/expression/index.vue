@@ -338,17 +338,18 @@ export default {
           <el-input type="textarea" v-if="showAppend" disabled v-model="form.content" rows="3" resize="none"></el-input>
           <el-input type="textarea" v-else v-model="form.content" rows="3" resize="none"></el-input>
         </el-form-item>
-        <el-form-item v-if="showEditor"
-                      v-for="(item, index) in form.expressionDetailData"
-                      :key="item.uuid"
-                      label="表达">
-          <el-input type="textarea" v-model="item.content" rows="4" resize="none"></el-input>
-        </el-form-item>
         <el-form-item label="怎么说" v-if="!showEditor">
           <el-input type="textarea" v-if="showAppend" v-model="appendContent" rows="4" resize="none"></el-input>
           <el-input type="textarea" v-else v-model="addContent" rows="4"
                     resize="none"></el-input>
         </el-form-item>
+        <el-form-item v-else
+                      v-for="(item, index) in form.expressionDetailData"
+                      :key="item.uuid"
+                      label="表达">
+          <el-input type="textarea" v-model="item.content" rows="4" resize="none"></el-input>
+        </el-form-item>
+
       </el-form>
       <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
         <el-col :span="10"></el-col>
