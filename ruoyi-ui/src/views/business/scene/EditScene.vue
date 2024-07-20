@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="overflow-y: auto; max-height: 450px;padding: 0 20px">
     <el-form ref="form" :model="sceneData" label-width="80px" v-if="showName">
       <el-row>
         <el-form-item label="场景名称">
@@ -16,10 +16,14 @@
     <el-row :gutter="20" v-for="(item,index) in contentList"
             :key="index">
       <el-col :span="10">
-        <el-input style="margin-top: 10px" v-model="item.senderContent" placeholder="请输入问题"></el-input>
+        <el-input type="textarea" rows="2" maxlength="100"  show-word-limit
+                  resize="none" style="margin-top: 10px"
+                  v-model="item.senderContent" placeholder="请输入问题"></el-input>
       </el-col>
       <el-col :span="10">
-        <el-input style="margin-top: 10px" v-model="item.reply" placeholder="请输入回复"></el-input>
+        <el-input type="textarea" rows="2" maxlength="100"  show-word-limit
+                  resize="none" style="margin-top: 10px"
+                  v-model="item.reply" placeholder="请输入回复"></el-input>
       </el-col>
       <el-col :span="4">
         <el-button style="margin-top: 10px" @click.prevent="remove(index)">删除</el-button>

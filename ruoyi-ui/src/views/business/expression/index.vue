@@ -330,12 +330,11 @@ export default {
       @pagination="getList"
     />
     <el-dialog :title="title"
-               :visible.sync="showDialog" width="800px"
+               :visible.sync="showDialog" width="800px" height="500px"
                :center="true"
                :destroy-on-close="true">
-      <el-form ref="form" :model="form" label-width="80px">
+      <el-form ref="form" :model="form" label-width="80px" style="overflow-y: auto; max-height: 420px;padding: 0 20px">
         <el-form-item label="想说">
-
           <el-input type="textarea" v-if="showAppend" disabled v-model="form.content" rows="3" resize="none"></el-input>
           <el-input type="textarea" v-else v-model="form.content" rows="3" resize="none"></el-input>
         </el-form-item>
@@ -345,7 +344,7 @@ export default {
                       label="表达">
           <el-input type="textarea" v-model="item.content" rows="4" resize="none"></el-input>
         </el-form-item>
-        <el-form-item label="怎么说" v-show="!showEditor">
+        <el-form-item label="怎么说" v-if="!showEditor">
           <el-input type="textarea" v-if="showAppend" v-model="appendContent" rows="4" resize="none"></el-input>
           <el-input type="textarea" v-else v-model="addContent" rows="4"
                     resize="none"></el-input>
