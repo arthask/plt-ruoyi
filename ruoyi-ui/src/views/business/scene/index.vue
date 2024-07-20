@@ -84,13 +84,13 @@
       @pagination="getList"
     />
     <el-dialog :title="title"
-               :visible.sync="showConversation" width="800px"
+               :visible.sync="showConversation" height="500px" width="800px"
                :center="true"
                :destroy-on-close="true">
       <conversation :diag-content-list="contentList"></conversation>
     </el-dialog>
     <el-dialog :title="title"
-               :visible.sync="showEditScene" width="800px"
+               :visible.sync="showEditScene" width="800px" height="500px"
                append-to-body
                :destroy-on-close="true">
       <edit-scene :sceneAndDialoguesData="sceneData" @closeAdd="closeAdd"></edit-scene>
