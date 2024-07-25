@@ -1,7 +1,7 @@
 package com.example.pltool.controller.business.flashcard;
 
 import com.example.pltool.domain.dto.flashcard.cardattribute.StudyCardDto;
-import com.example.pltool.service.FlashcardAttributeService;
+import com.example.pltool.service.flashcard.FlashcardAttributeService;
 import com.ruoyi.common.core.domain.AjaxResult;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package com.example.pltool.controller.business.flashcard;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.example.pltool.domain.entity.FlashcardPackage;
-import com.example.pltool.service.FlashcardPackageService;
+import com.example.pltool.service.flashcard.FlashcardPackageService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;

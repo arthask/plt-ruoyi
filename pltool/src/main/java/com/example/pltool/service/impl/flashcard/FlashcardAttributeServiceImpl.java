@@ -1,11 +1,11 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.flashcard;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.domain.dto.flashcard.cardattribute.ClassifyCountVo;
 import com.example.pltool.domain.entity.FlashcardAttribute;
 import com.example.pltool.mapper.FlashcardAttributeMapper;
-import com.example.pltool.service.FlashcardAttributeService;
+import com.example.pltool.service.flashcard.FlashcardAttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

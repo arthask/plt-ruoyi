@@ -47,11 +47,20 @@
     </select>
     <select id="getCollectionsOfPackage"
             resultType="com.example.pltool.domain.dto.language.wordcollection.WordCollectionData">
-        select l.uuid as labelUUID , l.name
-        from label_ref lr
-                 left join label l on lr.label_uuid = l.uuid
-        where lr.ref_type = #{type} and lr.ref_uuid = #{packageUUId} and lr.create_user_id = #{userId}
-        group by l.uuid, l.name
+        select uuid as labelUUID, name, create_time
+        from label
+        where uuid in (select collection_uuid as uuid from package_card_ref pcr where package_uuid = #{packageUUId})
+          and create_user_id = #{userId}
+    </select>
+    <select id="getCollectionByCardSourceId" resultType="java.lang.String">
+        select label_uuid
+        from label_ref
+        where ref_type = 4
+          and ref_uuid in (select uuid from flashcard where source_uuid in
+        <foreach item="uuid" collection="sourceUUIdList" open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+        group by label_uuid
     </select>
 
 

@@ -1,8 +1,7 @@
 package com.example.pltool.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.example.pltool.domain.entity.PackageCardRef;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author author
- * @since 2024-05-23
+ * @since 2024-07-25
  */
 @Mapper
 public interface PackageCardRefMapper extends BaseMapper<PackageCardRef> {

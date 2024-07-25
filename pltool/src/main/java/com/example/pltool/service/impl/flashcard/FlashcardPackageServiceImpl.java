@@ -1,4 +1,4 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.flashcard;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,6 +9,8 @@ import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.entity.*;
 import com.example.pltool.mapper.FlashcardPackageMapper;
 import com.example.pltool.service.*;
+import com.example.pltool.service.flashcard.FlashcardPackageService;
+import com.example.pltool.service.flashcard.FlashcardService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,12 +184,6 @@ public class FlashcardPackageServiceImpl extends ServiceImpl<FlashcardPackageMap
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean removeByUUID(String uuid) {
-        // 解绑卡包中的单词集
-        QueryWrapper<LabelRef> labelRefQueryWrapper = new QueryWrapper<>();
-        labelRefQueryWrapper.eq("ref_uuid", uuid)
-                .eq("ref_type", RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue());
-        List<LabelRef> labelRefs = labelRefService.list(labelRefQueryWrapper);
-        labelRefService.remove(labelRefQueryWrapper);
         // 解绑卡包中的卡片
         QueryWrapper<PackageCardRef> packageCardRefQueryWrapper = new QueryWrapper<>();
         packageCardRefQueryWrapper.eq("package_uuid", uuid);

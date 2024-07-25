@@ -42,7 +42,7 @@ public interface LabelRefService extends IService<LabelRef> {
 
     List<Word> getWordsOfCollection(List<String> labelUUIDList);
 
-    List<WordCollectionData> getCollectionsOfPackage(Integer type, String packageUUId, Long userId);
+    List<WordCollectionData> getCollectionsOfPackage(String packageUUId, Long userId);
 
     boolean isRepeatBindWordCollection(String packageUUId, String collectionUUId,Long userId);
 

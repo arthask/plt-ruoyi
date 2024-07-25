@@ -1,17 +1,16 @@
-package com.example.pltool.service.impl;
+package com.example.pltool.service.impl.flashcard;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.pltool.controller.business.constant.enums.CardTypeEnum;
-import com.example.pltool.controller.business.constant.enums.RefTypeEnum;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.CardInfo;
+import com.example.pltool.domain.dto.flashcard.cardpackage.OperateWordInCollection;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.example.pltool.domain.entity.*;
 import com.example.pltool.mapper.FlashcardMapper;
-import com.example.pltool.service.FlashcardService;
-import com.example.pltool.service.LabelRefService;
+import com.example.pltool.service.flashcard.CreateCardService;
+import com.example.pltool.service.flashcard.FlashcardService;
 import com.example.pltool.service.PackageCardRefService;
 import com.example.pltool.service.QuestionService;
 import com.example.pltool.service.language.WordCollectionService;
@@ -22,12 +21,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * <p>
@@ -54,8 +50,10 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     @Autowired
     private WordCollectionService wordCollectionService;
 
-    @Autowired
-    private LabelRefService labelRefService;
+    @Resource(name = "wordCardCreator")
+    private CreateCardService<Word> wordCardCreator;
+
+
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -136,63 +134,20 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
         return cardInfo;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+
     @Override
     public AjaxResult batchAddCard(PackageCollectionData packageCollectionData) {
-
-        List<Flashcard> flashcards = new ArrayList<>();
-        List<PackageCardRef> packageCardRefs = new ArrayList<>();
-        List<LabelRef> cardWithCollection = new ArrayList<>();
         // 卡片去重
         // 根据类型 构造卡片内容
         if (packageCollectionData.getCardType() == 1) {
             // 单词类型卡片
             List<Word> wordsOfCollection = wordCollectionService.getWordsOfCollection(packageCollectionData.getCollectionUUID());
-            wordsOfCollection.stream().filter(Objects::nonNull).forEach(word -> {
-                Flashcard flashcard = new Flashcard();
-                flashcard.setUserId(packageCollectionData.getUserId());
-                String flashcardUUUID = UUID.randomUUID().toString().replace("-", "");
-                flashcard.setUuid(flashcardUUUID);
-                flashcard.setFront(word.getWord());
-                flashcard.setBack(word.getTranslation());
-                flashcard.setType(CardTypeEnum.WORD.getValue());
-                flashcard.setSourceUuid(word.getUuid());
-                flashcards.add(flashcard);
-                if (StringUtils.isNotBlank(packageCollectionData.getPackageUUID())) {
-                    PackageCardRef packageCardRef = new PackageCardRef();
-                    packageCardRef.setUuid(UUID.randomUUID().toString().replace("-", ""));
-                    packageCardRef.setCardUuid(flashcardUUUID);
-                    packageCardRef.setPackageUuid(packageCollectionData.getPackageUUID());
-                    packageCardRefs.add(packageCardRef);
-                }
-                LabelRef labelRef = new LabelRef();
-                labelRef.setUuid(UUID.randomUUID().toString().replace("-", ""))
-                        .setLabelUuid(packageCollectionData.getCollectionUUID())
-                        .setRefUuid(flashcardUUUID)
-                        .setRefType(RefTypeEnum.CARD_COLLECTION.getValue())
-                        .setCreateUserId(packageCollectionData.getUserId());
-                cardWithCollection.add(labelRef);
-            });
-            // 单词集与卡包关联关系去重处理
-            // 添加单词集与卡包的关联关系
-            LabelRef labelRef = new LabelRef();
-            labelRef.setUuid(UUID.randomUUID().toString().replace("-", ""))
-                    .setLabelUuid(packageCollectionData.getCollectionUUID())
-                    .setRefUuid(packageCollectionData.getPackageUUID())
-                    .setRefType(RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue())
-                    .setCreateUserId(packageCollectionData.getUserId());
-            cardWithCollection.add(labelRef);
+            OperateWordInCollection operateWordInCollection = new OperateWordInCollection();
+            operateWordInCollection.setCollectionUUID(packageCollectionData.getCollectionUUID());
+            operateWordInCollection.setUserId(packageCollectionData.getUserId());
+            operateWordInCollection.setPackageUUIdList(Collections.singletonList(packageCollectionData.getPackageUUID()));
+            return wordCardCreator.createCardAndRelationShip(operateWordInCollection, wordsOfCollection);
         }
-        if (!CollectionUtils.isEmpty(flashcards)) {
-            saveBatch(flashcards);
-        }
-        if (!CollectionUtils.isEmpty(packageCardRefs)) {
-            packageCardRefService.saveBatch(packageCardRefs);
-        }
-        if (!CollectionUtils.isEmpty(cardWithCollection)) {
-            labelRefService.saveBatch(cardWithCollection);
-        }
-
         return AjaxResult.success(true);
     }
 }
