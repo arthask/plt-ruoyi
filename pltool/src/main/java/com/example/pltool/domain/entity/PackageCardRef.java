@@ -4,12 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author author
- * @since 2024-05-23
+ * @since 2024-07-25
  */
 @Getter
 @Setter
@@ -62,4 +61,16 @@ public class PackageCardRef implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 单词集uuid
+     */
+    @TableField("collection_uuid")
+    private String collectionUuid;
+
+    /**
+     * 创建人
+     */
+    @TableField("create_user_id")
+    private Long createUserId;
 }

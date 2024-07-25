@@ -1,4 +1,4 @@
-package com.example.pltool.service;
+package com.example.pltool.service.flashcard;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pltool.domain.dto.flashcard.cardattribute.ClassifyCountVo;

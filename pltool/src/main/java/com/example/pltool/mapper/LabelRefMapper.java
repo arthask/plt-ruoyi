@@ -26,9 +26,11 @@ public interface LabelRefMapper extends BaseMapper<LabelRef> {
 
     List<WordCollectionData> getAllCollectionByType(@Param("type") Integer type);
 
-    List<WordCollectionData> getCollectionsOfPackage(@Param("type")Integer type, @Param("packageUUId")String packageUUId,@Param("userId") Long userId);
+    List<WordCollectionData> getCollectionsOfPackage(@Param("packageUUId")String packageUUId,@Param("userId") Long userId);
 
     List<Word> getWordsOfCollection(@Param("uuid") String uuid);
 
     List<Word> getWordsOfCollectionUUIdList(@Param("labelUUIDList") List<String> labelUUIDList);
+
+    List<String> getCollectionByCardSourceId(@Param("sourceUUIdList") List<String> sourceUUIdList);
 }

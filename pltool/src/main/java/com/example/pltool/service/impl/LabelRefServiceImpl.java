@@ -7,8 +7,10 @@ import com.example.pltool.controller.business.constant.enums.RefTypeEnum;
 import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.domain.entity.LabelRef;
+import com.example.pltool.domain.entity.PackageCardRef;
 import com.example.pltool.domain.entity.Word;
 import com.example.pltool.mapper.LabelRefMapper;
+import com.example.pltool.mapper.PackageCardRefMapper;
 import com.example.pltool.service.LabelRefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ import java.util.stream.Collectors;
 public class LabelRefServiceImpl extends ServiceImpl<LabelRefMapper, LabelRef> implements LabelRefService {
     @Autowired
     private LabelRefMapper labelRefMapper;
+
+    @Autowired
+    private PackageCardRefMapper packageCardRefMapper;
 
     @Override
     public List<LabelInfo> getLabelInfoByRefUUID(String refUUID) {
@@ -57,24 +62,18 @@ public class LabelRefServiceImpl extends ServiceImpl<LabelRefMapper, LabelRef> i
     }
 
     @Override
-    public List<WordCollectionData> getCollectionsOfPackage(Integer type, String packageUUId, Long userId) {
-        List<WordCollectionData> allCollectionByType = labelRefMapper.getCollectionsOfPackage(type, packageUUId, userId);
-        // 获取创建时间
-        if (CollectionUtils.isEmpty(allCollectionByType)) {
-            return Collections.emptyList();
-        }
-        return setWordCollectionData(type, allCollectionByType);
+    public List<WordCollectionData> getCollectionsOfPackage(String packageUUId, Long userId) {
+        return labelRefMapper.getCollectionsOfPackage(packageUUId, userId);
     }
 
     @Override
     public boolean isRepeatBindWordCollection(String packageUUId, String collectionUUId, Long userId) {
         // 添加单词集与卡包的关联关系
-        QueryWrapper<LabelRef> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("label_uuid", collectionUUId)
-                .eq("ref_uuid", packageUUId)
-                .eq("ref_type", RefTypeEnum.WORD_COLLECTION_OF_PACKAGE.getValue())
+        QueryWrapper<PackageCardRef> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("collection_uuid", collectionUUId)
+                .eq("package_uuid", packageUUId)
                 .eq("create_user_id", userId);
-        return count(queryWrapper) > 0;
+        return packageCardRefMapper.exists(queryWrapper);
     }
 
     private List<WordCollectionData> setWordCollectionData(Integer type, List<WordCollectionData> allCollectionByType) {

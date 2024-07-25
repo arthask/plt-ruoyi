@@ -17,8 +17,6 @@ public class WordCollectionData {
      * 标签名
      */
     private String name;
-
-    private Long userId;
     /**
      * 创建时间
      */
@@ -31,4 +29,7 @@ public class WordCollectionData {
      * 单词uuid列表
      */
     private List<String> wordUUIDList;
+
+
+    private Long userId;
 }

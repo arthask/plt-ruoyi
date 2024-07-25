@@ -1,6 +1,5 @@
 <script>
 import {getWordsOfCollection, removeWordOfCollection} from "@/api/bussiness/wordcollection";
-import {removeCollectionOfPackage} from "@/api/bussiness/flashcardpackage";
 
 export default {
   name: "wordView",
