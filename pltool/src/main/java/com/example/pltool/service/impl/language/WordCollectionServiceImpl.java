@@ -2,6 +2,7 @@ package com.example.pltool.service.impl.language;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.example.pltool.controller.business.constant.enums.CardTypeEnum;
 import com.example.pltool.controller.business.constant.enums.RefTypeEnum;
 import com.example.pltool.domain.dto.flashcard.cardpackage.OperateWordInCollection;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
@@ -18,6 +19,7 @@ import com.example.pltool.service.language.WordCollectionService;
 import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.uuid.UUID;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +91,7 @@ public class WordCollectionServiceImpl implements WordCollectionService {
         return labelRefService.getCollectionsOfPackage(packageUUId, userId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public AjaxResult addWordToCollection(WordCollectionData wordCollectionData) {
         // 相同单词添加到相同单词集 需要过滤
@@ -135,6 +138,20 @@ public class WordCollectionServiceImpl implements WordCollectionService {
         }
         if (filteredFlag) {
             return AjaxResult.success("已过滤重复添加的单词", true);
+        }
+        // 如果这个单词集有绑定卡包，则需要生成卡片并绑定卡片对应关系
+        QueryWrapper<PackageCardRef> packageCardRefQueryWrapper = new QueryWrapper<>();
+        packageCardRefQueryWrapper.eq("collection_uuid", wordCollectionData.getLabelUUID());
+        packageCardRefQueryWrapper.eq("create_user_id", wordCollectionData.getUserId());
+        List<PackageCardRef> packageCardRefs = packageCardRefService.list(packageCardRefQueryWrapper);
+        if (!CollectionUtils.isEmpty(packageCardRefs)) {
+            Map<String, List<PackageCardRef>> packageMap = packageCardRefs.stream().collect(Collectors.groupingBy(PackageCardRef::getPackageUuid));
+            List<Word> wordsOfCollection = getWordsOfCollection(wordCollectionData.getLabelUUID());
+            OperateWordInCollection operateWordInCollection = new OperateWordInCollection();
+            operateWordInCollection.setCollectionUUID(wordCollectionData.getLabelUUID());
+            operateWordInCollection.setUserId(wordCollectionData.getUserId());
+            operateWordInCollection.setPackageUUIdList(new ArrayList<>(packageMap.keySet()));
+            wordCardCreator.createCardAndRelationShip(operateWordInCollection, wordsOfCollection);
         }
         return AjaxResult.success(true);
     }
