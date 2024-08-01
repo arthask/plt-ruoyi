@@ -69,3 +69,11 @@ export function searchClassifyCard(params) {
     params: params
   })
 }
+
+export function getPackageInfoOfCard(params) {
+  return request({
+    url: '/flashcard/getPackageInfoOfCard',
+    method: 'get',
+    params: params
+  })
+}

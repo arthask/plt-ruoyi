@@ -3,9 +3,10 @@ package com.example.pltool.domain.dto.flashcard.cardpackage;
 
 
 import com.example.pltool.domain.dto.label.LabelInfo;
+import lombok.Data;
 
 import java.util.List;
-
+@Data
 public class PackageInfoDto {
     /**
      * uuid
@@ -27,49 +28,4 @@ public class PackageInfoDto {
      * 卡片标签
      */
     private List<LabelInfo> labelInfos;
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public PackageInfoDto setUuid(String uuid) {
-        this.uuid = uuid;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public PackageInfoDto setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public PackageInfoDto setType(Integer type) {
-        this.type = type;
-        return this;
-    }
-
-    public List<LabelInfo> getLabelInfos() {
-        return labelInfos;
-    }
-
-    public PackageInfoDto setLabelInfos(List<LabelInfo> labelInfos) {
-        this.labelInfos = labelInfos;
-        return this;
-    }
-
-    public Long getCardCount() {
-        return cardCount;
-    }
-
-    public PackageInfoDto setCardCount(Long cardCount) {
-        this.cardCount = cardCount;
-        return this;
-    }
 }

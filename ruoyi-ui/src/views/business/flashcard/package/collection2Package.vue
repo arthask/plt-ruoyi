@@ -22,8 +22,8 @@ export default {
       }],
       form : {
         collectionUUID: '',
-        cardType: null
-      },
+        cardType: 1
+      }
     }
   },
   mounted() {
@@ -67,15 +67,15 @@ export default {
 <template>
   <div>
     <el-form ref="form" :model="form" label-width="80px">
-      <el-form-item label="卡片类型" prop="cardType">
-        <el-select v-model="form.cardType" placeholder="请选择卡片类型">
-          <el-option v-for="item in typeOptions"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="卡片类型" prop="cardType">-->
+<!--        <el-select v-model="form.cardType" placeholder="请选择卡片类型" @change="changeCardType">-->
+<!--          <el-option v-for="item in typeOptions"-->
+<!--                     :key="item.value"-->
+<!--                     :label="item.label"-->
+<!--                     :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item label="单词集" prop="collectionUUID">
         <el-select v-model="form.collectionUUID" filterable placeholder="请选择单词集">
           <el-option

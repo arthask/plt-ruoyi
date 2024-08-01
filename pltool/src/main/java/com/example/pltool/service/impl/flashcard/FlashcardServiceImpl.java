@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.CardInfo;
+import com.example.pltool.domain.dto.flashcard.card.CardViewInfo;
 import com.example.pltool.domain.dto.flashcard.cardpackage.OperateWordInCollection;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
@@ -16,6 +17,7 @@ import com.example.pltool.service.QuestionService;
 import com.example.pltool.service.language.WordCollectionService;
 import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.exception.user.UserPasswordNotMatchException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -100,6 +103,17 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     }
 
     @Override
+    public Boolean update(Flashcard flashcard, Long userId) {
+        QueryWrapper<Flashcard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uuid", flashcard.getUuid());
+        Flashcard updateCard = new Flashcard();
+        updateCard.setFront(flashcard.getFront());
+        updateCard.setBack(flashcard.getBack());
+        updateCard.setUpdateTime(LocalDateTime.now());
+        return update(updateCard, queryWrapper);
+    }
+
+    @Override
     public CardInfo getCardOfPackage(String packageUUID, Integer offset) {
         CardInfo cardInfo = new CardInfo();
         Flashcard cardOfPackage = flashcardMapper.getCardOfPackage(packageUUID, offset);
@@ -148,6 +162,25 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
             operateWordInCollection.setPackageUUIdList(Collections.singletonList(packageCollectionData.getPackageUUID()));
             return wordCardCreator.createCardAndRelationShip(operateWordInCollection, wordsOfCollection);
         }
+        return AjaxResult.success(true);
+    }
+
+    @Override
+    public List<PackageInfoDto> getPackageInfoOfCard(String cardUUId) {
+        return packageCardRefService.getPackagesByCardUUId(cardUUId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult delete(String uuid) {
+        // 删除关联关系
+        QueryWrapper<PackageCardRef> cardRefQueryWrapper = new QueryWrapper<>();
+        cardRefQueryWrapper.eq("card_uuid", uuid);
+        packageCardRefService.remove(cardRefQueryWrapper);
+        // 删除卡片
+        QueryWrapper<Flashcard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uuid", uuid);
+        remove(queryWrapper);
         return AjaxResult.success(true);
     }
 }

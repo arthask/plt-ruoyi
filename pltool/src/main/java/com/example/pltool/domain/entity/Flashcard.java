@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -29,6 +32,7 @@ public class Flashcard implements Serializable {
     /**
      * id
      */
+    @JsonIgnore
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -57,12 +61,14 @@ public class Flashcard implements Serializable {
     private Integer type;
 
     @TableField("user_id")
+    @JsonIgnore
     private Long userId;
 
     /**
      * 创建时间
      */
     @TableField("create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
     /**

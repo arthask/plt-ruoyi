@@ -23,6 +23,15 @@
           </el-option>
         </el-select>
         <div v-if="showCard">
+          <el-statistic
+            group-separator=","
+            :value="cardCount"
+            title="卡片总数"
+          >
+            <template slot="prefix">
+              <i class="el-icon-s-flag" style="color: rgba(0, 123, 255, 0.72)"></i>
+            </template>
+          </el-statistic>
           <div v-for="item in tag" :key="item.name" class="tag" @click="searchClassifyCard(item.type)">
             {{ item.name }}
             <p>{{ item.count }}</p>
@@ -60,7 +69,7 @@ export default {
         flashcardId: [],
       },
       tag: [],
-      colorFront: 'rgba(140,0,255,0.75)',
+      colorFront: 'rgba(0, 123, 255, 0.72)',
       colorTextFront: 'white',
       question: 'hello this is a flashcard',
       answer: 'with animation',
@@ -205,6 +214,6 @@ export default {
 .tag:hover {
   cursor: pointer; /* 鼠标样式变为手型 */
   transform: scale(1.1); /* 放大效果 */
-  background: rgba(140, 0, 255, 0.76);
+  background: rgba(140, 0, 255, 0.44);
 }
 </style>

@@ -2,24 +2,25 @@ package com.example.pltool.service.impl.language;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.example.pltool.controller.business.constant.enums.CardTypeEnum;
 import com.example.pltool.controller.business.constant.enums.RefTypeEnum;
 import com.example.pltool.domain.dto.flashcard.cardpackage.OperateWordInCollection;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.dto.flashcard.cardpackage.RemoveCollectionOfPackage;
 import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
-import com.example.pltool.domain.entity.*;
-import com.example.pltool.service.flashcard.CreateCardService;
-import com.example.pltool.service.flashcard.FlashcardService;
+import com.example.pltool.domain.entity.Label;
+import com.example.pltool.domain.entity.LabelRef;
+import com.example.pltool.domain.entity.PackageCardRef;
+import com.example.pltool.domain.entity.Word;
 import com.example.pltool.service.LabelRefService;
 import com.example.pltool.service.LabelService;
 import com.example.pltool.service.PackageCardRefService;
+import com.example.pltool.service.flashcard.CreateCardService;
+import com.example.pltool.service.flashcard.FlashcardService;
 import com.example.pltool.service.language.WordCollectionService;
 import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.uuid.UUID;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,9 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +49,9 @@ public class WordCollectionServiceImpl implements WordCollectionService {
 
     @Resource(name = "wordCardCreator")
     private CreateCardService<Word> wordCardCreator;
+
+    @Autowired
+    private WordService wordService;
 
     @Override
     public boolean addWordCollectionData(WordCollectionData wordCollectionData) {
@@ -108,6 +114,7 @@ public class WordCollectionServiceImpl implements WordCollectionService {
         List<String> filterdWordUUIdList = new ArrayList<>();
         boolean filteredFlag = false;
         if (labelWordListMap.containsKey(wordCollectionData.getLabelUUID())) {
+            // 获取单词的uuid
             List<String> existWordUUIdList = labelWordListMap.get(wordCollectionData.getLabelUUID())
                     .stream()
                     .map(LabelRef::getRefUuid)
@@ -146,7 +153,7 @@ public class WordCollectionServiceImpl implements WordCollectionService {
         List<PackageCardRef> packageCardRefs = packageCardRefService.list(packageCardRefQueryWrapper);
         if (!CollectionUtils.isEmpty(packageCardRefs)) {
             Map<String, List<PackageCardRef>> packageMap = packageCardRefs.stream().collect(Collectors.groupingBy(PackageCardRef::getPackageUuid));
-            List<Word> wordsOfCollection = getWordsOfCollection(wordCollectionData.getLabelUUID());
+            List<Word> wordsOfCollection = wordService.getWordListByUUID(filterdWordUUIdList);
             OperateWordInCollection operateWordInCollection = new OperateWordInCollection();
             operateWordInCollection.setCollectionUUID(wordCollectionData.getLabelUUID());
             operateWordInCollection.setUserId(wordCollectionData.getUserId());

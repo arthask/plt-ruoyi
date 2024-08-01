@@ -35,6 +35,8 @@ public interface WordService extends IService<Word> {
 
     Word getWordByUUID(String uuid);
 
+    List<Word> getWordListByUUID(List<String> uuidList);
+
     JSONArray parseUploadFile(MultipartFile file);
 
     /**
