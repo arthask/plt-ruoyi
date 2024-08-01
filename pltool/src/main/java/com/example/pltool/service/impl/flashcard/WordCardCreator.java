@@ -38,6 +38,9 @@ public class WordCardCreator extends ServiceImpl<FlashcardMapper, Flashcard> imp
     @Transactional(rollbackFor = Exception.class)
     @Override
     public AjaxResult createCardAndRelationShip(OperateWordInCollection operateWordInCollection, List<Word> sourceItem) {
+        if (CollectionUtils.isEmpty(sourceItem)) {
+            return AjaxResult.success(true);
+        }
         List<Flashcard> flashcards = new ArrayList<>();
         List<PackageCardRef> packageCardRefs = new ArrayList<>();
         List<String> sourceUUIdList = sourceItem.stream().map(Word::getUuid).collect(Collectors.toList());

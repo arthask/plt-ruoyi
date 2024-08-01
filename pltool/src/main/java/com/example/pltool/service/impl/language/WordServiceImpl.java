@@ -177,6 +177,13 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
     }
 
     @Override
+    public List<Word> getWordListByUUID(List<String> uuidList) {
+        QueryWrapper<Word> wordQuery = new QueryWrapper<>();
+        wordQuery.in("uuid", uuidList);
+        return list(wordQuery);
+    }
+
+    @Override
     public List<WordShowData> searchWord(String word) {
         QueryWrapper<Word> wordQuery = new QueryWrapper<>();
         wordQuery.like("word", word);
@@ -202,6 +209,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public String importWords(List<Word> wordList, Boolean isUpdateSupport, Long userId) {
         if (CollectionUtils.isEmpty(wordList)) {

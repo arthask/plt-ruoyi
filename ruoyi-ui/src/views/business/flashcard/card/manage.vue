@@ -32,6 +32,7 @@
           plain
           icon="el-icon-edit"
           size="mini"
+          :disabled="multiple"
           @click="handleUpdate"
         >修改
         </el-button>
@@ -56,6 +57,16 @@
       <el-table-column label="反面" align="center" prop="back"/>
       <el-table-column label="类型" align="center" :formatter="formatType" prop="type"/>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            @click="showPackages(scope.row)"
+          >查看卡包
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
@@ -70,7 +81,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body destroy-on-close>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="卡片类型" prop="type">
-          <el-select v-model="form.type" placeholder="请选择卡片类型">
+          <el-select v-model="form.type" placeholder="请选择卡片类型" @change="cardTypeChange">
             <el-option v-for="item in typeOptions"
                        :key="item.value"
                        :label="item.label"
@@ -78,7 +89,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="选择单词">
+        <el-form-item label="选择单词" v-if="showSelectWord">
           <el-select filterable remote :remote-method="queryWord" v-model="form.wordUUID" placeholder="请选择单词">
             <el-option v-for="item in wordOptions"
                        :key="item.value"
@@ -87,7 +98,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="选择问题">
+        <el-form-item label="选择问题" v-if="showSelectQuestion">
           <el-select filterable remote :remote-method="searchQuestion" v-model="form.questionUUID" placeholder="请选择问题">
             <el-option v-for="item in questionOptions"
                        :key="item.value"
@@ -110,6 +121,27 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
+    </el-dialog >
+    <el-dialog title="修改卡片" :visible.sync="showEditor" width="500px" append-to-body destroy-on-close>
+      <el-form ref="editForm" :model="editForm" label-width="80px" style="overflow-y: auto; max-height: 420px;padding: 0 20px">
+        <el-form-item label="正面">
+          <el-input type="textarea" v-model="editForm.front" rows="3" resize="none"></el-input>
+        </el-form-item>
+        <el-form-item label="反面" >
+          <el-input type="textarea" v-model="editForm.back"  rows="4" resize="none"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="editSubmit">确 定</el-button>
+        <el-button @click="editorCancel">取 消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="查看卡包"
+               v-if="showPackageView"
+               :visible.sync="showPackageView"
+               :center="true"
+               :destroy-on-close="true">
+      <PackageView :card-u-u-id="cardUUID"></PackageView>
     </el-dialog>
   </div>
 </template>
@@ -119,10 +151,14 @@ import LabelTag from "@/components/Tag/index.vue";
 import {getCardInfo, listCards, add, del, update} from "@/api/bussiness/flashcard";
 import {searchWord, searchWordByCN} from "@/api/bussiness/word";
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
+import WordView from "@/views/business/language/wordcollection/wordView.vue";
+import PackageView from "@/views/business/flashcard/card/PackageView.vue";
 
 export default {
   name: "card_manage",
   components: {
+    PackageView,
+    WordView,
     LabelTag
   },
   data() {
@@ -158,6 +194,11 @@ export default {
         questionUUID: "",
         packageUUID: ""
       },
+      editForm: {
+        uuid: "",
+        front: "",
+        back: ""
+      },
       typeOptions: [{
         value: 1,
         label: '单词卡片',
@@ -181,7 +222,12 @@ export default {
         type: [
           {required: true, message: "卡片类型不能为空", trigger: "blur"}
         ]
-      }
+      },
+      showPackageView: false,
+      cardUUID: "",
+      showSelectWord: false,
+      showSelectQuestion: false,
+      showEditor: false
     };
   },
   created() {
@@ -214,6 +260,11 @@ export default {
         type: null,
         labelInfos: [],
       };
+      this.editForm = {
+        cardUUID: "",
+        front: "",
+        back: ""
+      }
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -242,9 +293,13 @@ export default {
     handleUpdate() {
       this.reset();
       const id = this.ids
+      if (!id || id.length === 0 || id.length > 1) {
+        this.$modal.msgError("请选择一条记录");
+        return
+      }
       getCardInfo(id).then(response => {
-        this.form = response.data;
-        this.open = true;
+        this.editForm = response.data;
+        this.showEditor = true;
         this.title = "修改卡片";
       });
     },
@@ -253,11 +308,6 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            update(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
           } else {
             add(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
@@ -267,6 +317,22 @@ export default {
           }
         }
       });
+    },
+    editSubmit() {
+      this.$refs["editForm"].validate(valid => {
+        if (valid) {
+          this.editForm.uuid = this.ids[0]
+          update(this.editForm).then(res => {
+            this.$modal.msgSuccess("修改成功");
+            this.showEditor = false;
+            this.getList();
+          })
+        }
+      });
+    },
+    editorCancel() {
+      this.showEditor = false;
+      this.reset();
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -310,7 +376,7 @@ export default {
       }
     },
     formatType(row, column) {
-      // 获取当前行的金额值
+      // 获取当前行的属性值
       const type = row[column.property];
       if (type  === 1) {
         return "单词卡片"
@@ -318,6 +384,19 @@ export default {
         return "问题卡片"
       }
     },
+    showPackages(row) {
+      this.showPackageView = true
+      this.cardUUID = row.uuid
+    },
+    cardTypeChange(type) {
+      this.showSelectWord = false
+      this.showSelectQuestion = false
+      if (type === 1) {
+        this.showSelectWord = true
+      } else if (type === 2) {
+        this.showSelectQuestion = true
+      }
+    }
   }
 };
 </script>

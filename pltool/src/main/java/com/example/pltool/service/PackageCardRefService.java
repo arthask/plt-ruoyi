@@ -2,7 +2,10 @@ package com.example.pltool.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.example.pltool.domain.entity.PackageCardRef;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,5 +16,6 @@ import com.example.pltool.domain.entity.PackageCardRef;
  * @since 2024-05-23
  */
 public interface PackageCardRefService extends IService<PackageCardRef> {
+    List<PackageInfoDto> getPackagesByCardUUId(String cardUUId);
 
 }

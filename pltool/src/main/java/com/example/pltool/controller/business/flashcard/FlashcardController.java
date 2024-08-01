@@ -53,8 +53,17 @@ public class FlashcardController extends BaseController {
 
     @GetMapping("/getCardInfo/{uuid}")
     public AjaxResult getCardInfo(@PathVariable("uuid") String uuid) {
-        Long userId = getUserId();
-        return AjaxResult.success();
+        return AjaxResult.success(flashcardService.getCardByUUId(uuid));
+    }
+
+    @PostMapping("/update")
+    public AjaxResult update(@RequestBody Flashcard flashcard) {
+        return AjaxResult.success(flashcardService.update(flashcard, getUserId()));
+    }
+
+    @DeleteMapping("/delete/{uuid}")
+    public AjaxResult delete(@PathVariable("uuid") String uuid) {
+        return AjaxResult.success(flashcardService.delete(uuid));
     }
 
     /**
@@ -71,5 +80,14 @@ public class FlashcardController extends BaseController {
                                          @RequestParam("offset") Integer offset,
                                          @RequestParam("type") Integer type) {
         return AjaxResult.success(flashcardService.searchClassifyCard(packageUUID, type, offset));
+    }
+
+    /**
+     * 查询卡片关联的卡包信息
+     */
+    @GetMapping("/getPackageInfoOfCard")
+    public TableDataInfo getPackageInfoOfCard(@RequestParam("cardUUId") String cardUUId) {
+        startPage();
+        return getDataTable(flashcardService.getPackageInfoOfCard(cardUUId));
     }
 }
