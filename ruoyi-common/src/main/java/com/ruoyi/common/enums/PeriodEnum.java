@@ -4,45 +4,45 @@ public enum PeriodEnum {
     /**
      * 5分钟
      */
-    LEVEL_ONE(1L, 5L),
+    LEVEL_ONE(1, 5L),
     /**
      * 30分钟
      */
-    LEVEL_TWO(2L, 30L),
+    LEVEL_TWO(2, 30L),
     /**
      * 12小时
      */
-    LEVEL_THREE(3L, 720L),
+    LEVEL_THREE(3, 720L),
     /**
      * 24小时
      */
-    LEVEL_FOUR(4L, 1440L),
+    LEVEL_FOUR(4, 1440L),
     /**
      * 2天 48小时
      */
-    LEVEL_FIVE(5L, 2880L),
+    LEVEL_FIVE(5, 2880L),
     /**
      * 4天 96小时
      */
-    LEVEL_SIX(6L, 5760L),
+    LEVEL_SIX(6, 5760L),
     /**
      * 7天 168小时
      */
-    LEVEL_SEVEN(7L, 10080L),
+    LEVEL_SEVEN(7, 10080L),
     /**
      * 15天 360小时
      */
-    LEVEL_EIGHT(8L, 92160L);
+    LEVEL_EIGHT(8, 92160L);
 
     private final Long value;
-    private final Long code;
+    private final Integer code;
 
-    PeriodEnum(Long code,Long value) {
-        this.value = value;
+    PeriodEnum(Integer code,Long value) {
         this.code = code;
+        this.value = value;
     }
 
-    public Long getCode() {
+    public Integer getCode() {
         return code;
     }
 
@@ -50,7 +50,7 @@ public enum PeriodEnum {
         return value;
     }
 
-    public static Long getByPeriod(Long code) {
+    public static Long getByPeriod(Integer code) {
         for (PeriodEnum periodEnum : PeriodEnum.values()) {
             if (periodEnum.getCode().equals(code)) {
                 return periodEnum.getValue();

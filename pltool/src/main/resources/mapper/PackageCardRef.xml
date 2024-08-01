@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.pltool.mapper.PackageCardRefMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.pltool.domain.entity.PackageCardRef">
+        <id column="id" property="id" />
+        <result column="uuid" property="uuid" />
+        <result column="package_uuid" property="packageUuid" />
+        <result column="card_uuid" property="cardUuid" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="collection_uuid" property="collectionUuid" />
+        <result column="create_user_id" property="createUserId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, uuid, package_uuid, card_uuid, create_time, update_time, collection_uuid, create_user_id
+    </sql>
+
+</mapper>

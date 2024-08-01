@@ -35,6 +35,7 @@ import ImagePreview from "@/components/ImagePreview"
 import DictTag from '@/components/DictTag'
 // 头部标签组件
 import VueMeta from 'vue-meta'
+import CKEditor from '@ckeditor/ckeditor5-vue2';
 // 字典数据组件
 import DictData from '@/components/DictData'
 
@@ -66,7 +67,9 @@ Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)
 Vue.use(Chat)
+Vue.use( CKEditor );
 DictData.install()
+speakCommon.speechInit();
 
 /**
  * If you don't want to use mock-server

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.pltool.mapper.LabelRefMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.pltool.domain.entity.LabelRef">
+        <id column="id" property="id" />
+        <result column="uuid" property="uuid" />
+        <result column="label_uuid" property="labelUuid" />
+        <result column="ref_uuid" property="refUuid" />
+        <result column="ref_type" property="refType" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        uuid, id, label_uuid, ref_uuid, ref_type, create_user_id, create_time, update_time
+    </sql>
+    <select id="getLabelInfoByRefUUID" resultType="com.example.pltool.domain.dto.label.LabelInfo">
+        select l.uuid,l.name from label_ref lr left join label l on lr.label_uuid = l.uuid
+        where lr.ref_uuid = #{refUUID}
+    </select>
+    <select id="getAllCollectionByType"
+            resultType="com.example.pltool.domain.dto.language.wordcollection.WordCollectionData">
+        select l.uuid as labelUUID , l.name
+        from label_ref lr
+                 left join label l on lr.label_uuid = l.uuid
+        where lr.ref_type = #{type}
+        group by l.uuid, l.name
+    </select>
+    <select id="getWordsOfCollection" resultType="com.example.pltool.domain.entity.Word">
+        select w.* from label_ref lr
+            left join word w on lr.ref_uuid = w.uuid
+        where lr.label_uuid = #{uuid} and lr.ref_type = 2
+    </select>
+    <select id="getWordsOfCollectionUUIdList" resultType="com.example.pltool.domain.entity.Word">
+        select w.uuid, w.word, w.create_time
+        from label_ref lr
+        left join word w on lr.ref_uuid = w.uuid
+        where lr.label_uuid in
+        <foreach item="uuid" collection="labelUUIDList" open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+        and lr.ref_type = 2
+    </select>
+    <select id="getCollectionsOfPackage"
+            resultType="com.example.pltool.domain.dto.language.wordcollection.WordCollectionData">
+        select uuid as labelUUID, name, create_time
+        from label
+        where uuid in (select collection_uuid as uuid from package_card_ref pcr where package_uuid = #{packageUUId})
+          and create_user_id = #{userId}
+    </select>
+    <select id="getCollectionByCardSourceId" resultType="java.lang.String">
+        select label_uuid
+        from label_ref
+        where ref_type = 4
+          and ref_uuid in (select uuid from flashcard where source_uuid in
+        <foreach item="uuid" collection="sourceUUIdList" open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+        group by label_uuid
+    </select>
+
+
+</mapper>

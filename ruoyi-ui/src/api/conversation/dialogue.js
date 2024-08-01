@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询对话列表
 export function listDialogue(query) {
   return request({
-    url: '/system/dialogue/list',
+    url: '/dialogue/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDialogue(query) {
 // 查询对话详细
 export function getDialogue(id) {
   return request({
-    url: '/system/dialogue/' + id,
+    url: '/dialogue/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDialogue(id) {
 // 新增对话
 export function addDialogue(data) {
   return request({
-    url: '/system/dialogue',
+    url: '/dialogue',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDialogue(data) {
 // 修改对话
 export function updateDialogue(data) {
   return request({
-    url: '/system/dialogue',
+    url: '/dialogue',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateDialogue(data) {
 // 删除对话
 export function delDialogue(id) {
   return request({
-    url: '/system/dialogue/' + id,
+    url: '/dialogue/' + id,
     method: 'delete'
   })
 }

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.pltool.mapper.UserWordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.pltool.domain.entity.UserWord">
+        <id column="id" property="id"/>
+        <result column="uuid" property="uuid"/>
+        <result column="word_uuid" property="wordUuid"/>
+        <result column="word" property="word"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="period" property="period"/>
+        <result column="collect_flag" property="collectFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="next_study_time" property="nextStudyTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , uuid, word_uuid, word, user_id, user_name, period, collect_flag, create_time, update_time, next_study_time
+    </sql>
+    <select id="getNeedReviewWord" resultType="com.example.pltool.domain.entity.Word">
+        select w.*
+        from user_word uw
+                 left join word w on uw.word_uuid = w.uuid
+        where uw.next_study_time  <![CDATA[<=]]> #{timeStr}
+          and uw.period <![CDATA[<=]]> 8
+          and uw.user_id = #{userId}
+        order by uw.next_study_time ASC limit 1;
+    </select>
+
+    <select id="getWordCount" resultType="java.lang.Long">
+        select count(*)
+        from user_word
+        where user_id = #{userId}
+    </select>
+    <select id="getUserWordOfMonth" resultType="java.lang.Long">
+        select count(*)
+        from user_word
+        where create_time >= #{beginStr}
+          and create_time <![CDATA[<=]]> #{endStr}
+          and user_id = #{userId}
+        group by date_format(create_time, "%Y%m")
+    </select>
+    <select id="getUserWordPeriodCount" resultType="com.example.pltool.domain.vo.UserWordPeriodVo">
+        select period, count(*) as value
+        from user_word uw
+        where user_id = #{userId}
+        group by period;
+    </select>
+    <select id="getExceptValueOfDay" resultType="Map">
+        select date_format(next_study_time, "%Y%m%d") as day, count(*) as count
+        from user_word
+        where next_study_time >= #{beginStr}
+          and next_study_time <![CDATA[<=]]> #{endStr}
+          and user_id = #{userId}
+        group by date_format(next_study_time, "%Y%m%d")
+    </select>
+    <select id="getNeedReviewNumOfDay" resultType="java.lang.Long">
+        select count(*) as count
+        from user_word
+        where next_study_time >= #{beginStr}
+          and next_study_time <![CDATA[<=]]> #{endStr}
+          and user_id = #{userId}
+    </select>
+    <select id="getHaveReviewNumOfDay" resultType="java.lang.Long">
+        select count(distinct uw.word_uuid)
+        from user_word uw
+                 left join user_study_record usr
+                           on uw.word_uuid = usr.word_uuid
+        where uw.user_id = #{userId}
+          and uw.next_study_time > #{endStr}
+          and usr.study_time >= #{beginStr}
+          and usr.study_time <![CDATA[<=]]> #{endStr}
+    </select>
+    <select id="getTotalReviewNum" resultType="java.lang.Long">
+        select count(*) from word_snapshot ws
+        where
+            ws.user_id = #{userId}
+          and type = 0
+    </select>
+
+    <select id="getNeedReviewWords" resultType="com.example.pltool.domain.entity.Word">
+        select w.* from user_word uw
+                            left join word w on uw.word_id = w.id
+        where uw.next_study_time  <![CDATA[<=]]> #{timeStr}
+          and uw.period <![CDATA[<=]]> 8
+          and uw.user_id = #{userId}
+    </select>
+
+    <select id="getReviewWordByIndex" resultType="com.example.pltool.domain.entity.Word">
+        select w.*  from word_snapshot ws
+                             left join word w on ws.word_uuid = w.uuid
+        where
+            ws.user_id = #{userId}
+          and type = 0
+            limit #{offset},1;
+    </select>
+
+    <select id="getReviewWordId" resultType="java.lang.Long">
+        select word_id  from user_word uw
+        where uw.next_study_time  <![CDATA[<=]]> #{timeStr}
+          and uw.period <![CDATA[<=]]> 8
+          and uw.user_id = #{userId}
+        order by next_study_time ASC
+            limit 1;
+    </select>
+</mapper>

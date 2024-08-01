@@ -71,6 +71,13 @@ export const constantRoutes = [
         component: () => import('@/views/index_v1'),
         name: 'Index',
         meta: { title: '首页', icon: 'dashboard', affix: true }
+      },
+      {
+        hidden: true,
+        path: '/review',
+        name: '/review',
+        meta: { title: '复习', affix: false },
+        component: () => import('@/views/business/language/userword/review'),
       }
     ]
   },
@@ -161,7 +168,7 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
-  }
+  },
 ]
 
 // 防止连续点击多次路由报错

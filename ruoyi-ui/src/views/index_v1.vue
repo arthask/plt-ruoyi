@@ -44,7 +44,7 @@ import LineChart from './dashboard/LineChart'
 import RaddarChart from './dashboard/RaddarChart'
 import PieChart from './dashboard/PieChart'
 import BarChart from './dashboard/BarChart'
-import {listWordOfDay} from "@/api/system/record"
+import {listWordOfDay} from "@/api/bussiness/record"
 
 const lineChartData = {
   newVisitis: {
