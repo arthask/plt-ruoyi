@@ -4,25 +4,29 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.CardInfo;
-import com.example.pltool.domain.dto.flashcard.card.CardViewInfo;
+
+import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
 import com.example.pltool.domain.dto.flashcard.cardpackage.OperateWordInCollection;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
-import com.example.pltool.domain.entity.*;
+import com.example.pltool.domain.entity.Flashcard;
+import com.example.pltool.domain.entity.PackageCardRef;
+import com.example.pltool.domain.entity.Question;
+import com.example.pltool.domain.entity.Word;
 import com.example.pltool.mapper.FlashcardMapper;
-import com.example.pltool.service.flashcard.CreateCardService;
-import com.example.pltool.service.flashcard.FlashcardService;
 import com.example.pltool.service.PackageCardRefService;
 import com.example.pltool.service.QuestionService;
+import com.example.pltool.service.flashcard.CreateCardService;
+import com.example.pltool.service.flashcard.FlashcardService;
 import com.example.pltool.service.language.WordCollectionService;
 import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.exception.user.UserPasswordNotMatchException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -181,6 +185,24 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
         QueryWrapper<Flashcard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", uuid);
         remove(queryWrapper);
+        return AjaxResult.success(true);
+    }
+
+    @Override
+    public AjaxResult addCardsToPackage(PackageCardInfo packageCardInfo) {
+        List<PackageCardRef> needToAddList = new ArrayList<>();
+        // todo 需要校验是否有重复添加，过滤重添加的单词
+        for (String cardUUId : packageCardInfo.getCardUUIdList()) {
+            PackageCardRef packageCardRef = new PackageCardRef();
+            packageCardRef.setUuid(UUID.randomUUID().toString().replace("-", ""));
+            packageCardRef.setCardUuid(cardUUId);
+            packageCardRef.setPackageUuid(packageCardInfo.getPackageUUId());
+            packageCardRef.setCreateUserId(packageCardInfo.getUserId());
+            needToAddList.add(packageCardRef);
+        }
+        if (!CollectionUtils.isEmpty(needToAddList)) {
+            packageCardRefService.saveBatch(needToAddList);
+        }
         return AjaxResult.success(true);
     }
 }

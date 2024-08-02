@@ -204,16 +204,16 @@ export default {
   border-radius: 10px;
   margin: 20px;
   padding: 17px;
-  background: rgba(140, 0, 255, 0.62);
+  background: rgb(214, 234, 249);
   width: 80%;
   height: 100px;
   text-align: center;
-  color: white;
+  color: rgba(0, 0, 0, 0.46);
 }
 
 .tag:hover {
   cursor: pointer; /* 鼠标样式变为手型 */
   transform: scale(1.1); /* 放大效果 */
-  background: rgba(140, 0, 255, 0.44);
+  background: rgb(214, 234, 249);
 }
 </style>
