@@ -47,6 +47,15 @@
           @click="handleDelete"
         >删除
         </el-button>
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-folder"
+          size="mini"
+          :disabled="multiple"
+          @click="addCardsToPackage"
+        >关联到卡包
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -63,7 +72,7 @@
             size="mini"
             type="text"
             @click="showPackages(scope.row)"
-          >查看卡包
+          >查看关联卡包
           </el-button>
         </template>
       </el-table-column>
@@ -143,6 +152,23 @@
                :destroy-on-close="true">
       <PackageView :card-u-u-id="cardUUID"></PackageView>
     </el-dialog>
+    <el-dialog title="选择卡包" :visible.sync="showPackageSelect" width="500px" append-to-body destroy-on-close>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="选择卡包">
+          <el-select filterable v-model="form.packageUUID" placeholder="请选择卡包">
+            <el-option v-for="item in packageOptions"
+                       :key="item.value"
+                       :label="item.name"
+                       :value="item.uuid">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitCardsToPackage">确 定</el-button>
+        <el-button @click="cancelCardsToPackage">取 消</el-button>
+      </div>
+    </el-dialog >
   </div>
 </template>
 
@@ -153,6 +179,7 @@ import {searchWord, searchWordByCN} from "@/api/bussiness/word";
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
 import WordView from "@/views/business/language/wordcollection/wordView.vue";
 import PackageView from "@/views/business/flashcard/card/PackageView.vue";
+import {addCardsToPackage} from "../../../../api/bussiness/flashcard";
 
 export default {
   name: "card_manage",
@@ -227,7 +254,8 @@ export default {
       cardUUID: "",
       showSelectWord: false,
       showSelectQuestion: false,
-      showEditor: false
+      showEditor: false,
+      showPackageSelect: false
     };
   },
   created() {
@@ -256,6 +284,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        packageUUID : null,
         name: null,
         type: null,
         labelInfos: [],
@@ -396,6 +425,24 @@ export default {
       } else if (type === 2) {
         this.showSelectQuestion = true
       }
+    },
+    addCardsToPackage() {
+      this.showPackageSelect = true
+    },
+    submitCardsToPackage() {
+      let data = {
+        packageUUId: this.form.packageUUID,
+        cardUUIdList: this.ids
+      }
+      addCardsToPackage(data).then(response => {
+        this.$modal.msgSuccess("新增成功");
+        this.showPackageSelect = false;
+        this.getList();
+      });
+    },
+    cancelCardsToPackage() {
+      this.showPackageSelect = false
+      this.reset()
     }
   }
 };

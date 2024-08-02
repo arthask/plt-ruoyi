@@ -2,6 +2,7 @@ package com.example.pltool.controller.business.flashcard;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
+import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
 import com.example.pltool.domain.entity.Flashcard;
 import com.example.pltool.service.flashcard.FlashcardService;
 import com.ruoyi.common.annotation.Log;
@@ -80,6 +81,15 @@ public class FlashcardController extends BaseController {
                                          @RequestParam("offset") Integer offset,
                                          @RequestParam("type") Integer type) {
         return AjaxResult.success(flashcardService.searchClassifyCard(packageUUID, type, offset));
+    }
+
+    /**
+     * 查询卡片关联的卡包信息
+     */
+    @PostMapping("/addCardsToPackage")
+    public AjaxResult addCardsToPackage(@RequestBody PackageCardInfo packageCardInfo) {
+        packageCardInfo.setUserId(getUserId());
+        return AjaxResult.success(flashcardService.addCardsToPackage(packageCardInfo));
     }
 
     /**

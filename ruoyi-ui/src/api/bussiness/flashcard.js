@@ -77,3 +77,11 @@ export function getPackageInfoOfCard(params) {
     params: params
   })
 }
+export function addCardsToPackage(data) {
+  return request({
+    url: '/flashcard/addCardsToPackage',
+    method: 'post',
+    data: data
+  })
+}
+

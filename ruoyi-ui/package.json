@@ -72,6 +72,7 @@
     "screenfull": "5.0.2",
     "sortablejs": "1.10.2",
     "speak-tts": "^2.0.8",
+    "speed-measure-webpack-plugin": "^1.5.0",
     "tinymce": "^6.8.2",
     "vue": "^2.7.0",
     "vue-beautiful-chat": "^2.5.0",

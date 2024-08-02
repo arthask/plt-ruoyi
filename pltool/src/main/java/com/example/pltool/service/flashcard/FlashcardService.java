@@ -3,7 +3,7 @@ package com.example.pltool.service.flashcard;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.CardInfo;
-import com.example.pltool.domain.dto.flashcard.card.CardViewInfo;
+import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
 import com.example.pltool.domain.entity.Flashcard;
@@ -73,4 +73,6 @@ public interface FlashcardService extends IService<Flashcard> {
      * @return
      */
     AjaxResult delete(String uuid);
+
+    AjaxResult addCardsToPackage(PackageCardInfo packageCardInfo);
 }
