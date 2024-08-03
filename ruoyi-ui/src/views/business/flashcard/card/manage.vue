@@ -435,9 +435,17 @@ export default {
         cardUUIdList: this.ids
       }
       addCardsToPackage(data).then(response => {
-        this.$modal.msgSuccess("新增成功");
-        this.showPackageSelect = false;
-        this.getList();
+        if (response.data.code === 200) {
+          if(response.data.msg){
+            this.$modal.msgWarning(response.data.msg);
+          } else {
+            this.$modal.msgSuccess("添加成功");
+          }
+          this.showPackageSelect = false;
+          this.getList();
+        } else {
+          this.$modal.msgError("添加失败");
+        }
       });
     },
     cancelCardsToPackage() {
