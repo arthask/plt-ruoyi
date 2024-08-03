@@ -25,7 +25,7 @@
         <div v-if="showCard">
           <el-statistic
             group-separator=","
-            :value="cardCount"
+            :value="totalCardCount"
             title="卡片总数"
           >
             <template slot="prefix">
@@ -79,7 +79,8 @@ export default {
       cardUUID: "",
       offset: 0,
       cardCount: 0,
-      type: null
+      type: null,
+      totalCardCount: null
     }
   },
   computed: {
@@ -132,6 +133,9 @@ export default {
             this.answer = res.data.back
             this.cardUUID = res.data.uuid
             this.cardCount = res.data.packageInfoDto.cardCount
+            if(!this.totalCardCount) {
+              this.totalCardCount = this.cardCount;
+            }
           }
         })
       }
@@ -140,6 +144,7 @@ export default {
     getCardOfPackage(uuid) {
       this.offset = 0;
       this.type = null;
+      this.totalCardCount = null
       if (!uuid) {
         return;
       }

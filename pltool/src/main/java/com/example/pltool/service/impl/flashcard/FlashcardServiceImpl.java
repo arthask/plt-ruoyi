@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -191,8 +192,23 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     @Override
     public AjaxResult addCardsToPackage(PackageCardInfo packageCardInfo) {
         List<PackageCardRef> needToAddList = new ArrayList<>();
-        // todo 需要校验是否有重复添加，过滤重添加的单词
-        for (String cardUUId : packageCardInfo.getCardUUIdList()) {
+        // 需要校验是否有重复添加，过滤重添加的单词
+        QueryWrapper<PackageCardRef> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("package_uuid", packageCardInfo.getPackageUUId());
+        queryWrapper.in("card_uuid", packageCardInfo.getCardUUIdList());
+        queryWrapper.eq("create_user_id", packageCardInfo.getUserId());
+        List<PackageCardRef> packageCardRefList = packageCardRefService.list(queryWrapper);
+        List<String> filteredUUIdList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(packageCardRefList)) {
+            Set<String> existCardUUIdList = packageCardRefList.stream()
+                    .map(PackageCardRef::getCardUuid).collect(Collectors.toSet());
+            List<String> cardUUIdList = packageCardInfo.getCardUUIdList().stream()
+                    .filter(card -> !existCardUUIdList.contains(card)).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(cardUUIdList)) {
+                filteredUUIdList.addAll(cardUUIdList);
+            }
+        }
+        for (String cardUUId : filteredUUIdList) {
             PackageCardRef packageCardRef = new PackageCardRef();
             packageCardRef.setUuid(UUID.randomUUID().toString().replace("-", ""));
             packageCardRef.setCardUuid(cardUUId);
@@ -200,9 +216,10 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
             packageCardRef.setCreateUserId(packageCardInfo.getUserId());
             needToAddList.add(packageCardRef);
         }
-        if (!CollectionUtils.isEmpty(needToAddList)) {
-            packageCardRefService.saveBatch(needToAddList);
+        if (CollectionUtils.isEmpty(needToAddList)) {
+            return AjaxResult.success("已过滤重复添加到卡包的单词");
         }
+        packageCardRefService.saveBatch(needToAddList);
         return AjaxResult.success(true);
     }
 }
