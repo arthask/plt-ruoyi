@@ -12,6 +12,8 @@ export default {
   data() {
     return {
       ids: [],
+      // 非多个禁用
+      multiple: true,
       loading: false,
       tableData: [],
       // 查询参数
@@ -34,6 +36,7 @@ export default {
     },
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.uuid)
+      this.multiple = !selection.length
     },
     getList() {
       this.loading = true
@@ -79,6 +82,7 @@ export default {
           icon="el-icon-delete"
           size="mini"
           @click="handleDelete"
+          :disabled="multiple"
         >从单词集中移除
         </el-button>
       </el-col>
