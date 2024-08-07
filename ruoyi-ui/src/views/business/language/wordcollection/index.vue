@@ -1,10 +1,11 @@
 <script>
 import {getWordCollection, listWordCollection, updateWordCollection} from "@/api/bussiness/wordcollection";
 import WordView from "@/views/business/language/wordcollection/wordView.vue";
+import WordPanel from "../word/wordPanel.vue";
 
 export default {
   name: "index.vue",
-  components: {WordView},
+  components: {WordPanel, WordView},
   data() {
     return {
       // 遮罩层
@@ -37,7 +38,8 @@ export default {
       showEditor: false,
       showDialog: false,
       showView: false,
-      labelUUID: ''
+      labelUUID: '',
+      showStudy: false
     };
   },
   mounted() {
@@ -133,7 +135,8 @@ export default {
           this.$modal.msgSuccess("修改失败！");
         }
       })
-    }, doAddXXX() {
+    },
+    doAddXXX() {
 
     }, onSubmit() {
       if (this.form.uuid) {
@@ -141,6 +144,15 @@ export default {
       } else {
         this.doAddXXX();
       }
+    },
+    handleStudy(row) {
+      this.reset()
+      this.showStudy = true;
+      this.title = "学习";
+      this.labelUUID = row.labelUUID
+    },
+    handleStudyClose() {
+      this.showStudy = false;
     }
   }
 }
@@ -187,6 +199,13 @@ export default {
             @click="handleWatch(scope.row)"
           >查看单词
           </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-notebook-2"
+            @click="handleStudy(scope.row)"
+          >开始学习
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -223,6 +242,13 @@ export default {
                :center="true"
                :destroy-on-close="true">
       <word-view :labelUUID="labelUUID"></word-view>
+    </el-dialog>
+
+    <el-dialog :title="title" v-if="showStudy"
+               :visible.sync="showStudy"
+               :destroy-on-close="true"
+               :before-close="handleStudyClose">
+    <word-panel :word-collection-id="this.labelUUID"></word-panel>
     </el-dialog>
   </div>
 </template>

@@ -48,6 +48,15 @@ export function getTotalAndNotStudyNum() {
   })
 }
 
+// 查询用户总单词数，及未学习的新单词数
+export function getCollectionTotalAndNotStudyNum(query) {
+  return request({
+    url: '/statistics/getCollectionTotalAndNotStudyNum',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询用户今日需复习单词总数、已复习单词数
 export function getNeedReviewAnHaveReviewNum() {
   return request({

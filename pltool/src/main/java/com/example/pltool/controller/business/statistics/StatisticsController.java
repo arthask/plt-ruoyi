@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -84,6 +85,15 @@ public class StatisticsController extends BaseController {
     @GetMapping("/getNeedReviewAnHaveReviewNum")
     public AjaxResult getNeedReviewAnHaveReviewNum() {
         return AjaxResult.success(statisticsService.getNeedReviewAnHaveReviewNum(this.getUserId()));
+    }
+
+    /**
+     * 查询用户总单词数，及未学习的新单词数
+     * @return AjaxResult
+     */
+    @GetMapping("/getCollectionTotalAndNotStudyNum")
+    public AjaxResult getCollectionTotalAndNotStudyNum(@RequestParam("wordCollectionId") String collectionUUId) {
+        return AjaxResult.success(statisticsService.getCollectionTotalAndNotStudyNum(collectionUUId, this.getUserId()));
     }
 
 }

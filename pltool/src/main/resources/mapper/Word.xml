@@ -45,5 +45,34 @@
             ws.user_id = #{userId}
           and type = 1
     </select>
+    <select id="getRandomWordInCollectionOfUser" resultType="com.example.pltool.domain.entity.Word">
+        select * from label_ref lr left join word w
+            on lr.ref_uuid = w.uuid
+        where lr.label_uuid = #{collectionUUId}
+        and lr.ref_type = 2
+        and lr.create_user_id = #{userId}
+            limit #{offset}, 1;
+    </select>
+    <select id="getCollectionWordCount" resultType="java.lang.Long">
+        select count(*)
+        from label_ref lr
+                 left join word w
+                           on lr.ref_uuid = w.uuid
+        where lr.label_uuid = #{collectionUUId}
+          and lr.ref_type = 2
+          and lr.create_user_id = #{userId}
+    </select>
+    <select id="getCollectionNewWordCountOfUser" resultType="java.lang.Long">
+        select count(*)
+        from label_ref lr
+                 left join word w
+                           on lr.ref_uuid = w.uuid
+                 left join user_study_record usr
+                           on w.uuid = usr.word_uuid
+        where lr.label_uuid = #{collectionUUId}
+          and lr.create_user_id = #{userId}
+          and lr.ref_type = 2
+          and usr.uuid is null
+    </select>
 
 </mapper>

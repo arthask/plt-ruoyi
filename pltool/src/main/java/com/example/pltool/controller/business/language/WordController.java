@@ -112,6 +112,11 @@ public class WordController extends BaseController {
         return success(newWordService.getOneWord(this.getUserId(), lexiconUUId, index));
     }
 
+    @GetMapping("/getOneWordInCollection/{wordCollectionId}/{index}")
+    public AjaxResult getOneWordInCollection(@PathVariable("wordCollectionId") String wordCollectionId, @PathVariable("index") int index) {
+        return success(newWordService.getOneWordInCollection(this.getUserId(), wordCollectionId, index));
+    }
+
     /**
      * 从内置词库中查找单词
      *
