@@ -201,4 +201,9 @@ public class WordCollectionServiceImpl implements WordCollectionService {
                 wordCollectionData.getLabelUUID(), wordCollectionData.getUserId());
 
     }
+
+    @Override
+    public List<WordCollectionData> getCollectionOfWord(String wordUUId, Long userId) {
+        return labelRefService.getCollectionOfWord(wordUUId, userId);
+    }
 }

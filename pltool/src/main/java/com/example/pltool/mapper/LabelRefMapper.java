@@ -32,5 +32,5 @@ public interface LabelRefMapper extends BaseMapper<LabelRef> {
 
     List<Word> getWordsOfCollectionUUIdList(@Param("labelUUIDList") List<String> labelUUIDList);
 
-    List<String> getCollectionByCardSourceId(@Param("sourceUUIdList") List<String> sourceUUIdList);
+    List<WordCollectionData> getCollectionOfWord(@Param("wordUUId")String wordUUId,@Param("userId") Long userId);
 }
