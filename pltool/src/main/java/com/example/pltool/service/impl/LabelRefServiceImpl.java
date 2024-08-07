@@ -76,6 +76,11 @@ public class LabelRefServiceImpl extends ServiceImpl<LabelRefMapper, LabelRef> i
         return packageCardRefMapper.exists(queryWrapper);
     }
 
+    @Override
+    public List<WordCollectionData> getCollectionOfWord(String wordUUId, Long userId) {
+        return labelRefMapper.getCollectionOfWord(wordUUId, userId);
+    }
+
     private List<WordCollectionData> setWordCollectionData(Integer type, List<WordCollectionData> allCollectionByType) {
         Map<String, WordCollectionData> collectionDataMap = allCollectionByType.stream()
                 .collect(Collectors.toMap(WordCollectionData::getLabelUUID, Function.identity()));

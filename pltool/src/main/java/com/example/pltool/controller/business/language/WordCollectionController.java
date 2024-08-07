@@ -49,6 +49,15 @@ public class WordCollectionController extends BaseController {
         return getDataTable(wordCollectionService.getCollectionsOfPackage(packageUUId, getUserId()));
     }
 
+    /**
+     * 查询卡片关联的卡包信息
+     */
+    @GetMapping("/getCollectionOfWord")
+    public TableDataInfo getCollectionOfWord(@RequestParam("wordUUId") String wordUUId) {
+        startPage();
+        return getDataTable(wordCollectionService.getCollectionOfWord(wordUUId, getUserId()));
+    }
+
     @PostMapping("/addWordToCollection")
     AjaxResult addWordToCollection(@RequestBody WordCollectionData wordCollectionData) {
         wordCollectionData.setUserId(getUserId());

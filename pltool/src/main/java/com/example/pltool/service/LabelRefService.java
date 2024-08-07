@@ -46,4 +46,11 @@ public interface LabelRefService extends IService<LabelRef> {
 
     boolean isRepeatBindWordCollection(String packageUUId, String collectionUUId,Long userId);
 
+    /**
+     * 获取单词关联的单词集
+     * @param wordUUId
+     * @param userId
+     */
+    List<WordCollectionData> getCollectionOfWord(String wordUUId, Long userId);
+
 }

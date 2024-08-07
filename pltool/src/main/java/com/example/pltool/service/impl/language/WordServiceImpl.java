@@ -4,6 +4,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
 import com.example.pltool.domain.entity.*;
 import com.example.pltool.mapper.WordMapper;
 import com.example.pltool.service.*;

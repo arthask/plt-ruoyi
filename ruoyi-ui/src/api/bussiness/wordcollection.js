@@ -61,6 +61,15 @@ export function getCollectionsOfPackage(query) {
 }
 
 
+export function getCollectionOfWord(query) {
+  return request({
+    url: '/wordCollection/getCollectionOfWord',
+    method: 'get',
+    params: query
+  })
+}
+
+
 export function removeWordOfCollection(data) {
   return request({
     url: '/wordCollection/removeWordOfCollection',

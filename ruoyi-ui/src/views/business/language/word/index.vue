@@ -69,6 +69,16 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
+          type="primary"
+          icon="el-icon-plus"
+          size="mini"
+          :disabled="multiple"
+          @click="handle2Collection"
+        >添加到单词集
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
           type="warning"
           plain
           icon="el-icon-download"
@@ -85,15 +95,6 @@
           size="mini"
           @click="handleImport"
         >导入
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          size="mini"
-          @click="handle2Collection"
-        >添加到单词集
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -131,6 +132,12 @@
             @click="playAudio(scope.row)"
             v-hasPermi="['system:word:edit']"
           >播放
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="viewWordCollection(scope.row)"
+          >查看单词集
           </el-button>
         </template>
       </el-table-column>
@@ -214,6 +221,13 @@
         @closeDialog="closeCollection">
       </word2-collection>
     </el-dialog>
+    <el-dialog title="查看单词集"
+               v-if="showCollectionView"
+               :visible.sync="showCollectionView"
+               :center="true"
+               :destroy-on-close="true">
+      <CollectionView :word-u-u-id="wordUUId"></CollectionView>
+    </el-dialog>
   </div>
 </template>
 
@@ -223,10 +237,11 @@ import {importTemplate} from "@/api/bussiness/word";
 import {getToken} from "@/utils/auth";
 import WordPanel from "@/views/business/language/word/wordPanel.vue";
 import Word2Collection from "@/views/business/language/word/word2Collection.vue";
+import CollectionView from "./CollectionView.vue";
 
 export default {
   name: "Word",
-  components: {Word2Collection, WordPanel},
+  components: {CollectionView, Word2Collection, WordPanel},
   data() {
     return {
       // 遮罩层
@@ -280,7 +295,8 @@ export default {
         url: process.env.VUE_APP_BASE_API + "/system/word/importData"
       },
       showCollectionDialog: false,
-      editCollectionDialog: false
+      showCollectionView: false,
+      wordUUId: ''
     }
   },
   created() {
@@ -426,6 +442,10 @@ export default {
     },
     closeCollection() {
       this.showCollectionDialog = false
+    },
+    viewWordCollection(row) {
+      this.showCollectionView = true
+      this.wordUUId = row.uuid
     }
   }
 };

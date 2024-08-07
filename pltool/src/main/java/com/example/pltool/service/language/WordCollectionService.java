@@ -63,4 +63,12 @@ public interface WordCollectionService {
     AjaxResult removeCollectionOfPackage(RemoveCollectionOfPackage removeCollectionOfPackage);
 
     AjaxResult removeWordOfCollection(WordCollectionData wordCollectionData);
+
+
+    /**
+     * 获取单词关联的单词集
+     * @param wordUUId
+     * @param userId
+     */
+    List<WordCollectionData> getCollectionOfWord(String wordUUId, Long userId);
 }
