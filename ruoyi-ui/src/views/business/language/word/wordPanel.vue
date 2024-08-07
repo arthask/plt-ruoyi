@@ -20,15 +20,6 @@
             </el-statistic>
           </div>
         </el-col>
-        <el-col :span="6">
-          <div>
-            <el-statistic title="剩余未学">
-              <template slot="formatter">
-                {{ this.remainNum }}
-              </template>
-            </el-statistic>
-          </div>
-        </el-col>
       </el-row>
     </el-header>
     <el-main>
@@ -85,6 +76,8 @@
 import {getOneWord} from "@/api/bussiness/word";
 import {addUserWord} from "@/api/bussiness/userword";
 import {addRecord} from "@/api/bussiness/record";
+import {getOneWordInCollection} from "@/api/bussiness/word";
+import {getCollectionTotalAndNotStudyNum} from "@/api/statistics/statistics";
 import {getTotalAndNotStudyNum} from "@/api/statistics/statistics";
 
 export default {
@@ -92,6 +85,10 @@ export default {
     lexiconuuid: {
       type: String,
       default: "",
+    },
+    wordCollectionId: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -121,28 +118,28 @@ export default {
       remainNum: 0,
       showWordInfo: true,
       wordIndex: 0,
-      currentLexiconUUID: "11cf6577-4d92-4cab-802a-c7c812ae3754"
+      currentLexiconUUID: ""
     }
-  },
-  watch: {
-    lexiconuuid: {
-      handler(val) {
-        if (val !== this.currentLexiconUUID) {
-          this.currentLexiconUUID = val === null ? "" : val;
-        }
-      },
-      immediate: true,
-    },
   },
   async mounted() {
     this.clearPanelData()
-    // this.speakCommon.speechInit()
     // 更新统计数据
-    await getTotalAndNotStudyNum().then(res => {
-      this.totalNum = res.data.total;
-      this.remainNum = res.data.notStudy;
-      this.starStudy()
-    });
+    if (this.wordCollectionId) {
+      let params = {
+        wordCollectionId: this.wordCollectionId
+      }
+      await getCollectionTotalAndNotStudyNum(params).then(res => {
+        this.totalNum = res.data.total;
+        this.remainNum = res.data.notStudy;
+        this.starStudy()
+      });
+    } else {
+      await getTotalAndNotStudyNum().then(res => {
+        this.totalNum = res.data.total;
+        this.remainNum = res.data.notStudy;
+        this.starStudy()
+      });
+    }
   },
   methods: {
     studyEnd: function () {
@@ -164,7 +161,7 @@ export default {
           type: "success",
           message: "请停下来，已经没有啦！"
         });
-        this.wordIndex = 0;
+        this.wordIndex = -1;
         return;
       }
       this.showWordInfo = true;
@@ -175,12 +172,12 @@ export default {
       this.clearPanelData()
       let currentIndex = this.wordIndex + 1;
       console.log("================currentIndex:" + currentIndex)
-      if (currentIndex >= this.remainNum) {
+      if (currentIndex >= this.totalNum) {
         this.$notify({
           type: "success",
           message: "请停下来，已经没有啦！"
         });
-        this.wordIndex = this.remainNum - 2;
+        this.wordIndex = this.totalNum - 1;
         if (this.wordIndex < 0) {
           this.wordIndex = 0;
         }
@@ -190,25 +187,43 @@ export default {
       this.wordIndex++;
     },
     async getOneWord(index) {
-      if (this.remainNum === 0) {
+      if (this.wordIndex >= this.totalNum) {
         this.studyEnd();
         return;
       }
       this.clearPanelData();
-      await getOneWord(this.currentLexiconUUID, index).then(response => {
-        if (!response.data) {
-          this.showWordInfo = false;
-          return;
-        }
-        this.oneWord = response.data;
-        console.log(this.oneWord)
-        this.oneWordTxt = this.oneWord.word;
-        this.notInputtedTxt = this.oneWordTxt;
-        if (this.showWordInfo) {
-          this.okTxt = '';
-          this.playOneWordAudio(this.oneWordTxt)
-        }
-      });
+      if (this.wordCollectionId) {
+        await getOneWordInCollection(this.wordCollectionId, index).then(response => {
+          if (!response.data) {
+            this.showWordInfo = false;
+            return;
+          }
+          this.oneWord = response.data;
+          console.log(this.oneWord)
+          this.oneWordTxt = this.oneWord.word;
+          this.notInputtedTxt = this.oneWordTxt;
+          if (this.showWordInfo) {
+            this.okTxt = '';
+            this.playOneWordAudio(this.oneWordTxt)
+          }
+        });
+      } else {
+        await getOneWord(this.currentLexiconUUID, index).then(response => {
+          if (!response.data) {
+            this.showWordInfo = false;
+            return;
+          }
+          this.oneWord = response.data;
+          console.log(this.oneWord)
+          this.oneWordTxt = this.oneWord.word;
+          this.notInputtedTxt = this.oneWordTxt;
+          if (this.showWordInfo) {
+            this.okTxt = '';
+            this.playOneWordAudio(this.oneWordTxt)
+          }
+        });
+      }
+
     },
     // 播放音频
     playAudio(language, word) {
@@ -249,11 +264,7 @@ export default {
           });
         });
         this.wordIndex++;
-        if (this.wordIndex >= this.remainNum) {
-          this.$notify({
-            type: "success",
-            message: "请停下来，已经没有啦！"
-          });
+        if (this.wordIndex >= this.totalNum) {
           this.studyEnd();
           return;
         }

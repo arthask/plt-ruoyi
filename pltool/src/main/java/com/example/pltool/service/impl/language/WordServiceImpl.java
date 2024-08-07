@@ -149,6 +149,16 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
     }
 
     @Override
+    public WordShowData getOneWordInCollection(Long userId, String collectionUUId, int index) {
+        // 查询词库标签
+        Word word = wordMapper.getRandomWordInCollectionOfUser(userId, collectionUUId, (long) index);
+        Assert.notNull(word, "未查询到单词数据");
+        WordShowData wordShowData = new WordShowData();
+        BeanUtils.copyProperties(word, wordShowData);
+        return wordShowData;
+    }
+
+    @Override
     public WordShowData getWordInfo(String wordUuid) {
         // 查询词库标签
         Word word = getWordByUUID(wordUuid);

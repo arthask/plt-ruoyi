@@ -50,4 +50,12 @@ public interface IStatisticsService {
      * @return 用户今日需复习单词总数、已复习单词数
      */
     Map<String ,Long> getNeedReviewAnHaveReviewNum(Long userId);
+
+    /**
+     * 查询用户单词集下单词数，及未学习的新单词数
+     * @param collectionId
+     * @param userId
+     * @return
+     */
+    Map<String, Long> getCollectionTotalAndNotStudyNum(String collectionId, Long userId);
 }

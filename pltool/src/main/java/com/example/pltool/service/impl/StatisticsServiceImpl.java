@@ -196,6 +196,16 @@ public class StatisticsServiceImpl implements IStatisticsService {
         return result;
     }
 
+    @Override
+    public Map<String, Long> getCollectionTotalAndNotStudyNum(String collectionId, Long userId) {
+        Map<String, Long> result = new HashMap<>();
+        Long wordCount = wordMapper.getCollectionWordCount(collectionId, userId);
+        Long notStudyNum = wordMapper.getCollectionNewWordCountOfUser(collectionId, userId);
+        result.put(TOTAL, wordCount);
+        result.put(NOT_STUDY, notStudyNum);
+        return result;
+    }
+
     private static void setPeriodName(UserWordPeriodVo e, Map<String, Long> periodMap, String key) {
         if (periodMap.containsKey(key)) {
             Long oldValue = periodMap.get(key);

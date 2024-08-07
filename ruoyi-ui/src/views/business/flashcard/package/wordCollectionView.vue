@@ -14,6 +14,8 @@ export default {
     return {
       ids: [],
       loading: false,
+      // 非多个禁用
+      multiple: true,
       tableData: [],
       // 查询参数
       queryParams: {
@@ -31,6 +33,7 @@ export default {
   methods: {
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.labelUUID)
+      this.multiple = !selection.length
     },
     getList() {
       this.loading = true
@@ -76,7 +79,8 @@ export default {
           icon="el-icon-delete"
           size="mini"
           @click="handleDelete"
-        >删除
+          :disabled="multiple"
+        >从卡包中移除
         </el-button>
       </el-col>
     </el-row>

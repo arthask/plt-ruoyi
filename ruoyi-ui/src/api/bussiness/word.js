@@ -59,6 +59,14 @@ export function getOneWord(uuid, index) {
   })
 }
 
+// 随机获取一个单词
+export function getOneWordInCollection(uuid, index) {
+  return request({
+    url: '/system/word/getOneWordInCollection/'+uuid+"/"+index,
+    method: 'get'
+  })
+}
+
 // 搜索单词
 export function searchWordByCN(query) {
   return request({
