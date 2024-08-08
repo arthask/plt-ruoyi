@@ -3,7 +3,7 @@ FROM maven:3.8.5-openjdk-8 AS builder
 WORKDIR /app
 
 # 将 Maven 配置文件和源代码复制到容器中
-COPY pom.xml ./
+COPY ../pom.xml ./
 COPY src ./src
 
 # 使用 Maven 构建项目
