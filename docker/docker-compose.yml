@@ -1,6 +1,6 @@
 version : '1.0'
 services:
-  ruoyi-mysql:
+  plt-mysql:
     container_name: plt-mysql
     image: mysql:5.7
     build:
@@ -21,7 +21,7 @@ services:
     ]
     env_file:
       - .env
-  ruoyi-nginx:
+  plt-nginx:
     container_name: plt-nginx
     image: nginx
     build:
