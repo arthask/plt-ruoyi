@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author author
- * @since 2024-04-12
+ * @since 2024-08-12
  */
 @Getter
 @Setter
@@ -65,4 +65,10 @@ public class Label implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 作用对象，1表示词库，2表示单词集
+     */
+    @TableField("target")
+    private Integer target;
 }

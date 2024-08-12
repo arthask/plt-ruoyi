@@ -37,4 +37,28 @@ public interface LabelService extends IService<Label> {
      */
     List<LabelInfo> getAllLabels(Long userId);
 
+    /**
+     * 创建标签
+     *
+     * @param labelInfo
+     * @return
+     */
+    boolean createLabel(LabelInfo labelInfo);
+
+    /**
+     * 更新标签,修改标签名称
+     *
+     * @param labelInfo
+     * @return
+     */
+    boolean updateLabel(LabelInfo labelInfo);
+
+    /**
+     * 获取标签信息
+     *
+     * @param uuid
+     * @return
+     */
+    LabelInfo getLabelInfo(String uuid);
+
 }

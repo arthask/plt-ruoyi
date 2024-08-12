@@ -2,7 +2,6 @@ package com.example.pltool.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.example.pltool.domain.dto.label.LabelInfo;
 import com.example.pltool.domain.entity.Label;
 import com.example.pltool.mapper.LabelMapper;
@@ -13,6 +12,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -54,5 +55,34 @@ public class LabelServiceImpl extends ServiceImpl<LabelMapper, Label> implements
                     return labelInfo;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean createLabel(LabelInfo labelInfo) {
+        Label label = new Label();
+        label.setUuid(UUID.randomUUID().toString().replace("-", ""));
+        BeanUtils.copyProperties(labelInfo, label);
+        return save(label);
+    }
+
+    @Override
+    public boolean updateLabel(LabelInfo labelInfo) {
+        Label label = new Label();
+        label.setName(label.getName());
+        if (Objects.nonNull(label.getTarget())) {
+            label.setTarget(label.getTarget());
+        }
+        QueryWrapper<Label> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uuid", labelInfo.getUuid());
+        return update(label, queryWrapper);
+    }
+
+    @Override
+    public LabelInfo getLabelInfo(String uuid) {
+        Label label = getLabelByUUID(uuid);
+        if (Objects.isNull(label)) {
+            return null;
+        }
+        return LabelInfo.convertData2Vo(label);
     }
 }
