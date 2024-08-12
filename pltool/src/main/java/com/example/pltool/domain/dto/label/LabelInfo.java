@@ -1,5 +1,17 @@
 package com.example.pltool.domain.dto.label;
 
+import com.example.pltool.domain.entity.Label;
+import lombok.Data;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+@Data
 public class LabelInfo {
     /**
      * uuid
@@ -9,22 +21,38 @@ public class LabelInfo {
      * 标签名称
      */
     private String name;
+    /**
+     * 标签类型
+     */
+    private Integer target;
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+    /**
+     * 创建人id
+     */
+    private Long createUserId;
 
-    public String getUuid() {
-        return uuid;
+    public static List<LabelInfo> convertListData2Vo(List<Label> labelList) {
+        if (CollectionUtils.isEmpty(labelList)) {
+            return Collections.emptyList();
+        }
+        List<LabelInfo> result = new ArrayList<>();
+        labelList.forEach(e -> {
+            LabelInfo labelInfo = new LabelInfo();
+            BeanUtils.copyProperties(e, labelInfo);
+            result.add(labelInfo);
+        });
+        return result;
     }
 
-    public LabelInfo setUuid(String uuid) {
-        this.uuid = uuid;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public LabelInfo setName(String name) {
-        this.name = name;
-        return this;
+    public static LabelInfo convertData2Vo(Label label) {
+        if (Objects.isNull(label)) {
+            return null;
+        }
+        LabelInfo labelInfo = new LabelInfo();
+        BeanUtils.copyProperties(label, labelInfo);
+        return labelInfo;
     }
 }

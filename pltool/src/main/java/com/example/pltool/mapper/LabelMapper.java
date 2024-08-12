@@ -1,7 +1,6 @@
 package com.example.pltool.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.example.pltool.domain.entity.Label;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author author
- * @since 2024-04-12
+ * @since 2024-08-12
  */
 @Mapper
 public interface LabelMapper extends BaseMapper<Label> {
