@@ -1,84 +1,77 @@
 <template>
-  <el-container>
-    <el-header>
-      <el-row type="flex" justify="space-between">
-        <el-col :span="6">
-          <el-button type="primary" @click="forward()">上一个</el-button>
-        </el-col>
-        <el-col :span="6">
-          <el-button type="primary" @click="nextWord()">下一个</el-button>
-        </el-col>
-      </el-row>
-      <el-row type="flex" class="row-bg" justify="center">
-        <el-col :span="6">
-          <div>
-            <el-statistic
-              group-separator=","
-              :precision="0"
-              :value="totalNum"
-              title="总数">
-            </el-statistic>
-          </div>
-        </el-col>
-      </el-row>
-    </el-header>
-    <el-main>
-      <el-empty description="没有啦" v-show="!showWordInfo"></el-empty>
-      <el-descriptions title="单词信息" border v-show="showWordInfo" :column="2">
-        <el-descriptions-item label="单词">
-          <span class="ok-content">{{ okTxt }}</span>
-          <span class="error-content">{{ notInputtedTxt }}</span>
-        </el-descriptions-item>
-        <el-descriptions-item label="标签">
-          <el-tag size="small" v-for="item in oneWord.labelList"> {{ item }}</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="美式发音">
-          <template slot="label">
-            美式发音
-          </template>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-microphone"
-            @click="playAudio(US,oneWord.word)"
-          >播放
-          </el-button>
-        </el-descriptions-item>
-        <el-descriptions-item label="英式发音">
-          <template slot="label">
-            英式发音
-          </template>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-microphone"
-            @click="playAudio(UK,oneWord.word)"
-          >播放
-          </el-button>
-        </el-descriptions-item>
-        <el-descriptions-item label="释义">{{ oneWord.translation }}</el-descriptions-item>
-      </el-descriptions>
-      <el-descriptions title="内容填写区" :colon="false" v-show="showWordInfo">
-        <el-descriptions-item>
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 4, maxRows: 6}"
-            placeholder="请输入内容"
-            v-model="currentInputTxt"
-            @input="userInputs"/>
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-main>
-  </el-container>
+  <div>
+    <el-row justify="space-between" type="flex">
+      <el-col :span="6">
+        <el-button type="primary" @click="forward()">上一个</el-button>
+      </el-col>
+      <el-col :span="6">
+        <el-button type="primary" @click="nextWord()">下一个</el-button>
+      </el-col>
+    </el-row>
+    <el-row justify="center" type="flex">
+      <el-col :span="6">
+        <div>
+          <el-statistic
+            :precision="0"
+            :value="totalNum"
+            group-separator=","
+            title="总数">
+          </el-statistic>
+        </div>
+      </el-col>
+    </el-row>
+    <el-descriptions v-show="showWordInfo" border column="1" direction="vertical" title="单词信息">
+      <el-descriptions-item label="单词">
+        <span class="ok-content">{{ okTxt }}</span>
+        <span class="error-content">{{ notInputtedTxt }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="释义">{{ oneWord.translation }}</el-descriptions-item>
+    </el-descriptions>
+    <el-descriptions v-show="showWordInfo" border class="margin-top" column="2" title="发音">
+      <el-descriptions-item label="美式发音">
+        <template slot="label">
+          美式发音
+        </template>
+        <el-button
+          icon="el-icon-microphone"
+          size="mini"
+          type="text"
+          @click="playAudio(US,oneWord.word)"
+        >播放
+        </el-button>
+      </el-descriptions-item>
+      <el-descriptions-item label="英式发音">
+        <template slot="label">
+          英式发音
+        </template>
+        <el-button
+          icon="el-icon-microphone"
+          size="mini"
+          type="text"
+          @click="playAudio(UK,oneWord.word)"
+        >播放
+        </el-button>
+      </el-descriptions-item>
+    </el-descriptions>
+    <el-descriptions v-show="showWordInfo" :colon="false" class="margin-top" title="内容填写区">
+      <el-descriptions-item>
+        <el-input
+          v-model="currentInputTxt"
+          placeholder="请输入内容"
+          resize="none"
+          rows="2" type="textarea"
+          @input="userInputs"/>
+      </el-descriptions-item>
+    </el-descriptions>
+    <el-empty v-show="!showWordInfo" description="没有啦"></el-empty>
+  </div>
 </template>
 
 <script>
-import {getOneWord} from "@/api/bussiness/word";
+import {getOneWord, getOneWordInCollection} from "@/api/bussiness/word";
 import {addUserWord} from "@/api/bussiness/userword";
 import {addRecord} from "@/api/bussiness/record";
-import {getOneWordInCollection} from "@/api/bussiness/word";
-import {getCollectionTotalAndNotStudyNum} from "@/api/statistics/statistics";
-import {getTotalAndNotStudyNum} from "@/api/statistics/statistics";
+import {getCollectionTotalAndNotStudyNum, getTotalAndNotStudyNum} from "@/api/statistics/statistics";
 
 export default {
   props: {
@@ -112,7 +105,7 @@ export default {
       // 学习记录
       record: {
         word: '',
-        wordUuid:''
+        wordUuid: ''
       },
       totalNum: 0,
       remainNum: 0,
@@ -286,6 +279,9 @@ export default {
 }
 </script>
 <style>
+.margin-top {
+  margin-top: 20px;
+}
 .ok-content {
   color: #42b983;
   font-size: large;
