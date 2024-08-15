@@ -26,7 +26,7 @@ public class LabelController extends BaseController {
      */
     @GetMapping("/list")
     public TableDataInfo list(@RequestParam(value = "name", required = false) String name,
-                              @RequestParam(value = "type", required = false) Integer type) {
+                              @RequestParam(value = "target", required = false) Integer type) {
         startPage();
         QueryWrapper<Label> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(name)) {
