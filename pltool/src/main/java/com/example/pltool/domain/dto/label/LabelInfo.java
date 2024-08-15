@@ -1,6 +1,7 @@
 package com.example.pltool.domain.dto.label;
 
 import com.example.pltool.domain.entity.Label;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
@@ -28,6 +29,7 @@ public class LabelInfo {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
     /**
      * 创建人id
