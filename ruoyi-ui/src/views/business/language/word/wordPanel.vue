@@ -1,33 +1,38 @@
 <template>
   <div>
-    <el-row justify="space-between" type="flex">
+    <el-row :gutter="20" justify="center" type="flex">
       <el-col :span="6">
-        <el-button type="primary" @click="forward()">上一个</el-button>
+        <el-button :disabled="backDisable" type="primary" @click="forward()">上一个</el-button>
       </el-col>
-      <el-col :span="6">
-        <el-button type="primary" @click="nextWord()">下一个</el-button>
-      </el-col>
-    </el-row>
-    <el-row justify="center" type="flex">
       <el-col :span="6">
         <div>
           <el-statistic
+            :value="this.wordIndex+1"
             :precision="0"
-            :value="totalNum"
             group-separator=","
-            title="总数">
-          </el-statistic>
+            title="当前"
+          ></el-statistic>
         </div>
       </el-col>
+      <el-col :span="6">
+        <el-statistic :precision="0"
+                      :value="totalNum"
+                      group-separator=","
+                      title="总数">
+        </el-statistic>
+      </el-col>
+      <el-col :span="6">
+        <el-button :disabled="nextDisable" type="primary" @click="nextWord()">下一个</el-button>
+      </el-col>
     </el-row>
-    <el-descriptions v-show="showWordInfo" border column="1" direction="vertical" title="单词信息">
+    <el-descriptions v-show="showWordInfo" :column="1" border direction="vertical" title="单词信息">
       <el-descriptions-item label="单词">
         <span class="ok-content">{{ okTxt }}</span>
         <span class="error-content">{{ notInputtedTxt }}</span>
       </el-descriptions-item>
       <el-descriptions-item label="释义">{{ oneWord.translation }}</el-descriptions-item>
     </el-descriptions>
-    <el-descriptions v-show="showWordInfo" border class="margin-top" column="2" title="发音">
+    <el-descriptions v-show="showWordInfo" :column="2" border class="margin-top" title="发音">
       <el-descriptions-item label="美式发音">
         <template slot="label">
           美式发音
@@ -72,16 +77,17 @@ import {getOneWord, getOneWordInCollection} from "@/api/bussiness/word";
 import {addUserWord} from "@/api/bussiness/userword";
 import {addRecord} from "@/api/bussiness/record";
 import {getCollectionTotalAndNotStudyNum, getTotalAndNotStudyNum} from "@/api/statistics/statistics";
+import {getReviewWord} from "../../../../api/review/review";
 
 export default {
   props: {
-    lexiconuuid: {
-      type: String,
-      default: "",
-    },
     wordCollectionId: {
       type: String,
       default: ""
+    },
+    review: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -108,10 +114,11 @@ export default {
         wordUuid: ''
       },
       totalNum: 0,
-      remainNum: 0,
       showWordInfo: true,
       wordIndex: 0,
-      currentLexiconUUID: ""
+      currentLexiconUUID: "",
+      backDisable: false,
+      nextDisable: false,
     }
   },
   async mounted() {
@@ -123,27 +130,18 @@ export default {
       }
       await getCollectionTotalAndNotStudyNum(params).then(res => {
         this.totalNum = res.data.total;
-        this.remainNum = res.data.notStudy;
         this.starStudy()
       });
     } else {
       await getTotalAndNotStudyNum().then(res => {
         this.totalNum = res.data.total;
-        this.remainNum = res.data.notStudy;
-        this.starStudy()
+        this.starStudy(this.review)
       });
     }
   },
   methods: {
-    studyEnd: function () {
-      this.showWordInfo = false;
-      this.$notify({
-        type: "warning",
-        message: "新单词已学完，赶紧去复习一下吧^-^"
-      });
-    },
-    async starStudy() {
-      await this.getOneWord(this.wordIndex);
+    async starStudy(isReview) {
+      await this.getOneWord(this.wordIndex, isReview);
     },
     async forward() {
       this.clearPanelData()
@@ -179,41 +177,55 @@ export default {
       await this.getOneWord(currentIndex);
       this.wordIndex++;
     },
-    async getOneWord(index) {
-      if (this.wordIndex >= this.totalNum) {
-        this.studyEnd();
+    setBtnStatus: function (index) {
+      this.backDisable = false
+      this.nextDisable = false
+      // 边界值判断
+      if (this.totalNum === 1) {
+        this.nextDisable = true
+        this.backDisable = true
+        return
+      }
+      if (index + 1 >= this.totalNum) {
+        this.nextDisable = true
+        return
+      }
+      if (index <= 0) {
+        this.backDisable = true
+      }
+    }, processResData: function (response, index) {
+      if (!response.data) {
+        this.showWordInfo = false;
         return;
       }
+      this.setBtnStatus(index);
+      this.oneWord = response.data;
+      this.oneWordTxt = this.oneWord.word;
+      this.notInputtedTxt = this.oneWordTxt;
+      if (this.showWordInfo) {
+        this.okTxt = '';
+        this.playOneWordAudio(this.oneWordTxt)
+      }
+    },
+    async getOneWord(index, isReview) {
+      if (this.totalNum === 0) {
+        return
+      }
+      console.log("-----index", index, "----------totalNum", this.totalNum)
       this.clearPanelData();
       if (this.wordCollectionId) {
         await getOneWordInCollection(this.wordCollectionId, index).then(response => {
-          if (!response.data) {
-            this.showWordInfo = false;
-            return;
-          }
-          this.oneWord = response.data;
-          console.log(this.oneWord)
-          this.oneWordTxt = this.oneWord.word;
-          this.notInputtedTxt = this.oneWordTxt;
-          if (this.showWordInfo) {
-            this.okTxt = '';
-            this.playOneWordAudio(this.oneWordTxt)
-          }
+          this.processResData(response, index);
         });
       } else {
+        if (isReview) {
+          await getReviewWord().then(res => {
+            this.processResData(res, index)
+          });
+          return
+        }
         await getOneWord(this.currentLexiconUUID, index).then(response => {
-          if (!response.data) {
-            this.showWordInfo = false;
-            return;
-          }
-          this.oneWord = response.data;
-          console.log(this.oneWord)
-          this.oneWordTxt = this.oneWord.word;
-          this.notInputtedTxt = this.oneWordTxt;
-          if (this.showWordInfo) {
-            this.okTxt = '';
-            this.playOneWordAudio(this.oneWordTxt)
-          }
+          this.processResData(res, index)
         });
       }
 
@@ -244,21 +256,12 @@ export default {
         this.record.word = this.oneWord.word;
         // 我的单词+1
         await addUserWord(this.record).then(() => {
-          this.$notify({
-            type: "success",
-            message: "单词量+1"
-          });
         });
         // 新增学习记录
         await addRecord(this.record).then(() => {
-          this.$notify({
-            type: "success",
-            message: "学习记录+1"
-          });
         });
         this.wordIndex++;
         if (this.wordIndex >= this.totalNum) {
-          this.studyEnd();
           return;
         }
         await this.getOneWord(this.wordIndex);
@@ -282,6 +285,7 @@ export default {
 .margin-top {
   margin-top: 20px;
 }
+
 .ok-content {
   color: #42b983;
   font-size: large;

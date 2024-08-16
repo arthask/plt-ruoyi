@@ -239,8 +239,10 @@ export default {
     <el-dialog title="查看单词"
                v-if="showView"
                :visible.sync="showView"
-               :center="true"
-               :destroy-on-close="true">
+               :destroy-on-close="true"
+               append-to-body
+               center
+               height="500px" width="800px">
       <word-view :labelUUID="labelUUID"></word-view>
     </el-dialog>
 
@@ -248,7 +250,7 @@ export default {
                :visible.sync="showStudy"
                :destroy-on-close="true"
                :before-close="handleStudyClose">
-    <word-panel :word-collection-id="this.labelUUID"></word-panel>
+      <word-panel :word-collection-id="this.labelUUID"></word-panel>
     </el-dialog>
   </div>
 </template>

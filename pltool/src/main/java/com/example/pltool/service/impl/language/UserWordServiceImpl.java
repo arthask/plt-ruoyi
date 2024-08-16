@@ -4,8 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.pltool.domain.entity.Label;
-import com.example.pltool.domain.entity.LexiconWord;
+import com.example.pltool.domain.dto.language.word.WordShowData;
 import com.example.pltool.domain.entity.UserWord;
 import com.example.pltool.domain.entity.Word;
 import com.example.pltool.mapper.UserWordMapper;
@@ -14,22 +13,17 @@ import com.example.pltool.service.language.LexiconWordService;
 import com.example.pltool.service.language.UserWordService;
 import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.enums.PeriodEnum;
-import com.example.pltool.domain.dto.language.word.WordShowData;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -109,18 +103,6 @@ public class UserWordServiceImpl extends ServiceImpl<UserWordMapper, UserWord> i
         }
         WordShowData wordShowData = new WordShowData();
         BeanUtils.copyProperties(needReviewWord, wordShowData);
-        // 根据单词查询词库uuid
-        QueryWrapper<LexiconWord> lexiconWordQueryWrapper = new QueryWrapper<>();
-        lexiconWordQueryWrapper.eq("word_uuid", needReviewWord.getUuid());
-        List<LexiconWord> lexiconWords = lexiconWordService.list(lexiconWordQueryWrapper);
-        if (CollectionUtils.isEmpty(lexiconWords)) {
-            return wordShowData;
-        }
-        List<Label> labelOfLexicon = lexiconService.getLabelOfLexicon(lexiconWords.get(0).getLexiconUuid());
-        if (!CollectionUtils.isEmpty(labelOfLexicon)) {
-            List<String> labelNames = labelOfLexicon.stream().map(Label::getName).collect(Collectors.toList());
-            wordShowData.setLabelList(labelNames);
-        }
         return wordShowData;
     }
 
