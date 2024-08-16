@@ -3,16 +3,14 @@ package com.example.pltool.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.example.pltool.domain.vo.StatisticsCountVo;
+import com.example.pltool.domain.vo.UserWordPeriodVo;
 import com.example.pltool.mapper.UserStudyRecordMapper;
 import com.example.pltool.mapper.UserWordMapper;
 import com.example.pltool.mapper.WordMapper;
 import com.example.pltool.service.IStatisticsService;
 import com.example.pltool.service.language.LexiconService;
-import com.example.pltool.domain.vo.StatisticsCountVo;
-import com.example.pltool.domain.vo.UserWordPeriodVo;
 import com.ruoyi.common.utils.DateUtils;
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,10 +168,8 @@ public class StatisticsServiceImpl implements IStatisticsService {
     @Override
     public Map<String, Long> getTotalAndNotStudyNum(Long userId) {
         Map<String, Long> result = new HashMap<>();
-        Long wordCount = wordMapper.getWordCount(userId);
-        Long notStudyNum = wordMapper.getNewWordCountOfUser(userId);
+        Long wordCount = userWordMapper.getWordCount(userId);
         result.put(TOTAL, wordCount);
-        result.put(NOT_STUDY, notStudyNum);
         return result;
     }
 
