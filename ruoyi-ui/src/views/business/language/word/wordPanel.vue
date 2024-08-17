@@ -2,10 +2,10 @@
   <div>
     <el-row :gutter="20" justify="center" type="flex">
       <el-col :span="6">
-        <el-button :disabled="backDisable" type="primary" @click="forward()">上一个</el-button>
+        <el-button v-if="!this.review" :disabled="backDisable" type="primary" @click="forward()">上一个</el-button>
       </el-col>
       <el-col :span="6">
-        <div>
+        <div v-if="!this.review">
           <el-statistic
             :value="this.wordIndex+1"
             :precision="0"
@@ -15,14 +15,16 @@
         </div>
       </el-col>
       <el-col :span="6">
+        <div v-if="!this.review">
         <el-statistic :precision="0"
                       :value="totalNum"
                       group-separator=","
                       title="总数">
         </el-statistic>
+        </div>
       </el-col>
       <el-col :span="6">
-        <el-button :disabled="nextDisable" type="primary" @click="nextWord()">下一个</el-button>
+        <el-button v-if="!this.review" :disabled="nextDisable" type="primary" @click="nextWord()">下一个</el-button>
       </el-col>
     </el-row>
     <el-descriptions v-show="showWordInfo" :column="1" border direction="vertical" title="单词信息">
@@ -145,37 +147,15 @@ export default {
     },
     async forward() {
       this.clearPanelData()
-      let currentIndex = this.wordIndex - 1;
+      let currentIndex = --this.wordIndex;
       console.log("================currentIndex:" + currentIndex)
-      if (currentIndex < 0) {
-        this.$notify({
-          type: "success",
-          message: "请停下来，已经没有啦！"
-        });
-        this.wordIndex = -1;
-        return;
-      }
-      this.showWordInfo = true;
-      await this.getOneWord(currentIndex);
-      this.wordIndex--;
+      await this.getOneWord(currentIndex, this.review);
     },
     async nextWord() {
       this.clearPanelData()
-      let currentIndex = this.wordIndex + 1;
+      let currentIndex = ++this.wordIndex;
       console.log("================currentIndex:" + currentIndex)
-      if (currentIndex >= this.totalNum) {
-        this.$notify({
-          type: "success",
-          message: "请停下来，已经没有啦！"
-        });
-        this.wordIndex = this.totalNum - 1;
-        if (this.wordIndex < 0) {
-          this.wordIndex = 0;
-        }
-        return;
-      }
-      await this.getOneWord(currentIndex);
-      this.wordIndex++;
+      await this.getOneWord(currentIndex, this.review);
     },
     setBtnStatus: function (index) {
       this.backDisable = false
@@ -210,6 +190,10 @@ export default {
     async getOneWord(index, isReview) {
       if (this.totalNum === 0) {
         return
+      }
+      if (index < 0) {
+        this.wordIndex = 0
+        index = 0
       }
       console.log("-----index", index, "----------totalNum", this.totalNum)
       this.clearPanelData();
@@ -264,7 +248,7 @@ export default {
         if (this.wordIndex >= this.totalNum) {
           return;
         }
-        await this.getOneWord(this.wordIndex);
+        await this.getOneWord(this.wordIndex, this.review);
         return;
       }
       for (let i = 0; i < this.currentInputTxt.length; i++) {

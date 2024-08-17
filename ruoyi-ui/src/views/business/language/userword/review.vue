@@ -8,11 +8,12 @@ export default {
   components: {WordPanel},
   data() {
     return {
+      UK: 'en-GB',
+      US: 'en-US',
       showDetail: false,
       detail: {
         name: '',
         translation: '',
-        labelNames: []
       },
       // 学习记录
       record: {
@@ -47,12 +48,16 @@ export default {
     },
     async getWordDetail(row) {
       await getWordInfo({wordUuid: row.wordUuid}).then(res => {
-        this.showWordDetail = true;
+        this.showDetail = true;
         this.detail.name = res.data.word
         this.detail.translation = res.data.translation
-        this.detail.labelNames = [...res.data.labelList]
       })
-    }
+    },
+    // 播放音频
+    playAudio(language, word) {
+      this.speakCommon.changeVoice(language)
+      this.speakCommon.speak(word)
+    },
   }
 }
 </script>
@@ -60,14 +65,15 @@ export default {
 <template>
   <div>
     <el-container>
-      <el-container style="border-style:solid;border-width:5px; border-color: #97a8be; margin-left: 20px">
+      <el-container style="border-style:solid;border-width:1px;
+       border-color: lightgrey; margin: 10px 0 30px 50px">
         <!--        <el-header></el-header>-->
         <el-main>
           <word-panel :review="true"></word-panel>
         </el-main>
         <!--        <el-footer></el-footer>-->
       </el-container>
-      <el-aside style="background-color:white" width="35%">
+      <el-aside style="background-color:white;width:35%">
         <el-table v-loading="loading" :data="recordList" :stripe="true">
           <el-table-column align="center" label="单词" min-width="120px" prop="word"/>
           <el-table-column align="center" label="学习日期" min-width="150px" prop="studyTime"/>
@@ -95,6 +101,38 @@ export default {
         />
       </el-aside>
     </el-container>
+    <el-dialog :visible.sync="showDetail" title="">
+      <el-descriptions :column="2" border title="单词信息">
+        <el-descriptions-item label="单词">
+          {{ detail.name }}
+        </el-descriptions-item>
+        <el-descriptions-item label="释义">{{ detail.translation }}</el-descriptions-item>
+        <el-descriptions-item label="美式发音">
+          <template slot="label">
+            美式发音
+          </template>
+          <el-button
+            icon="el-icon-microphone"
+            size="mini"
+            type="text"
+            @click="playAudio(US,detail.name)"
+          >播放
+          </el-button>
+        </el-descriptions-item>
+        <el-descriptions-item label="英式发音">
+          <template slot="label">
+            英式发音
+          </template>
+          <el-button
+            icon="el-icon-microphone"
+            size="mini"
+            type="text"
+            @click="playAudio(UK,detail.name)"
+          >播放
+          </el-button>
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
