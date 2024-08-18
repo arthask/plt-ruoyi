@@ -39,16 +39,16 @@ export default {
   },
   methods: {
     async getStudyRecord() {
-      this.loading = true;
+      this.loading = true
       await listRecord(this.queryParams).then(response => {
-        this.recordList = response.rows;
-        this.total = response.total;
-        this.loading = false;
+        this.recordList = response.rows
+        this.total = response.total
+        this.loading = false
       });
     },
     async getWordDetail(row) {
       await getWordInfo({wordUuid: row.wordUuid}).then(res => {
-        this.showDetail = true;
+        this.showDetail = true
         this.detail.name = res.data.word
         this.detail.translation = res.data.translation
       })
@@ -58,6 +58,9 @@ export default {
       this.speakCommon.changeVoice(language)
       this.speakCommon.speak(word)
     },
+    handleNextWord() {
+      this.getStudyRecord()
+    }
   }
 }
 </script>
@@ -66,14 +69,14 @@ export default {
   <div>
     <el-container>
       <el-container style="border-style:solid;border-width:1px;
-       border-color: lightgrey; margin: 10px 0 30px 50px">
+       border-color: lightgrey; margin: 10px 0 0 50px">
         <!--        <el-header></el-header>-->
         <el-main>
-          <word-panel :review="true"></word-panel>
+          <word-panel :review="true" @handleNextWord="handleNextWord"></word-panel>
         </el-main>
         <!--        <el-footer></el-footer>-->
       </el-container>
-      <el-aside style="background-color:white;width:35%">
+      <el-aside style="background-color:white;width:35%;margin: 10px 0 0 0">
         <el-table v-loading="loading" :data="recordList" :stripe="true">
           <el-table-column align="center" label="单词" min-width="120px" prop="word"/>
           <el-table-column align="center" label="学习日期" min-width="150px" prop="studyTime"/>

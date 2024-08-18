@@ -246,9 +246,13 @@ export default {
         });
         this.wordIndex++;
         if (this.wordIndex >= this.totalNum) {
+          this.wordIndex = this.wordIndex - 1
           return;
         }
         await this.getOneWord(this.wordIndex, this.review);
+        if (this.review) {
+          this.$emit("handleNextWord")
+        }
         return;
       }
       for (let i = 0; i < this.currentInputTxt.length; i++) {
