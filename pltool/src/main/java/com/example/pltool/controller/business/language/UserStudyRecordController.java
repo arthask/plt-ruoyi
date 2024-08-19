@@ -92,4 +92,16 @@ public class UserStudyRecordController extends BaseController {
         startPage();
         return getDataTable(newUserStudyRecordService.listWordOfDay(this.getUserId(), day));
     }
+
+    /**
+     * 获取某个单词的学习记录
+     *
+     * @param wordUUId
+     * @return
+     */
+    @GetMapping("/getStudyRecordsOfWord")
+    public TableDataInfo getStudyRecordsOfWord(@RequestParam("wordUUId") String wordUUId) {
+        startPage();
+        return getDataTable(newUserStudyRecordService.getStudyRecordsOfWord(wordUUId));
+    }
 }

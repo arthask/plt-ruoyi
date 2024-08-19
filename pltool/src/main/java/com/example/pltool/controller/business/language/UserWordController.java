@@ -1,5 +1,6 @@
 package com.example.pltool.controller.business.language;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.entity.UserWord;
 import com.example.pltool.service.language.UserWordService;
 import com.ruoyi.common.annotation.Log;
@@ -7,15 +8,14 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-
-
-
+import com.ruoyi.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户单词Controller
@@ -37,8 +37,18 @@ public class UserWordController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(UserWord userWord) {
         startPage();
-//        QueryWrapper<UserWord> queryWrapper = new QueryWrapper<>();
-        List<UserWord> list = newUserWordService.list();
+        QueryWrapper<UserWord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
+        if (StringUtils.isNotBlank(userWord.getWord())) {
+            queryWrapper.eq("word", userWord.getWord());
+        }
+        if (Objects.nonNull(userWord.getPeriod())) {
+            queryWrapper.eq("period", userWord.getPeriod());
+        }
+        if (Objects.nonNull(userWord.getCollectFlag())) {
+            queryWrapper.eq("collect_flag", userWord.getCollectFlag());
+        }
+        List<UserWord> list = newUserWordService.list(queryWrapper);
         return getDataTable(list);
     }
 

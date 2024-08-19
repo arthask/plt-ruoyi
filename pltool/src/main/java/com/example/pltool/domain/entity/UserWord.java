@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,6 +32,7 @@ public class UserWord implements Serializable {
     /**
      * 编号
      */
+    @JsonIgnore
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -54,6 +57,7 @@ public class UserWord implements Serializable {
     /**
      * 用户id
      */
+    @JsonIgnore
     @TableField("user_id")
     private Long userId;
 
@@ -78,6 +82,7 @@ public class UserWord implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("create_time")
     private LocalDateTime createTime;
 
@@ -90,6 +95,7 @@ public class UserWord implements Serializable {
     /**
      * 下次学习时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("next_study_time")
     private LocalDateTime nextStudyTime;
 }
