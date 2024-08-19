@@ -49,3 +49,11 @@ export function listWordOfDay(day) {
     method: 'get'
   })
 }
+
+export function getStudyRecordsOfWord(query) {
+  return request({
+    url: '/system/record/getStudyRecordsOfWord',
+    method: 'get',
+    params: query
+  })
+}

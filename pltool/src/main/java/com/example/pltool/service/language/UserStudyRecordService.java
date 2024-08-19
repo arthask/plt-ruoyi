@@ -18,4 +18,6 @@ public interface UserStudyRecordService extends IService<UserStudyRecord> {
     int insertUserStudyRecord(UserStudyRecord userStudyRecord);
 
     List<UserStudyRecord> listWordOfDay(Long userId, int day);
+
+    List<UserStudyRecord> getStudyRecordsOfWord(String wordUUId);
 }

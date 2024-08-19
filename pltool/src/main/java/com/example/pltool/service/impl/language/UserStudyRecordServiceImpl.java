@@ -3,12 +3,12 @@ package com.example.pltool.service.impl.language;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.domain.entity.UserStudyRecord;
 import com.example.pltool.mapper.UserStudyRecordMapper;
 import com.example.pltool.service.language.UserStudyRecordService;
 import com.ruoyi.common.utils.DateUtils;
-
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -52,5 +52,12 @@ public class UserStudyRecordServiceImpl extends ServiceImpl<UserStudyRecordMappe
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<UserStudyRecord> getStudyRecordsOfWord(String wordUUId) {
+        QueryWrapper<UserStudyRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("word_uuid", wordUUId);
+        return list(queryWrapper);
     }
 }
