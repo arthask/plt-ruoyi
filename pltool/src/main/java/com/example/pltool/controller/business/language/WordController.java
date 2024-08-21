@@ -1,5 +1,6 @@
 package com.example.pltool.controller.business.language;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.entity.Word;
 import com.example.pltool.service.language.WordService;
 import com.ruoyi.common.annotation.Log;
@@ -8,8 +9,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-
-
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +39,12 @@ public class WordController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(Word word) {
         startPage();
-        List<Word> list = newWordService.list();
+        QueryWrapper<Word> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
+        if (StringUtils.isNotEmpty(word.getWord())) {
+            queryWrapper.like("word", word.getWord());
+        }
+        List<Word> list = newWordService.list(queryWrapper);
         return getDataTable(list);
     }
 
@@ -57,9 +62,9 @@ public class WordController extends BaseController {
      * 获取单词详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:word:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(newWordService.getById(id));
+    @GetMapping(value = "/{uuid}")
+    public AjaxResult getInfo(@PathVariable("uuid") String uuid) {
+        return success(newWordService.getWordByUUID(uuid));
     }
 
     /**
@@ -79,7 +84,11 @@ public class WordController extends BaseController {
     @Log(title = "单词", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Word word) {
-        return toAjax(newWordService.updateById(word));
+        QueryWrapper<Word> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uuid", word.getUuid());
+        Word updateData = new Word();
+        updateData.setTranslation(word.getTranslation());
+        return toAjax(newWordService.update(updateData, queryWrapper));
     }
 
     /**

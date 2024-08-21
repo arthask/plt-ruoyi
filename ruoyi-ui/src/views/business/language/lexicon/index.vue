@@ -71,7 +71,7 @@
               <el-tag :key="label.uuid" v-for="label in item.labelList" type="success">{{label.name}}</el-tag>
             </div>
             <div>
-              <el-button type="text" @click="handleStartStudy(item.uuid)">开始学习</el-button>
+              <!--              <el-button type="text" @click="handleStartStudy(item.uuid)">开始学习</el-button>-->
               <el-button type="text" @click="handleUpdate(item.id)">修改</el-button>
               <el-button type="text" @click="handleDelete(item.id)" >删除</el-button>
             </div>
@@ -91,7 +91,6 @@
       <data-component :lexicon-id="lexiconId" @closeDig="closeDig"></data-component>
     </el-dialog>
     <el-dialog :title="studyTitle" :visible.sync="studyOpen" :destroy-on-close="true" :before-close="handleStudyClose">
-      <word-panel v-if="studyOpen" :lexiconuuid="lexiconUuId"></word-panel>
     </el-dialog>
   </div>
 </template>
@@ -109,13 +108,12 @@
 }
 </style>
 <script>
-import {listLexicon, getLexicon, delLexicon} from "@/api/bussiness/lexicon";
+import {delLexicon, listLexicon} from "@/api/bussiness/lexicon";
 import DataComponent from '@/views/business/language/lexicon/DataComponent.vue'
-import WordPanel from "@/views/business/language/word/wordPanel.vue";
+
 export default {
   name: "Lexicon",
   components:{
-    WordPanel,
     DataComponent
   },
   data() {
