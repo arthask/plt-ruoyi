@@ -1,10 +1,10 @@
 <script>
 import {
-  listExpression,
-  getExpression,
   addExpression,
-  updateExpression,
-  delExpression
+  delExpression,
+  getExpression,
+  listExpression,
+  updateExpression
 } from "@/api/bussiness/expression";
 import ExpressionDetail from "@/views/business/expression/ExpressionDetail.vue";
 
@@ -332,6 +332,7 @@ export default {
     <el-dialog :title="title"
                :visible.sync="showDialog" width="800px" height="500px"
                :center="true"
+               :before-close="closeDialog"
                :destroy-on-close="true">
       <el-form ref="form" :model="form" label-width="80px" style="overflow-y: auto; max-height: 420px;padding: 0 20px">
         <el-form-item label="想说">
