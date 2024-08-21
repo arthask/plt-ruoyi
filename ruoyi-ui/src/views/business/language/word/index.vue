@@ -9,22 +9,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="翻译" prop="translation">
-        <el-input
-          v-model="queryParams.translation"
-          placeholder="请输入翻译"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="标签" prop="tag">
-        <el-input
-          v-model="queryParams.tag"
-          placeholder="请输入标签"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -103,8 +87,7 @@
     <el-table v-loading="loading" :data="wordList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="单词" align="center" prop="word"/>
-      <el-table-column label="翻译" align="center" prop="translation"/>
-      <el-table-column label="词库" align="center" prop="tag"/>
+      <el-table-column align="center" label="释义" prop="translation"/>
       <!--      <el-table-column label="标签" align="center" prop="tag"/>-->
       <el-table-column label="创建时间" align="center" prop="createTime"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -157,22 +140,12 @@
         <el-form-item label="单词" prop="word">
           <el-input v-model="form.word" placeholder="请输入单词"/>
         </el-form-item>
+        <el-form-item label="释义" prop="translation">
+          <el-input v-model="form.translation" placeholder="请输入释义"/>
+        </el-form-item>
         <el-form-item label="音标" prop="phonetic">
           <el-input v-model="form.phonetic" placeholder="请输入音标"/>
         </el-form-item>
-        <el-form-item label="翻译" prop="translation">
-          <el-input v-model="form.translation" placeholder="请输入翻译"/>
-        </el-form-item>
-        <el-form-item label="词性" prop="pos">
-          <el-input v-model="form.pos" placeholder="请输入词性"/>
-        </el-form-item>
-        <el-form-item label="标签" prop="tag">
-          <el-input v-model="form.tag" placeholder="请输入标签"/>
-        </el-form-item>
-        <el-form-item label="例句" prop="sentence">
-          <el-input v-model="form.sentence" type="textarea" placeholder="请输入内容"/>
-        </el-form-item>
-        <audio></audio>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -232,8 +205,7 @@
 </template>
 
 <script>
-import {listWord, getWord, delWord, addWord, updateWord} from "@/api/bussiness/word";
-import {importTemplate} from "@/api/bussiness/word";
+import {addWord, delWord, getWord, importTemplate, listWord, updateWord} from "@/api/bussiness/word";
 import {getToken} from "@/utils/auth";
 import WordPanel from "@/views/business/language/word/wordPanel.vue";
 import Word2Collection from "@/views/business/language/word/word2Collection.vue";
@@ -258,22 +230,16 @@ export default {
       total: 0,
       // 单词表格数据
       wordList: [],
-      // 学习弹出层标题
-      studyTitle: '',
       title: '',
       // 是否显示弹出层
       open: false,
-      studyOpen: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         word: null,
         phonetic: null,
-        translation: null,
-        pos: null,
-        tag: null,
-        sentence: null
+        translation: null
       },
       // 表单参数
       form: {},
@@ -320,7 +286,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: null,
+        uuid: null,
         word: null,
         phonetic: null,
         translation: null,
@@ -355,7 +321,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.uuid || this.ids
       getWord(id).then(response => {
         this.form = response.data;
         this.open = true;
@@ -366,7 +332,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.id != null) {
+          if (this.form.uuid != null) {
             updateWord(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -424,10 +390,6 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
-    },
-    // 开始学习
-    async beginWordStudy() {
-      this.studyOpen = true;
     },
     // 播放音频
     playAudio(word) {
