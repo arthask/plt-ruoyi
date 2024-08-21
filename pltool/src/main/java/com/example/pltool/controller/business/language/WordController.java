@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 单词Controller
@@ -74,6 +75,8 @@ public class WordController extends BaseController {
     @Log(title = "单词", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Word word) {
+        word.setUuid(UUID.randomUUID().toString().replace("-", ""));
+        word.setCreateUserId(this.getUserId());
         return toAjax(newWordService.save(word));
     }
 
