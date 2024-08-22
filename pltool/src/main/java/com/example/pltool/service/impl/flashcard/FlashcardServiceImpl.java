@@ -1,10 +1,13 @@
 package com.example.pltool.service.impl.flashcard;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.pltool.controller.business.constant.enums.CardTypeEnum;
+import com.example.pltool.domain.dto.expression.ExpressionData;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
+import com.example.pltool.domain.dto.flashcard.card.BatchAddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.CardInfo;
-
 import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
 import com.example.pltool.domain.dto.flashcard.cardpackage.OperateWordInCollection;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
@@ -14,6 +17,7 @@ import com.example.pltool.domain.entity.PackageCardRef;
 import com.example.pltool.domain.entity.Question;
 import com.example.pltool.domain.entity.Word;
 import com.example.pltool.mapper.FlashcardMapper;
+import com.example.pltool.service.ExpressionService;
 import com.example.pltool.service.PackageCardRefService;
 import com.example.pltool.service.QuestionService;
 import com.example.pltool.service.flashcard.CreateCardService;
@@ -61,6 +65,9 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     @Resource(name = "wordCardCreator")
     private CreateCardService<Word> wordCardCreator;
 
+    @Autowired
+    private ExpressionService expressionService;
+
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -105,6 +112,32 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
             packageCardRefService.save(packageCardRef);
         }
         return Boolean.TRUE;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult batchAddCard(BatchAddCardDto batchAddCardDto) {
+        if (Objects.equals(batchAddCardDto.getCardType(), CardTypeEnum.EXPRESSION.getValue())) {
+            // 获取表达内容，构造卡片
+            List<ExpressionData> expressionDataList = expressionService.getExpressionListByUUIds(batchAddCardDto.getUuidList());
+            if (CollectionUtils.isEmpty(expressionDataList)) {
+                return AjaxResult.success("添加失败,构造数据为空", false);
+            }
+            List<Flashcard> cardList = new ArrayList<>();
+            Long userId = batchAddCardDto.getUserId();
+            for (ExpressionData expression : expressionDataList) {
+                List<String> detailContentList = new ArrayList<>();
+                expression.getExpressionDetailData().forEach(e -> {
+                    detailContentList.add(e.getContent());
+                });
+                String back = JSON.toJSONString(detailContentList);
+                Flashcard flashcard = buildFlashCard(userId, expression.getContent(), back,
+                        batchAddCardDto.getCardType(), expression.getUuid());
+                cardList.add(flashcard);
+            }
+            saveBatch(cardList);
+        }
+        return AjaxResult.success(true);
     }
 
     @Override
@@ -155,7 +188,7 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
 
 
     @Override
-    public AjaxResult batchAddCard(PackageCollectionData packageCollectionData) {
+    public AjaxResult batchAddCardByWordCollection(PackageCollectionData packageCollectionData) {
         // 卡片去重
         // 根据类型 构造卡片内容
         if (packageCollectionData.getCardType() == 1) {
@@ -207,6 +240,8 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
             if (!CollectionUtils.isEmpty(cardUUIdList)) {
                 filteredUUIdList.addAll(cardUUIdList);
             }
+        } else {
+            filteredUUIdList.addAll(packageCardInfo.getCardUUIdList());
         }
         for (String cardUUId : filteredUUIdList) {
             PackageCardRef packageCardRef = new PackageCardRef();
@@ -221,5 +256,17 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
         }
         packageCardRefService.saveBatch(needToAddList);
         return AjaxResult.success(true);
+    }
+
+    private Flashcard buildFlashCard(Long userId, String front, String back,
+                                     Integer cardType, String sourceUUId) {
+        Flashcard flashcard = new Flashcard();
+        flashcard.setUuid(UUID.randomUUID().toString().replace("-", ""));
+        flashcard.setUserId(userId);
+        flashcard.setFront(front);
+        flashcard.setBack(back);
+        flashcard.setType(cardType);
+        flashcard.setSourceUuid(sourceUUId);
+        return flashcard;
     }
 }

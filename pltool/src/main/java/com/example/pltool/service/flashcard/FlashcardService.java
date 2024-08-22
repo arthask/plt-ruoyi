@@ -2,6 +2,7 @@ package com.example.pltool.service.flashcard;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
+import com.example.pltool.domain.dto.flashcard.card.BatchAddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.CardInfo;
 import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
@@ -28,6 +29,13 @@ public interface FlashcardService extends IService<Flashcard> {
      * @return
      */
     Boolean addCard(AddCardDto addCardDto, Long userId);
+
+    /**
+     * 批量创建卡片
+     *
+     * @return
+     */
+    AjaxResult batchAddCard(BatchAddCardDto batchAddCardDto);
 
     /**
      * 添加卡片
@@ -58,7 +66,7 @@ public interface FlashcardService extends IService<Flashcard> {
      * @param packageCollectionData
      * @return
      */
-    AjaxResult batchAddCard(PackageCollectionData packageCollectionData);
+    AjaxResult batchAddCardByWordCollection(PackageCollectionData packageCollectionData);
 
     /**
      * 获取和卡片关联的卡包信息

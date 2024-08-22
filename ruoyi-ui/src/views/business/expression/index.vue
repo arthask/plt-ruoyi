@@ -7,6 +7,7 @@ import {
   updateExpression
 } from "@/api/bussiness/expression";
 import ExpressionDetail from "@/views/business/expression/ExpressionDetail.vue";
+import {batchAddCard} from "../../../api/bussiness/flashcard";
 
 
 export default {
@@ -239,6 +240,19 @@ export default {
     },
     closeHistory() {
       this.showHistory = false
+    },
+    createCard() {
+      let params = {
+        uuidList: this.ids,
+        cardType: 3
+      }
+      batchAddCard(params).then(res => {
+        if (res.data === true) {
+          this.$modal.msgSuccess("生成卡片成功");
+        } else {
+          this.$modal.msgError("生成卡片失败！");
+        }
+      })
     }
   }
 }
@@ -270,6 +284,17 @@ export default {
           size="mini"
           @click="handleAdd"
         >新增
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          :disabled="multiple"
+          icon="el-icon-plus"
+          plain
+          size="mini"
+          type="warning"
+          @click="createCard"
+        >生成卡片
         </el-button>
       </el-col>
       <el-col :span="1.5">
@@ -368,7 +393,7 @@ export default {
       :destroy-on-close="true"
       :before-close="closeHistory"
     >
-      <expression-detail :items="details" ></expression-detail>
+      <expression-detail :items="details"></expression-detail>
     </el-dialog>
   </div>
 </template>

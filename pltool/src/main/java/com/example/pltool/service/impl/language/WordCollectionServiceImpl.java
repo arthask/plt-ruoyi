@@ -176,7 +176,7 @@ public class WordCollectionServiceImpl implements WordCollectionService {
         if (repeatBindWordCollection) {
             return AjaxResult.success("该单词集已绑定，请重新选择", true);
         }
-        return flashcardService.batchAddCard(packageCollectionData);
+        return flashcardService.batchAddCardByWordCollection(packageCollectionData);
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -2,6 +2,7 @@ package com.example.pltool.controller.business.flashcard;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
+import com.example.pltool.domain.dto.flashcard.card.BatchAddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
 import com.example.pltool.domain.entity.Flashcard;
 import com.example.pltool.service.flashcard.FlashcardService;
@@ -37,6 +38,7 @@ public class FlashcardController extends BaseController {
     public TableDataInfo list() {
         startPage();
         QueryWrapper<Flashcard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
         List<Flashcard> list = flashcardService.list(queryWrapper);
         return getDataTable(list);
     }
@@ -84,12 +86,21 @@ public class FlashcardController extends BaseController {
     }
 
     /**
-     * 查询卡片关联的卡包信息
+     * 卡片关联卡包
      */
     @PostMapping("/addCardsToPackage")
     public AjaxResult addCardsToPackage(@RequestBody PackageCardInfo packageCardInfo) {
         packageCardInfo.setUserId(getUserId());
         return AjaxResult.success(flashcardService.addCardsToPackage(packageCardInfo));
+    }
+
+    /**
+     * 批量新增卡片
+     */
+    @PostMapping("/batchAddCard")
+    public AjaxResult batchAddCard(@RequestBody BatchAddCardDto batchAddCardDto) {
+        batchAddCardDto.setUserId(getUserId());
+        return flashcardService.batchAddCard(batchAddCardDto);
     }
 
     /**

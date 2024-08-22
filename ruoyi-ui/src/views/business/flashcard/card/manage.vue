@@ -174,8 +174,8 @@
 
 <script>
 import LabelTag from "@/components/Tag/index.vue";
-import {getCardInfo, listCards, add, del, update} from "@/api/bussiness/flashcard";
-import {searchWord, searchWordByCN} from "@/api/bussiness/word";
+import {add, del, getCardInfo, listCards, update} from "@/api/bussiness/flashcard";
+import {searchWord} from "@/api/bussiness/word";
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
 import WordView from "@/views/business/language/wordcollection/wordView.vue";
 import PackageView from "@/views/business/flashcard/card/PackageView.vue";
@@ -411,6 +411,8 @@ export default {
         return "单词卡片"
       } else if (type === 2) {
         return "问题卡片"
+      } else if (type === 3) {
+        return "表达卡片"
       }
     },
     showPackages(row) {

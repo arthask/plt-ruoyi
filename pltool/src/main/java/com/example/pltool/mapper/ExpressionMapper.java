@@ -1,11 +1,12 @@
 package com.example.pltool.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.example.pltool.domain.dto.expression.ExpressionData;
 import com.example.pltool.domain.entity.Expression;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,4 +19,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ExpressionMapper extends BaseMapper<Expression> {
     ExpressionData getInfo(@Param("expressionUUID") String expressionUUID);
+
+    List<ExpressionData> getExpressionInfoList(@Param("expressionUUIdList") List<String> expressionUUIdList);
 }
