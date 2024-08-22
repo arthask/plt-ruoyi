@@ -1,5 +1,5 @@
 <script>
-import {addWordToCollection, getAllLabels} from "@/api/bussiness/wordcollection";
+import {getAllLabels} from "@/api/bussiness/wordcollection";
 import {addCollectionToPackage} from "@/api/bussiness/flashcardpackage";
 
 export default {
@@ -19,6 +19,9 @@ export default {
       }, {
         value: 2,
         label: '问题卡片',
+      }, {
+        value: 3,
+        label: '表达卡片',
       }],
       form : {
         collectionUUID: '',

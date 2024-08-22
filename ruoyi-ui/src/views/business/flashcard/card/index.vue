@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top:10px">
     <el-row>
-      <el-col :span="18" v-if="showCard">
+      <el-col v-if="showCard && this.packageType === 1" :span="18">
         <word-card
           :headerFront="headerFront"
           :footerFront="footerFront"
@@ -10,6 +10,16 @@
           :front="question"
           :back="answer">
         </word-card>
+      </el-col>
+      <el-col v-if="showCard && this.packageType === 3" :span="18">
+        <ExpressionCard
+          :back="answer"
+          :colorFront="colorFront"
+          :colorTextFront="colorTextFront"
+          :footerFront="footerFront"
+          :front="question"
+          :headerFront="headerFront">
+        </ExpressionCard>
       </el-col>
       <el-col :span="6">
         <el-select v-model="packageList" filterable placeholder="请选择闪卡集"
@@ -58,9 +68,11 @@
 import WordCard from './WordCard.vue'
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
 import {getCardOfPackage, getClassifyCount, searchClassifyCard, studyCard} from "@/api/bussiness/flashcard";
+import ExpressionCard from "./ExpressionCard.vue";
+import {getPackageInfo} from "../../../../api/bussiness/flashcardpackage";
 
 export default {
-  components: {WordCard},
+  components: {ExpressionCard, WordCard},
   data() {
     return {
       options: [],
@@ -79,8 +91,9 @@ export default {
       cardUUID: "",
       offset: 0,
       cardCount: 0,
-      type: null,
-      totalCardCount: null
+      packageType: null,
+      totalCardCount: null,
+      type: null
     }
   },
   computed: {
@@ -133,7 +146,7 @@ export default {
             this.answer = res.data.back
             this.cardUUID = res.data.uuid
             this.cardCount = res.data.packageInfoDto.cardCount
-            if(!this.totalCardCount) {
+            if (!this.totalCardCount) {
               this.totalCardCount = this.cardCount;
             }
           }
@@ -142,13 +155,18 @@ export default {
       this.getCount()
     },
     getCardOfPackage(uuid) {
+      this.reset()
       this.offset = 0;
-      this.type = null;
+      this.packageType = null;
       this.totalCardCount = null
       if (!uuid) {
         return;
       }
       this.packageUUID = uuid
+      getPackageInfo(this.packageUUID).then(res => {
+        this.packageType = res.data.type
+        console.log(this.packageType)
+      })
       this.getCard();
     },
     nextCard() {
@@ -194,6 +212,10 @@ export default {
       this.type = type
       this.offset = 0;
       this.searchCardByType()
+    },
+    reset() {
+      this.question = null
+      this.answer = null
     }
   }
 }

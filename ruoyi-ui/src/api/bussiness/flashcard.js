@@ -85,3 +85,11 @@ export function addCardsToPackage(data) {
   })
 }
 
+export function batchAddCard(data) {
+  return request({
+    url: '/flashcard/batchAddCard',
+    method: 'post',
+    data: data
+  })
+}
+

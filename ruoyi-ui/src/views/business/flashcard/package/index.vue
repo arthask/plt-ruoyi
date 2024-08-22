@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import {listPackages, getPackageInfo, add, del, update} from "@/api/bussiness/flashcardpackage";
+import {add, del, getPackageInfo, listPackages, update} from "@/api/bussiness/flashcardpackage";
 
 import LabelTag from "@/components/Tag/index.vue";
 import Word2Collection from "@/views/business/language/word/word2Collection.vue";
@@ -195,6 +195,9 @@ export default {
       }, {
         value: 2,
         label: '问题卡包',
+      }, {
+        value: 3,
+        label: '表达卡包',
       }],
       labelOptions: [],
       labelType: 3,
@@ -330,6 +333,8 @@ export default {
         return "单词卡包"
       } else if (type === 2) {
         return "问题卡包"
+      } else if (type === 3) {
+        return "表达卡包"
       }
     },
     addCardOfPackage(row) {

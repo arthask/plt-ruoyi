@@ -12,8 +12,6 @@ import com.example.pltool.service.ExpressionDetailRefService;
 import com.example.pltool.service.ExpressionDetailService;
 import com.example.pltool.service.ExpressionService;
 import com.ruoyi.common.utils.StringUtils;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,6 +130,14 @@ public class ExpressionServiceImpl extends ServiceImpl<ExpressionMapper, Express
     @Override
     public int removeExpressionData(String[] ids) {
         return 0;
+    }
+
+    @Override
+    public List<ExpressionData> getExpressionListByUUIds(List<String> uuidList) {
+        if (CollectionUtils.isEmpty(uuidList)) {
+            return Collections.emptyList();
+        }
+        return this.getBaseMapper().getExpressionInfoList(uuidList);
     }
 
     private Expression getExpressionByUUID(String uuid) {

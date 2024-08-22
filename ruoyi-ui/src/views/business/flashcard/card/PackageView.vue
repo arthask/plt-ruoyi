@@ -36,6 +36,8 @@ export default {
         return "单词卡包"
       } else if (type === 2) {
         return "问题卡包"
+      } else if (type === 3) {
+        return "表达卡包"
       }
     },
     handleSelectionChange(selection) {

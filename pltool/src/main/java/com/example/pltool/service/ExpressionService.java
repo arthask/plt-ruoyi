@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pltool.domain.dto.expression.ExpressionData;
 import com.example.pltool.domain.entity.Expression;
 
+import java.util.List;
+
 
 /**
  * <p>
@@ -22,4 +24,6 @@ public interface ExpressionService extends IService<Expression> {
     ExpressionData getInfo(String expressionUUID);
 
     int removeExpressionData(String[] ids);
+
+    List<ExpressionData> getExpressionListByUUIds(List<String> uuidList);
 }
