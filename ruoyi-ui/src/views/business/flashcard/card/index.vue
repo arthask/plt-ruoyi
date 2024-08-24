@@ -1,28 +1,27 @@
 <template>
   <div style="margin-top:10px">
     <el-row>
-      <el-col v-if="showCard && this.packageType === 1" :span="18">
-        <word-card
-          :headerFront="headerFront"
-          :footerFront="footerFront"
-          :colorFront="colorFront"
-          :colorTextFront="colorTextFront"
-          :front="question"
-          :back="answer">
-        </word-card>
-      </el-col>
-      <el-col v-if="showCard && this.packageType === 3" :span="18">
-        <el-carousel
-          ref="carousel" :autoplay="false" :loop="false" height="500px" indicator-position="none">
-          <el-carousel-item v-for="item in totalCardCount">
+      <el-col v-if="showCard" :span="18">
+        <el-carousel ref="carousel" :autoplay="false" :loop="false" height="500px" indicator-position="none">
+          <el-carousel-item v-for="item in cardList" :key="item.uuid">
             <ExpressionCard
-              :back="answer"
+              v-if="packageType === 3"
+              :back="item.back"
               :colorFront="colorFront"
               :colorTextFront="colorTextFront"
               :footerFront="footerFront"
-              :front="question"
+              :front="item.front"
               :headerFront="headerFront">
             </ExpressionCard>
+            <word-card
+              v-if="packageType === 1"
+              :back="item.back"
+              :colorFront="colorFront"
+              :colorTextFront="colorTextFront"
+              :footerFront="footerFront"
+              :front="item.front"
+              :headerFront="headerFront">
+            </word-card>
           </el-carousel-item>
         </el-carousel>
       </el-col>
@@ -55,26 +54,27 @@
       </el-col>
     </el-row>
     <el-row :gutter="20" type="flex" justify="left" v-if="showCard">
-      <el-col :span="5">
-      </el-col>
-      <el-col :span="3">
-        <el-button type="primary" plain @click="study(0)">不会</el-button>
-      </el-col>
-      <el-col :span="3">
-        <el-button type="success" plain @click="study(2)">跳过</el-button>
-      </el-col>
-      <el-col :span="3">
-        <el-button type="info" plain @click="study(1)">会</el-button>
-      </el-col>
+      <!--      <el-col :span="5">-->
+      <!--      </el-col>-->
+      <!--      <el-col :span="3">-->
+      <!--        <el-button type="primary" plain @click="study(0)">不会</el-button>-->
+      <!--      </el-col>-->
+      <!--      <el-col :span="3">-->
+      <!--        <el-button type="success" plain @click="study(2)">跳过</el-button>-->
+      <!--      </el-col>-->
+      <!--      <el-col :span="3">-->
+      <!--        <el-button type="info" plain @click="study(1)">会</el-button>-->
+      <!--      </el-col>-->
     </el-row>
   </div>
 </template>
 <script>
 import WordCard from './WordCard.vue'
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
-import {getCardOfPackage, getClassifyCount, searchClassifyCard, studyCard} from "@/api/bussiness/flashcard";
+import {getClassifyCount, searchClassifyCard, studyCard} from "@/api/bussiness/flashcard";
 import ExpressionCard from "./ExpressionCard.vue";
 import {getPackageInfo} from "../../../../api/bussiness/flashcardpackage";
+import {getCardListInPackage} from "../../../../api/bussiness/flashcard";
 
 export default {
   components: {ExpressionCard, WordCard},
@@ -98,7 +98,8 @@ export default {
       cardCount: 0,
       packageType: null,
       totalCardCount: null,
-      type: null
+      type: null,
+      cardList: []
     }
   },
   computed: {
@@ -107,7 +108,7 @@ export default {
         if (!this.packageUUID) {
           return false
         }
-        return this.cardUUID;
+        return this.cardList.length > 0;
 
       },
       cache: false,
@@ -136,29 +137,6 @@ export default {
         }
       })
     },
-    getCard() {
-      if (this.type) {
-        this.searchCardByType();
-      } else {
-        let params = {
-          packageUUID: this.packageUUID,
-          offset: this.offset
-        }
-        getCardOfPackage(params).then(res => {
-          this.cardUUID = ""
-          if (res.data && res.data.uuid) {
-            this.question = res.data.front
-            this.answer = res.data.back
-            this.cardUUID = res.data.uuid
-            this.cardCount = res.data.packageInfoDto.cardCount
-            if (!this.totalCardCount) {
-              this.totalCardCount = this.cardCount;
-            }
-          }
-        })
-      }
-      this.getCount()
-    },
     getCardOfPackage(uuid) {
       this.reset()
       this.offset = 0;
@@ -172,7 +150,13 @@ export default {
         this.packageType = res.data.type
         console.log(this.packageType)
       })
-      this.getCard();
+      let params = {
+        packageUUID: this.packageUUID
+      }
+      getCardListInPackage(params).then(res => {
+        this.cardList = res.data
+        this.totalCardCount = this.cardList.length
+      })
     },
     nextCard() {
       this.nextSlide()
@@ -185,7 +169,6 @@ export default {
         return;
       }
       this.offset++;
-      this.getCard();
     },
     study(familiarity) {
       let params = {
@@ -228,7 +211,6 @@ export default {
       this.$refs.carousel.setActiveItem(index);
     },
     nextSlide() {
-      // Programmatically go to the next slide
       const carousel = this.$refs.carousel;
       const currentIndex = carousel.activeIndex;
       if (currentIndex === this.totalCardCount - 1) {

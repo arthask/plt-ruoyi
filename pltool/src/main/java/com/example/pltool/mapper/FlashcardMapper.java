@@ -3,9 +3,10 @@ package com.example.pltool.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.pltool.domain.entity.Flashcard;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,6 +26,8 @@ public interface FlashcardMapper extends BaseMapper<Flashcard> {
      * @return
      */
     Flashcard getCardOfPackage(@Param("packageUUID") String packageUUID, @Param("offset") Integer offset);
+
+    List<Flashcard> getCardListInPackage(@Param("packageUUID") String packageUUID);
 
     /**
      * 获取卡包中的卡片数量

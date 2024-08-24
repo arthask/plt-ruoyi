@@ -166,6 +166,11 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
     }
 
     @Override
+    public List<Flashcard> getCardListInPackage(String packageUUId) {
+        return flashcardMapper.getCardListInPackage(packageUUId);
+    }
+
+    @Override
     public Flashcard getCardByUUId(String cardUUID) {
         QueryWrapper<Flashcard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", cardUUID);

@@ -78,6 +78,14 @@ public class FlashcardController extends BaseController {
         return AjaxResult.success(flashcardService.getCardOfPackage(packageUUID, offset));
     }
 
+    /**
+     * 获取卡包中的所有卡片
+     */
+    @GetMapping("/getCardListInPackage")
+    public AjaxResult getCardListInPackage(@RequestParam("packageUUID") String packageUUID) {
+        return AjaxResult.success(flashcardService.getCardListInPackage(packageUUID));
+    }
+
     @GetMapping("/searchClassifyCard")
     public AjaxResult searchClassifyCard(@RequestParam("packageUUID") String packageUUID,
                                          @RequestParam("offset") Integer offset,

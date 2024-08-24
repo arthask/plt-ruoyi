@@ -93,3 +93,11 @@ export function batchAddCard(data) {
   })
 }
 
+export function getCardListInPackage(params) {
+  return request({
+    url: '/flashcard/getCardListInPackage',
+    method: 'get',
+    params: params
+  })
+}
+
