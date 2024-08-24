@@ -52,6 +52,8 @@ public interface FlashcardService extends IService<Flashcard> {
      */
     CardInfo getCardOfPackage(String packageUUID, Integer offset);
 
+    List<Flashcard> getCardListInPackage(String packageUUId);
+
     /**
      * 通过uuid获取卡片
      * @param cardUUID 卡片uuid
