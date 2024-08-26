@@ -37,7 +37,7 @@
 export default {
   data() {
     return {
-      isToggle: false,
+      // isToggle: false,
     }
   }, props: {
     imgFront: {
@@ -95,7 +95,11 @@ export default {
     footerBack: {
       type: String,
       default: 'Click to show Front'
-    }
+    },
+    isToggle: {
+      type: Boolean,
+      default: false
+    },
   }, methods: {
     speakWord(content) {
       this.speakCommon.speak(content)
