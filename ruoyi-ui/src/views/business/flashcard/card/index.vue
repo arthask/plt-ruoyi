@@ -1,8 +1,9 @@
 <template>
   <div style="margin-top:10px">
-    <el-row>
+    <el-row :gutter="20">
       <el-col v-if="showCard" :span="18">
-        <el-carousel ref="carousel" :autoplay="false" :loop="false" height="500px" indicator-position="none">
+        <el-carousel ref="carousel" :autoplay="false" :loop="false"
+                     height="500px" indicator-position="none">
           <el-carousel-item v-for="item in cardList" :key="item.uuid">
             <ExpressionCard
               v-if="packageType === 3"
@@ -11,7 +12,9 @@
               :colorTextFront="colorTextFront"
               :footerFront="footerFront"
               :front="item.front"
-              :headerFront="headerFront">
+              :headerFront="headerFront"
+              :is-toggle="showBack"
+            >
             </ExpressionCard>
             <word-card
               v-if="packageType === 1"
@@ -20,7 +23,9 @@
               :colorTextFront="colorTextFront"
               :footerFront="footerFront"
               :front="item.front"
-              :headerFront="headerFront">
+              :headerFront="headerFront"
+              :is-toggle="showBack"
+            >
             </word-card>
           </el-carousel-item>
         </el-carousel>
@@ -53,25 +58,26 @@
         </div>
       </el-col>
     </el-row>
-    <el-row :gutter="20" type="flex" justify="left" v-if="showCard">
-      <!--      <el-col :span="5">-->
-      <!--      </el-col>-->
-      <!--      <el-col :span="3">-->
-      <!--        <el-button type="primary" plain @click="study(0)">不会</el-button>-->
-      <!--      </el-col>-->
-      <!--      <el-col :span="3">-->
-      <!--        <el-button type="success" plain @click="study(2)">跳过</el-button>-->
-      <!--      </el-col>-->
-      <!--      <el-col :span="3">-->
-      <!--        <el-button type="info" plain @click="study(1)">会</el-button>-->
-      <!--      </el-col>-->
+    <el-row v-if="showCard" :gutter="20" justify="center" type="flex">
+      <el-col v-if="!showOption && !showRestart" :span="9">
+        <el-button plain style="width: 150px;height: 50px" type="primary" @click="showCardOption">查看答案</el-button>
+      </el-col>
+      <el-col v-if="showRestart" :span="9">
+        <el-button plain style="width: 150px;height: 50px" type="primary" @click="restart">重新开始</el-button>
+      </el-col>
+      <el-col v-if="showOption" :span="9">
+        <el-button plain style="width: 150px;height: 50px" type="primary" @click="study(1)">会</el-button>
+      </el-col>
+      <el-col v-if="showOption" :span="9">
+        <el-button plain style="width: 150px;height: 50px" type="danger" @click="study(0)">不会</el-button>
+      </el-col>
     </el-row>
   </div>
 </template>
 <script>
 import WordCard from './WordCard.vue'
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
-import {getClassifyCount, searchClassifyCard, studyCard} from "@/api/bussiness/flashcard";
+import {getClassifyCount, searchClassifyCard} from "@/api/bussiness/flashcard";
 import ExpressionCard from "./ExpressionCard.vue";
 import {getPackageInfo} from "../../../../api/bussiness/flashcardpackage";
 import {getCardListInPackage} from "../../../../api/bussiness/flashcard";
@@ -99,7 +105,10 @@ export default {
       packageType: null,
       totalCardCount: null,
       type: null,
-      cardList: []
+      cardList: [],
+      showOption: false,
+      showBack: false,
+      showRestart: false
     }
   },
   computed: {
@@ -140,6 +149,7 @@ export default {
     getCardOfPackage(uuid) {
       this.reset()
       this.offset = 0;
+      this.showRestart = false
       this.packageType = null;
       this.totalCardCount = null
       if (!uuid) {
@@ -162,7 +172,7 @@ export default {
       this.nextSlide()
       console.log("nextCard")
       if (this.offset + 1 >= this.cardCount) {
-        this.$modal.msgWarning("已经到最后了呢");
+        // this.$modal.msgWarning("已经到最后了呢");
         return;
       }
       if (!this.packageUUID) {
@@ -171,13 +181,14 @@ export default {
       this.offset++;
     },
     study(familiarity) {
-      let params = {
-        cardUUID: this.cardUUID,
-        familiarity: familiarity
-      }
-      studyCard(params).then(res => {
-        this.getCount();
-      })
+      // let params = {
+      //   cardUUID: this.cardUUID,
+      //   familiarity: familiarity
+      // }
+      // studyCard(params).then(res => {
+      //   this.getCount();
+      // })
+      this.showOption = false
       this.nextCard();
     },
     getCount() {
@@ -206,18 +217,32 @@ export default {
     reset() {
       this.question = null
       this.answer = null
+      this.showBack = false
+      this.showOption = false
     },
     goToSlide(index) {
       this.$refs.carousel.setActiveItem(index);
+      this.showBack = false
     },
     nextSlide() {
       const carousel = this.$refs.carousel;
       const currentIndex = carousel.activeIndex;
       if (currentIndex === this.totalCardCount - 1) {
+        this.showRestart = true
+        this.showOption = false
         return
       }
       const nextIndex = (currentIndex + 1) % this.totalCardCount;
       this.goToSlide(nextIndex);
+    },
+    showCardOption() {
+      this.showOption = true
+      this.showBack = true
+    },
+    restart() {
+      this.showBack = false
+      this.showRestart = false
+      this.goToSlide(0)
     }
   }
 }

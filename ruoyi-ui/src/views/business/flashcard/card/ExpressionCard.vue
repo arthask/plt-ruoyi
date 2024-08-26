@@ -3,7 +3,6 @@ export default {
   name: "ExpressionCard",
   data() {
     return {
-      isToggle: false,
       expressDetail: [],
       speakContent: ''
     }
@@ -64,7 +63,11 @@ export default {
     footerBack: {
       type: String,
       default: 'Click to show Front'
-    }
+    },
+    isToggle: {
+      type: Boolean,
+      default: false
+    },
   },
   watch: {
     back: {
