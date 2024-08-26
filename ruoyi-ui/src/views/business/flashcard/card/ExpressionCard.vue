@@ -103,7 +103,7 @@ export default {
   <div>
     <div v-show="!isToggle" class="animated flipInX flashcard"
          v-bind:style="{backgroundColor: colorFront, color: colorTextFront}">
-      <div @click="isToggle=!isToggle">
+      <div>
 
         <el-row align="middle" justify="center" style="height: 300px;width: 100%" type="flex">
           <!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->
@@ -119,7 +119,7 @@ export default {
     <div v-show="isToggle" class="animated flipInX flashcard"
          v-bind:style="{backgroundColor: colorBack, color: colorTextBack}">
       <!--      <i class="el-icon-headset" @click.stop.prevent="speakWord(back)"></i>-->
-      <div @click="isToggle=!isToggle">
+      <div>
         <i class="el-icon-headset" @click.stop.prevent="speakWord(speakContent)"></i>
         <el-row align="middle" justify="center" style="height: 300px;width: 100%" type="flex">
           <!--          <div class="card-header" style="padding-bottom: 15px;"> {{headerFront}} </div>-->

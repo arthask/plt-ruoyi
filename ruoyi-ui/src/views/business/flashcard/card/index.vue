@@ -4,7 +4,7 @@
       <el-col v-if="showCard" :span="18">
         <el-carousel ref="carousel" :autoplay="false" :loop="false"
                      height="500px" indicator-position="none">
-          <el-carousel-item v-for="item in cardList" :key="item.uuid">
+          <el-carousel-item v-for="item in viewCardList" :key="item.uuid">
             <ExpressionCard
               v-if="packageType === 3"
               :back="item.back"
@@ -42,19 +42,41 @@
           </el-option>
         </el-select>
         <div v-if="showCard">
-          <el-statistic
-            group-separator=","
-            :value="totalCardCount"
-            title="卡片总数"
-          >
-            <template slot="prefix">
-              <i class="el-icon-s-flag" style="color: rgba(0, 123, 255, 0.72)"></i>
-            </template>
-          </el-statistic>
-          <div v-for="item in tag" :key="item.name" class="tag" @click="searchClassifyCard(item.type)">
-            {{ item.name }}
-            <p>{{ item.count }}</p>
-          </div>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <div>
+                <el-statistic
+                  :value="totalCardCount"
+                  group-separator=","
+                  title="卡片总数"
+                >
+                  <template slot="prefix">
+                    <i class="el-icon-s-flag" style="color: rgba(0, 123, 255, 0.72)"></i>
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div>
+                <el-statistic
+                  :value="okCardCount"
+                  group-separator=","
+                  title="会卡片数"
+                >
+                </el-statistic>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="statistic" @click="studyNoRightCard">
+                <el-statistic
+                  :value="noRightCardCount"
+                  group-separator=","
+                  title="不会卡片数"
+                >
+                </el-statistic>
+              </div>
+            </el-col>
+          </el-row>
         </div>
       </el-col>
     </el-row>
@@ -66,10 +88,10 @@
         <el-button plain style="width: 150px;height: 50px" type="primary" @click="restart">重新开始</el-button>
       </el-col>
       <el-col v-if="showOption" :span="9">
-        <el-button plain style="width: 150px;height: 50px" type="primary" @click="study(1)">会</el-button>
+        <el-button plain style="width: 150px;height: 50px" type="primary" @click="study(0)">会</el-button>
       </el-col>
       <el-col v-if="showOption" :span="9">
-        <el-button plain style="width: 150px;height: 50px" type="danger" @click="study(0)">不会</el-button>
+        <el-button plain style="width: 150px;height: 50px" type="danger" @click="study(1)">不会</el-button>
       </el-col>
     </el-row>
   </div>
@@ -84,6 +106,7 @@ import {getCardListInPackage} from "../../../../api/bussiness/flashcard";
 
 export default {
   components: {ExpressionCard, WordCard},
+  name: "CardIndex",
   data() {
     return {
       options: [],
@@ -108,7 +131,12 @@ export default {
       cardList: [],
       showOption: false,
       showBack: false,
-      showRestart: false
+      showRestart: false,
+      okCardCount: 0,
+      noRightCardCount: 0,
+      okCardList: [],
+      noRightCardList: [],
+      viewCardList: []
     }
   },
   computed: {
@@ -140,7 +168,6 @@ export default {
           this.question = res.data.front
           this.answer = res.data.back
           this.cardUUID = res.data.uuid
-          this.cardCount = res.data.packageInfoDto.cardCount
         } else {
           this.$modal.msgWarning("没有这个类型的卡片了呢！");
         }
@@ -148,10 +175,13 @@ export default {
     },
     getCardOfPackage(uuid) {
       this.reset()
-      this.offset = 0;
+      this.offset = 0
+      this.okCardCount = 0
+      this.noRightCardCount = 0
       this.showRestart = false
       this.packageType = null;
       this.totalCardCount = null
+      this.noRightCardList = []
       if (!uuid) {
         return;
       }
@@ -165,30 +195,27 @@ export default {
       }
       getCardListInPackage(params).then(res => {
         this.cardList = res.data
-        this.totalCardCount = this.cardList.length
+        this.viewCardList = [...this.cardList]
+        this.totalCardCount = this.viewCardList.length
       })
     },
     nextCard() {
       this.nextSlide()
-      console.log("nextCard")
-      if (this.offset + 1 >= this.cardCount) {
-        // this.$modal.msgWarning("已经到最后了呢");
-        return;
-      }
       if (!this.packageUUID) {
         return;
       }
       this.offset++;
     },
     study(familiarity) {
-      // let params = {
-      //   cardUUID: this.cardUUID,
-      //   familiarity: familiarity
-      // }
-      // studyCard(params).then(res => {
-      //   this.getCount();
-      // })
       this.showOption = false
+      const currentCardInfo = this.viewCardList[this.getCurrentIndex()];
+      if (familiarity === 0) {
+        this.okCardCount++
+        this.okCardList.push(currentCardInfo)
+      } else if (familiarity === 1) {
+        this.noRightCardCount++
+        this.noRightCardList.push(currentCardInfo)
+      }
       this.nextCard();
     },
     getCount() {
@@ -225,13 +252,15 @@ export default {
       this.showBack = false
     },
     nextSlide() {
-      const carousel = this.$refs.carousel;
-      const currentIndex = carousel.activeIndex;
-      if (currentIndex === this.totalCardCount - 1) {
+      if (this.offset > this.totalCardCount - 1) {
+        return;
+      }
+      if (this.offset === this.totalCardCount - 1) {
         this.showRestart = true
         this.showOption = false
         return
       }
+      const currentIndex = this.getCurrentIndex()
       const nextIndex = (currentIndex + 1) % this.totalCardCount;
       this.goToSlide(nextIndex);
     },
@@ -240,8 +269,26 @@ export default {
       this.showBack = true
     },
     restart() {
+      this.offset = 0
+      this.okCardCount = 0
+      this.noRightCardCount = 0
       this.showBack = false
       this.showRestart = false
+      this.goToSlide(0)
+    },
+    getCurrentIndex() {
+      const carousel = this.$refs.carousel;
+      return carousel.activeIndex;
+    },
+    studyNoRightCard() {
+      this.offset = 0
+      this.showBack = false
+      this.showRestart = false
+      this.totalCardCount = this.noRightCardCount
+      this.okCardCount = 0
+      this.noRightCardCount = 0
+      this.viewCardList = [...this.noRightCardList]
+      this.noRightCardList = []
       this.goToSlide(0)
     }
   }
@@ -277,5 +324,9 @@ export default {
   opacity: 0.75;
   line-height: 200px;
   margin: 0;
+}
+
+.statistic {
+  cursor: pointer;
 }
 </style>
