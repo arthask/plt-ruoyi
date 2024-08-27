@@ -41,7 +41,7 @@
             :value="item.uuid">
           </el-option>
         </el-select>
-        <div v-if="showCard">
+        <div v-if="showCard" style="margin-top: 30px">
           <el-row :gutter="20">
             <el-col :span="8">
               <div>
@@ -49,6 +49,7 @@
                   :value="totalCardCount"
                   group-separator=","
                   title="卡片总数"
+                  :value-style="{ fontWeight: 'bold' }"
                 >
                   <template slot="prefix">
                     <i class="el-icon-s-flag" style="color: rgba(0, 123, 255, 0.72)"></i>
@@ -62,6 +63,7 @@
                   :value="okCardCount"
                   group-separator=","
                   title="会卡片数"
+                  :value-style="{ color: 'green', fontWeight: 'bold'}"
                 >
                 </el-statistic>
               </div>
@@ -72,9 +74,19 @@
                   :value="noRightCardCount"
                   group-separator=","
                   title="不会卡片数"
+                  :value-style="{ color: 'red',fontWeight: 'bold' }"
                 >
                 </el-statistic>
               </div>
+            </el-col>
+          </el-row>
+        </div>
+        <div v-if="showCard" style="margin-top: 50px">
+          <el-row :gutter="20" justify="center" type="flex">
+            <el-col :span="12">
+              <el-progress :color="colors" :percentage="percentage"
+                           :stroke-width="12" type="dashboard">
+              </el-progress>
             </el-col>
           </el-row>
         </div>
@@ -136,7 +148,15 @@ export default {
       noRightCardCount: 0,
       okCardList: [],
       noRightCardList: [],
-      viewCardList: []
+      viewCardList: [],
+      percentage: 0,
+      colors: [
+        {color: '#f56c6c', percentage: 20},
+        {color: '#e6a23c', percentage: 40},
+        {color: '#5cb87a', percentage: 60},
+        {color: '#1989fa', percentage: 80},
+        {color: '#6f7ad3', percentage: 100}
+      ]
     }
   },
   computed: {
@@ -182,6 +202,7 @@ export default {
       this.packageType = null;
       this.totalCardCount = null
       this.noRightCardList = []
+      this.percentage = 0
       if (!uuid) {
         return;
       }
@@ -203,6 +224,10 @@ export default {
       this.nextSlide()
       if (!this.packageUUID) {
         return;
+      }
+      this.percentage = Math.floor((this.offset + 1) / this.totalCardCount * 100);
+      if (this.percentage > 100) {
+        this.percentage = 100;
       }
       this.offset++;
     },
@@ -274,6 +299,7 @@ export default {
       this.noRightCardCount = 0
       this.showBack = false
       this.showRestart = false
+      this.percentage = 0
       this.goToSlide(0)
     },
     getCurrentIndex() {
@@ -289,6 +315,7 @@ export default {
       this.noRightCardCount = 0
       this.viewCardList = [...this.noRightCardList]
       this.noRightCardList = []
+      this.percentage = 0
       this.goToSlide(0)
     }
   }
