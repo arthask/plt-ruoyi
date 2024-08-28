@@ -95,6 +95,12 @@
           <el-button
             size="mini"
             type="text"
+            @click="handleAddSentence(scope.row)"
+          >添加例句
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:word:edit']"
@@ -151,6 +157,39 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
+    </el-dialog>
+    <el-dialog v-if="showSentence"
+               :before-close="closeSentence"
+               :center="true"
+               :destroy-on-close="true"
+               :visible.sync="showSentence"
+               title="添加例句"
+    >
+      <el-row justify="start" type="flex">
+        <el-button style="margin-top: 10px" type="primary" @click.prevent="addSentence">添加</el-button>
+      </el-row>
+      <el-row v-for="(item,index) in sentenceList" :key="index"
+              :gutter="20">
+        <el-col :span="10">
+          <el-input v-model="item.sentenceContent" placeholder="请输入句子"
+                    resize="none" rows="2"
+                    style="margin-top: 10px" type="textarea"></el-input>
+        </el-col>
+        <el-col :span="10">
+          <el-input v-model="item.translateContent" placeholder="请输入翻译"
+                    resize="none" rows="2"
+                    style="margin-top: 10px" type="textarea"></el-input>
+        </el-col>
+        <el-col :span="4">
+          <el-button style="margin-top: 10px" type="danger" @click.prevent="removeSentence(index)">删除</el-button>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" justify="end" style="margin-top: 20px" type="flex">
+        <el-col :span="10"></el-col>
+        <el-col :span="4">
+          <el-button type="primary" @click="">提交</el-button>
+        </el-col>
+      </el-row>
     </el-dialog>
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
@@ -262,7 +301,12 @@ export default {
       },
       showCollectionDialog: false,
       showCollectionView: false,
-      wordUUId: ''
+      wordUUId: '',
+      showSentence: false,
+      sentenceList: [{
+        sentenceContent: "",
+        translateContent: "",
+      }]
     }
   },
   created() {
@@ -311,6 +355,12 @@ export default {
       this.ids = selection.map(item => item.uuid)
       this.single = selection.length !== 1
       this.multiple = !selection.length
+    },
+    /**
+     * 添加例句
+     */
+    handleAddSentence() {
+      this.showSentence = true
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -396,7 +446,7 @@ export default {
       this.speakCommon.speak(word.word)
     },
     handle2Collection() {
-      if(this.ids.length === 0) {
+      if (this.ids.length === 0) {
         this.$modal.msgSuccess("请选择记录");
         return
       }
@@ -408,6 +458,22 @@ export default {
     viewWordCollection(row) {
       this.showCollectionView = true
       this.wordUUId = row.uuid
+    },
+    addSentence() {
+      this.sentenceList.push({
+        sentenceContent: "",
+        translateContent: "",
+      })
+    },
+    removeSentence() {
+      if (this.sentenceList.length === 1) {
+        this.$modal.msgWarning("再删除就没有了呢");
+        return
+      }
+      this.sentenceList.splice(index, 1)
+    },
+    closeSentence() {
+      this.showSentence = false
     }
   }
 };
