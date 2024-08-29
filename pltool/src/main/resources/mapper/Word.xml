@@ -46,7 +46,9 @@
           and type = 1
     </select>
     <select id="getRandomWordInCollectionOfUser" resultType="com.example.pltool.domain.entity.Word">
-        select * from label_ref lr left join word w
+        select w.*
+        from label_ref lr
+                 left join word w
             on lr.ref_uuid = w.uuid
         where lr.label_uuid = #{collectionUUId}
         and lr.ref_type = 2

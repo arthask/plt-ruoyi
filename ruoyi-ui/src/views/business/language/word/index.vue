@@ -95,8 +95,8 @@
           <el-button
             size="mini"
             type="text"
-            @click="handleAddSentence(scope.row)"
-          >添加例句
+            @click="manageSentence(scope.row)"
+          >管理例句
           </el-button>
           <el-button
             size="mini"
@@ -163,7 +163,7 @@
                :center="true"
                :destroy-on-close="true"
                :visible.sync="showSentence"
-               title="添加例句"
+               title="管理例句"
     >
       <el-row justify="start" type="flex">
         <el-button style="margin-top: 10px" type="primary" @click.prevent="addSentence">添加</el-button>
@@ -187,7 +187,7 @@
       <el-row :gutter="20" justify="end" style="margin-top: 20px" type="flex">
         <el-col :span="10"></el-col>
         <el-col :span="4">
-          <el-button type="primary" @click="">提交</el-button>
+          <el-button type="primary" @click="submitSentence">提交</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -249,6 +249,7 @@ import {getToken} from "@/utils/auth";
 import WordPanel from "@/views/business/language/word/wordPanel.vue";
 import Word2Collection from "@/views/business/language/word/word2Collection.vue";
 import CollectionView from "./CollectionView.vue";
+import {editSentenceOfWord, getSentence} from "../../../../api/bussiness/wordsentence";
 
 export default {
   name: "Word",
@@ -306,7 +307,8 @@ export default {
       sentenceList: [{
         sentenceContent: "",
         translateContent: "",
-      }]
+      }],
+      removeSentenceUUIdList: []
     }
   },
   created() {
@@ -357,10 +359,21 @@ export default {
       this.multiple = !selection.length
     },
     /**
-     * 添加例句
+     * 管理例句
      */
-    handleAddSentence() {
+    manageSentence(row) {
       this.showSentence = true
+      this.wordUUId = row.uuid
+      this.removeSentenceUUIdList = []
+      const params = {
+        wordUUId: this.wordUUId
+      }
+      getSentence(params).then(res => {
+        if (res.data && res.data.length > 0) {
+          this.sentenceList = []
+          this.sentenceList = [...res.data]
+        }
+      })
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -465,15 +478,44 @@ export default {
         translateContent: "",
       })
     },
-    removeSentence() {
+    removeSentence(index) {
       if (this.sentenceList.length === 1) {
         this.$modal.msgWarning("再删除就没有了呢");
         return
       }
-      this.sentenceList.splice(index, 1)
+      const item = this.sentenceList.splice(index, 1);
+      console.log("---", item)
+      if (item[0].uuid) {
+        this.removeSentenceUUIdList.push(item[0].uuid)
+      }
     },
     closeSentence() {
       this.showSentence = false
+    },
+    submitSentence() {
+      let check = true;
+      this.sentenceList.forEach(e => {
+        if (!e.sentenceContent) {
+          check = false
+        }
+      })
+      if (!check) {
+        this.$modal.msgError("例句为必填项");
+        return
+      }
+      let params = {
+        wordUUId: this.wordUUId,
+        sentenceDtoList: this.sentenceList,
+        removeSentenceUUIdList: this.removeSentenceUUIdList
+      }
+      editSentenceOfWord(params).then(res => {
+        if (res.data) {
+          this.$modal.msgSuccess("操作成功");
+        } else {
+          this.$modal.msgError("操作失败！");
+        }
+      })
+      this.closeSentence()
     }
   }
 };

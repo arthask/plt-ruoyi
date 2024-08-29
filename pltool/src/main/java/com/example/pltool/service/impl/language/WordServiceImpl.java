@@ -4,12 +4,12 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.pltool.domain.dto.language.wordcollection.WordCollectionData;
+import com.example.pltool.domain.dto.language.word.WordShowData;
 import com.example.pltool.domain.entity.*;
 import com.example.pltool.mapper.WordMapper;
-import com.example.pltool.service.*;
-import com.example.pltool.domain.dto.language.word.WordShowData;
-
+import com.example.pltool.service.IWordSentenceService;
+import com.example.pltool.service.LabelRefService;
+import com.example.pltool.service.LabelService;
 import com.example.pltool.service.language.LexiconService;
 import com.example.pltool.service.language.LexiconWordService;
 import com.example.pltool.service.language.WordService;
@@ -51,6 +51,9 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
 
     @Autowired
     private LabelService labelService;
+
+    @Autowired
+    private IWordSentenceService wordSentenceService;
 
     @Override
     public List<WordShowData> searchWordByCN(String searchCn) {
@@ -123,12 +126,6 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
             }
             WordShowData wordShowData = new WordShowData();
             BeanUtils.copyProperties(e, wordShowData);
-            if (!CollectionUtils.isEmpty(lexiconNameList)) {
-                wordShowData.setLexiconName(lexiconNameList);
-            }
-            if (!CollectionUtils.isEmpty(labelNameList)) {
-                wordShowData.setLabelList(labelNameList);
-            }
             return wordShowData;
         }).collect(Collectors.toList());
     }
@@ -140,11 +137,6 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
         Assert.notNull(word, "未查询到单词数据");
         WordShowData wordShowData = new WordShowData();
         BeanUtils.copyProperties(word, wordShowData);
-        List<Label> labelOfLexicon = lexiconService.getLabelOfLexicon(lexiconUUID);
-        if (!CollectionUtils.isEmpty(labelOfLexicon)) {
-            List<String> labelNames = labelOfLexicon.stream().map(Label::getName).collect(Collectors.toList());
-            wordShowData.setLabelList(labelNames);
-        }
         return wordShowData;
     }
 
@@ -155,6 +147,10 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
         Assert.notNull(word, "未查询到单词数据");
         WordShowData wordShowData = new WordShowData();
         BeanUtils.copyProperties(word, wordShowData);
+        List<WordSentence> wordSentenceList = wordSentenceService.getSentencesByWordUUId(word.getUuid());
+        if (!CollectionUtils.isEmpty(wordSentenceList)) {
+            wordShowData.setSentenceList(wordSentenceList);
+        }
         return wordShowData;
     }
 
@@ -165,18 +161,6 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements Wo
         Assert.notNull(word, "未查询到单词数据");
         WordShowData wordShowData = new WordShowData();
         BeanUtils.copyProperties(word, wordShowData);
-        // 根据单词查询词库uuid
-        QueryWrapper<LexiconWord> lexiconWordQueryWrapper = new QueryWrapper<>();
-        lexiconWordQueryWrapper.eq("word_uuid", word.getUuid());
-        List<LexiconWord> lexiconWords = lexiconWordService.list(lexiconWordQueryWrapper);
-        if (CollectionUtils.isEmpty(lexiconWords)) {
-            return wordShowData;
-        }
-        List<Label> labelOfLexicon = lexiconService.getLabelOfLexicon(lexiconWords.get(0).getLexiconUuid());
-        if (!CollectionUtils.isEmpty(labelOfLexicon)) {
-            List<String> labelNames = labelOfLexicon.stream().map(Label::getName).collect(Collectors.toList());
-            wordShowData.setLabelList(labelNames);
-        }
         return wordShowData;
     }
 
