@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="overflow-y: auto; max-height: 450px;padding: 0 20px">
     <el-row :gutter="20" justify="center" type="flex">
       <el-col :span="6">
         <el-button v-if="!this.review" :disabled="backDisable" type="primary" @click="forward()">上一个</el-button>
@@ -16,11 +16,11 @@
       </el-col>
       <el-col :span="6">
         <div v-if="!this.review">
-        <el-statistic :precision="0"
-                      :value="totalNum"
-                      group-separator=","
-                      title="总数">
-        </el-statistic>
+          <el-statistic :precision="0"
+                        :value="totalNum"
+                        group-separator=","
+                        title="总数">
+          </el-statistic>
         </div>
       </el-col>
       <el-col :span="6">
@@ -60,6 +60,13 @@
         </el-button>
       </el-descriptions-item>
     </el-descriptions>
+    <el-collapse v-show="showWordInfo && sentenceList.length > 0" accordion>
+      <div class="margin-top" style="font-size: 16px;font-weight: bold;">例句</div>
+      <el-collapse-item v-for="(sentence,index) in sentenceList" :key="sentence.uuid"
+                        :title="sentence.sentenceContent">
+        <div>{{ sentence.translateContent }}</div>
+      </el-collapse-item>
+    </el-collapse>
     <el-descriptions v-show="showWordInfo" :colon="false" class="margin-top" title="内容填写区">
       <el-descriptions-item>
         <el-input
@@ -82,6 +89,7 @@ import {getCollectionTotalAndNotStudyNum, getTotalAndNotStudyNum} from "@/api/st
 import {getReviewWord} from "../../../../api/review/review";
 
 export default {
+  name: "WordPanel",
   props: {
     wordCollectionId: {
       type: String,
@@ -121,6 +129,7 @@ export default {
       currentLexiconUUID: "",
       backDisable: false,
       nextDisable: false,
+      sentenceList: []
     }
   },
   async mounted() {
@@ -148,13 +157,11 @@ export default {
     async forward() {
       this.clearPanelData()
       let currentIndex = --this.wordIndex;
-      console.log("================currentIndex:" + currentIndex)
       await this.getOneWord(currentIndex, this.review);
     },
     async nextWord() {
       this.clearPanelData()
       let currentIndex = ++this.wordIndex;
-      console.log("================currentIndex:" + currentIndex)
       await this.getOneWord(currentIndex, this.review);
     },
     setBtnStatus: function (index) {
@@ -182,6 +189,10 @@ export default {
       this.oneWord = response.data;
       this.oneWordTxt = this.oneWord.word;
       this.notInputtedTxt = this.oneWordTxt;
+      this.sentenceList = []
+      if (response.data.sentenceList && response.data.sentenceList.length > 0) {
+        this.sentenceList = [...response.data.sentenceList]
+      }
       if (this.showWordInfo) {
         this.okTxt = '';
         this.playOneWordAudio(this.oneWordTxt)
@@ -195,7 +206,6 @@ export default {
         this.wordIndex = 0
         index = 0
       }
-      console.log("-----index", index, "----------totalNum", this.totalNum)
       this.clearPanelData();
       if (this.wordCollectionId) {
         await getOneWordInCollection(this.wordCollectionId, index).then(response => {
@@ -212,7 +222,6 @@ export default {
           this.processResData(res, index)
         });
       }
-
     },
     // 播放音频
     playAudio(language, word) {
@@ -220,7 +229,6 @@ export default {
       this.speakCommon.speak(word)
     },
     playOneWordAudio(word) {
-      console.log("====================" + word)
       this.speakCommon.speak(word)
       // this.audio.src = "http://dict.youdao.com/dictvoice?type=0&audio=" + this.oneWordTxt;
       // this.audio.play();

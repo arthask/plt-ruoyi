@@ -249,7 +249,8 @@ export default {
     <el-dialog :title="title" v-if="showStudy"
                :visible.sync="showStudy"
                :destroy-on-close="true"
-               :before-close="handleStudyClose">
+               :before-close="handleStudyClose"
+               height="500px" width="800px">
       <word-panel :word-collection-id="this.labelUUID"></word-panel>
     </el-dialog>
   </div>
