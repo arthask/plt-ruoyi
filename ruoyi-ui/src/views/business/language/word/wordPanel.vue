@@ -27,12 +27,18 @@
         <el-button v-if="!this.review" :disabled="nextDisable" type="primary" @click="nextWord()">下一个</el-button>
       </el-col>
     </el-row>
-    <el-descriptions v-show="showWordInfo" :column="2" border direction="horizontal" title="单词信息">
+    <el-descriptions v-show="showWordInfo" :column="2" border direction="vertical" title="单词信息">
       <el-descriptions-item label="单词">
-        <span class="ok-content">{{ okTxt }}</span>
-        <span class="error-content">{{ notInputtedTxt }}</span>
+        <div style=" width: 200px ">
+          <span class="ok-content">{{ okTxt }}</span>
+          <span class="error-content">{{ notInputtedTxt }}</span>
+        </div>
       </el-descriptions-item>
-      <el-descriptions-item label="释义">{{ oneWord.translation }}</el-descriptions-item>
+      <el-descriptions-item label="释义">
+        <div style=" width: 500px; ">
+          {{ oneWord.translation }}
+        </div>
+      </el-descriptions-item>
     </el-descriptions>
     <el-descriptions v-show="showWordInfo" :column="2" border class="margin-top" title="发音">
       <el-descriptions-item label="美式发音">
