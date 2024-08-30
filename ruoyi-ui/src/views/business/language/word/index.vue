@@ -163,6 +163,7 @@
                :center="true"
                :destroy-on-close="true"
                :visible.sync="showSentence"
+               width="65%"
                title="管理例句"
     >
       <el-row justify="start" type="flex">
@@ -170,17 +171,17 @@
       </el-row>
       <el-row v-for="(item,index) in sentenceList" :key="index"
               :gutter="20">
-        <el-col :span="10">
+        <el-col :span="11">
           <el-input v-model="item.sentenceContent" placeholder="请输入句子"
                     resize="none" rows="2"
                     style="margin-top: 10px" type="textarea"></el-input>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="11">
           <el-input v-model="item.translateContent" placeholder="请输入翻译"
                     resize="none" rows="2"
                     style="margin-top: 10px" type="textarea"></el-input>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="2">
           <el-button style="margin-top: 10px" type="danger" @click.prevent="removeSentence(index)">删除</el-button>
         </el-col>
       </el-row>
