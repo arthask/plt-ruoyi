@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow-y: auto; max-height: 450px;padding: 0 20px">
+  <div>
     <el-row :gutter="20" justify="center" type="flex">
       <el-col :span="6">
         <el-button v-if="!this.review" :disabled="backDisable" type="primary" @click="forward()">上一个</el-button>
@@ -27,7 +27,7 @@
         <el-button v-if="!this.review" :disabled="nextDisable" type="primary" @click="nextWord()">下一个</el-button>
       </el-col>
     </el-row>
-    <el-descriptions v-show="showWordInfo" :column="1" border direction="vertical" title="单词信息">
+    <el-descriptions v-show="showWordInfo" :column="2" border direction="horizontal" title="单词信息">
       <el-descriptions-item label="单词">
         <span class="ok-content">{{ okTxt }}</span>
         <span class="error-content">{{ notInputtedTxt }}</span>
@@ -64,7 +64,15 @@
       <div class="margin-top" style="font-size: 16px;font-weight: bold;">例句</div>
       <el-collapse-item v-for="(sentence,index) in sentenceList" :key="sentence.uuid"
                         :title="sentence.sentenceContent">
-        <div>{{ sentence.translateContent }}</div>
+        <div>{{ sentence.translateContent }}
+          <el-button
+            icon="el-icon-microphone"
+            size="mini"
+            type="text"
+            @click="playAudio(UK,sentence.sentenceContent)"
+          >
+          </el-button>
+        </div>
       </el-collapse-item>
     </el-collapse>
     <el-descriptions v-show="showWordInfo" :colon="false" class="margin-top" title="内容填写区">

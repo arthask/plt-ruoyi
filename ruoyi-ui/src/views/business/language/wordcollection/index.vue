@@ -4,7 +4,7 @@ import WordView from "@/views/business/language/wordcollection/wordView.vue";
 import WordPanel from "../word/wordPanel.vue";
 
 export default {
-  name: "index.vue",
+  name: "WordCollectionIndex.vue",
   components: {WordPanel, WordView},
   data() {
     return {
@@ -250,7 +250,7 @@ export default {
                :visible.sync="showStudy"
                :destroy-on-close="true"
                :before-close="handleStudyClose"
-               height="500px" width="800px">
+               width="55%">
       <word-panel :word-collection-id="this.labelUUID"></word-panel>
     </el-dialog>
   </div>
