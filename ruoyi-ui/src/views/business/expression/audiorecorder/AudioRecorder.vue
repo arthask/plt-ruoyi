@@ -8,7 +8,8 @@ export default {
       recorder: null,
       isRecording: false,
       audioUrl: null,
-      stream: null
+      stream: null,
+      inputContent: ''
     };
   },
   methods: {
@@ -43,28 +44,62 @@ export default {
       // Reset audio URL and other states
       this.audioUrl = null;
       this.startRecording(); // Start a new recording session
+    },
+    playContent() {
+      this.speakCommon.speak(this.inputContent)
+    },
+    pausePlayContent() {
+      this.speakCommon.pauseSpeak()
+    },
+    resumePlayContent() {
+      this.speakCommon.resumeSpeak()
     }
   }
 }
 </script>
 
 <template>
-  <el-row :gutter="20" justify="center" type="flex">
-    <el-col :span="8">
-      <div class="centered-div">
-        <el-button :disabled="isRecording" type="success" @click="startRecording">开始录音</el-button>
-        <el-button :disabled="!isRecording" type="danger" @click="stopRecording">结束录音</el-button>
-        <el-button :disabled="isRecording" type="primary" @click="restartRecording">重新开始</el-button>
-      </div>
-      <div>
-        <audio v-if="audioUrl" :src="audioUrl" controls></audio>
-      </div>
-    </el-col>
-  </el-row>
+  <div>
+    <el-row :gutter="20" justify="center" type="flex">
+      <el-col :span="16">
+        <div class="centered-div">
+          <h3>练习内容</h3>
+          <el-input
+            v-model="inputContent"
+            :rows="14"
+            placeholder="请输入内容"
+            resize="none"
+            type="textarea">
+          </el-input>
+        </div>
+        <div class="centered-div">
+          <el-button plain type="success" @click="playContent">播放</el-button>
+          <el-button plain type="warning" @click="pausePlayContent">暂停</el-button>
+          <el-button plain type="info" @click="resumePlayContent">继续</el-button>
+        </div>
+        <el-divider></el-divider>
+        <h3>成果检测</h3>
+        <div class="centered-div">
+          <el-button :disabled="isRecording" plain type="success" @click="startRecording">开始录音</el-button>
+          <el-button :disabled="!isRecording" plain type="danger" @click="stopRecording">结束录音</el-button>
+          <el-button :disabled="isRecording" plain type="primary" @click="restartRecording">重新开始</el-button>
+        </div>
+        <div>
+          <audio v-if="audioUrl" :src="audioUrl" controls></audio>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20" justify="center" type="flex">
+      <el-col :span="8">
+
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .centered-div {
-  padding: 20px;
+  padding: 5px;
+  align-content: center;
 }
 </style>
