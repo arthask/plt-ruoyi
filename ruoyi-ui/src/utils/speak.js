@@ -30,5 +30,11 @@ export default {
       this.speech.setVoice('Google UK English Male')
     }
     this.speech.setLanguage(language)
+  },
+  pauseSpeak() {
+    this.speech.pause()
+  },
+  resumeSpeak() {
+    this.speech.resume()
   }
 }
