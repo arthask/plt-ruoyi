@@ -80,9 +80,9 @@ export default {
         <el-divider></el-divider>
         <h3>成果检测</h3>
         <div class="centered-div">
-          <el-button :disabled="isRecording" type="success" @click="startRecording">开始录音</el-button>
-          <el-button :disabled="!isRecording" type="danger" @click="stopRecording">结束录音</el-button>
-          <el-button :disabled="isRecording" type="primary" @click="restartRecording">重新开始</el-button>
+          <el-button :disabled="isRecording" plain type="success" @click="startRecording">开始录音</el-button>
+          <el-button :disabled="!isRecording" plain type="danger" @click="stopRecording">结束录音</el-button>
+          <el-button :disabled="isRecording" plain type="primary" @click="restartRecording">重新开始</el-button>
         </div>
         <div>
           <audio v-if="audioUrl" :src="audioUrl" controls></audio>
