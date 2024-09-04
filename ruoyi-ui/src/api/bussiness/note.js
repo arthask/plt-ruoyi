@@ -20,7 +20,7 @@ export function getNote(id) {
 // 新增笔记
 export function addNote(data) {
   return request({
-    url: '/system/note',
+    url: '/system/note/addNote',
     method: 'post',
     data: data
   })

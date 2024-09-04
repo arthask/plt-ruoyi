@@ -2,13 +2,15 @@ package com.example.pltool.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.pltool.domain.dto.note.NoteDto;
 import com.example.pltool.domain.entity.Note;
 import com.example.pltool.domain.entity.Question;
+import com.example.pltool.domain.vo.NoteInfoVo;
 import com.example.pltool.mapper.NoteMapper;
 import com.example.pltool.mapper.QuestionMapper;
 import com.example.pltool.service.NoteService;
-
-import com.example.pltool.domain.vo.NoteInfoVo;
+import com.ruoyi.common.core.domain.AjaxResult;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * <p>
@@ -66,5 +69,25 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
         List<Question> questionList = noteInfoVo.getQuestionList();
         questionList.forEach(e -> e.setUpdateTime(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault())));
         return questionMapper.updateQuestionBatch(questionList);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult addNote(NoteDto noteDto) {
+        Note note = new Note();
+        note.setTitle(noteDto.getTitle());
+        note.setUserId(noteDto.getUserId());
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        note.setUuid(uuid);
+        note.setType(noteDto.getType());
+        note.setContent(noteDto.getContent());
+        if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
+            note.setSummary(noteDto.getSummary());
+        }
+        if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
+            note.setRefUuid(noteDto.getRefUUId());
+        }
+        save(note);
+        return AjaxResult.success(true);
     }
 }

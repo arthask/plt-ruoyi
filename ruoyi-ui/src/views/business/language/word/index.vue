@@ -128,6 +128,12 @@
             @click="viewWordCollection(scope.row)"
           >查看单词集
           </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="manageWordNote(scope.row)"
+          >管理笔记
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -167,7 +173,7 @@
                title="管理例句"
     >
       <el-row justify="start" type="flex">
-        <el-button style="margin-top: 10px" type="primary" @click.prevent="addSentence">添加</el-button>
+        <el-button plain style="margin-top: 10px" type="primary" @click.prevent="addSentence">添加</el-button>
       </el-row>
       <el-row v-for="(item,index) in sentenceList" :key="index"
               :gutter="20">
@@ -182,13 +188,15 @@
                     style="margin-top: 10px" type="textarea"></el-input>
         </el-col>
         <el-col :span="2">
-          <el-button style="margin-top: 10px" type="danger" @click.prevent="removeSentence(index)">删除</el-button>
+          <el-button plain style="margin-top: 10px" type="danger" @click.prevent="removeSentence(index)">删除
+          </el-button>
         </el-col>
       </el-row>
       <el-row :gutter="20" justify="end" style="margin-top: 20px" type="flex">
-        <el-col :span="10"></el-col>
-        <el-col :span="4">
+        <el-col :span="18"></el-col>
+        <el-col :span="6">
           <el-button type="primary" @click="submitSentence">提交</el-button>
+          <el-button @click="closeSentence">取 消</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -241,6 +249,28 @@
                :destroy-on-close="true">
       <CollectionView :word-u-u-id="wordUUId"></CollectionView>
     </el-dialog>
+    <el-dialog v-if="showNote"
+               :center="true"
+               :destroy-on-close="true"
+               :visible.sync="showNote"
+               title="管理笔记">
+      <el-row>
+        <el-col>
+          <el-form :model="noteDto" label-position="top" label-width="100px">
+            <el-form-item label="笔记" prop="content">
+              <ck-editor v-model="noteDto.content" class="bb"></ck-editor>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" justify="end" style="margin-top: 20px" type="flex">
+        <el-col :span="18"></el-col>
+        <el-col :span="6">
+          <el-button type="primary" @click="submitWordNote">提交</el-button>
+          <el-button @click="closeWordNote">取 消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -251,10 +281,12 @@ import WordPanel from "@/views/business/language/word/wordPanel.vue";
 import Word2Collection from "@/views/business/language/word/word2Collection.vue";
 import CollectionView from "./CollectionView.vue";
 import {editSentenceOfWord, getSentence} from "../../../../api/bussiness/wordsentence";
+import {addNote} from "../../../../api/bussiness/note";
+import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {
   name: "Word",
-  components: {CollectionView, Word2Collection, WordPanel},
+  components: {CollectionView, Word2Collection, WordPanel, CkEditor},
   data() {
     return {
       // 遮罩层
@@ -304,12 +336,18 @@ export default {
       showCollectionDialog: false,
       showCollectionView: false,
       wordUUId: '',
+      word: '',
       showSentence: false,
       sentenceList: [{
         sentenceContent: "",
         translateContent: "",
       }],
-      removeSentenceUUIdList: []
+      removeSentenceUUIdList: [],
+      showNote: false,
+      noteDto: {
+        type: 1,
+        content: '',
+      }
     }
   },
   created() {
@@ -517,6 +555,31 @@ export default {
         }
       })
       this.closeSentence()
+    },
+    manageWordNote(row) {
+      this.wordUUId = row.uuid
+      this.word = row.word
+      this.showNote = true
+    },
+    closeWordNote() {
+      this.showNote = false
+      this.word = ''
+    },
+    submitWordNote() {
+      let params = {
+        title: this.word + '笔记',
+        type: this.noteDto.type,
+        content: this.noteDto.content,
+        refUUId: this.wordUUId,
+      }
+      addNote(params).then(res => {
+        if (res.data) {
+          this.$modal.msgSuccess("操作成功");
+        } else {
+          this.$modal.msgError("操作失败！");
+        }
+      })
+      this.closeWordNote()
     }
   }
 };

@@ -1,9 +1,10 @@
 package com.example.pltool.controller.business.note;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.pltool.domain.dto.note.NoteDto;
 import com.example.pltool.domain.entity.Note;
-import com.example.pltool.service.NoteService;
 import com.example.pltool.domain.vo.NoteInfoVo;
+import com.example.pltool.service.NoteService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -60,9 +61,10 @@ public class NoteController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:note:add')")
     @Log(title = "笔记", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody Note note) {
-        return toAjax(newNoteService.save(note));
+    @PostMapping("/addNote")
+    public AjaxResult add(@RequestBody NoteDto noteDto) {
+        noteDto.setUserId(getUserId());
+        return newNoteService.addNote(noteDto);
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.example.pltool.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.example.pltool.domain.entity.Note;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author author
- * @since 2024-05-03
+ * @since 2024-09-04
  */
 @Mapper
 public interface NoteMapper extends BaseMapper<Note> {

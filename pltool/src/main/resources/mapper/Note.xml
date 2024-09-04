@@ -9,13 +9,17 @@
         <result column="title" property="title" />
         <result column="summary" property="summary" />
         <result column="user_id" property="userId" />
+        <result column="type" property="type"/>
+        <result column="ref_uuid" property="refUuid"/>
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
+        <result column="content" property="content"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, uuid, title, summary, user_id, create_time, update_time
+        id
+        , uuid, title, summary, user_id, type, ref_uuid, create_time, update_time, content
     </sql>
 
 </mapper>
