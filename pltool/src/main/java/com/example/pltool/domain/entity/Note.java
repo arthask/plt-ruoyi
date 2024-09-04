@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author author
- * @since 2024-05-03
+ * @since 2024-09-04
  */
 @Getter
 @Setter
@@ -50,6 +50,18 @@ public class Note implements Serializable {
     private Long userId;
 
     /**
+     * 笔记类型
+     */
+    @TableField("type")
+    private Integer type;
+
+    /**
+     * 关联uuid
+     */
+    @TableField("ref_uuid")
+    private String refUuid;
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -62,4 +74,10 @@ public class Note implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 笔记内容
+     */
+    @TableField("content")
+    private String content;
 }
