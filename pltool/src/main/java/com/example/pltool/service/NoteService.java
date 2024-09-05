@@ -17,10 +17,12 @@ import com.ruoyi.common.core.domain.AjaxResult;
  */
 public interface NoteService extends IService<Note> {
 
-    NoteInfoVo getNoteInfo(Long id);
+    NoteInfoVo getQuestionNoteInfo(Long id);
 
-    int updateNoteInfo(NoteInfoVo noteInfoVo);
+    int updateQuestionNoteInfo(NoteInfoVo noteInfoVo);
 
-    AjaxResult addNote(NoteDto noteDto);
+    AjaxResult saveOrUpdateNote(NoteDto noteDto);
+
+    AjaxResult getNoteInfoByRefUUId(String refUUId);
 
 }

@@ -61,10 +61,10 @@ public class NoteController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:note:add')")
     @Log(title = "笔记", businessType = BusinessType.INSERT)
-    @PostMapping("/addNote")
-    public AjaxResult add(@RequestBody NoteDto noteDto) {
+    @PostMapping("/saveOrUpdateNote")
+    public AjaxResult saveOrUpdateNote(@RequestBody NoteDto noteDto) {
         noteDto.setUserId(getUserId());
-        return newNoteService.addNote(noteDto);
+        return newNoteService.saveOrUpdateNote(noteDto);
     }
 
     /**
@@ -95,7 +95,7 @@ public class NoteController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:note:query')")
     @GetMapping(value = "/getNoteInfo/{id}")
     public AjaxResult getNoteInfo(@PathVariable("id") Long id) {
-        return success(newNoteService.getNoteInfo(id));
+        return success(newNoteService.getQuestionNoteInfo(id));
     }
 
     /**
@@ -104,6 +104,11 @@ public class NoteController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:note:query')")
     @PostMapping(value = "/updateNoteInfo")
     public AjaxResult updateNoteInfo(@RequestBody NoteInfoVo noteInfoVo) {
-        return success(newNoteService.updateNoteInfo(noteInfoVo));
+        return success(newNoteService.updateQuestionNoteInfo(noteInfoVo));
+    }
+
+    @GetMapping(value = "/getNoteInfoByRefUUId/{refUUId}")
+    public AjaxResult getNoteInfoByRefUUId(@PathVariable("refUUId") String refUUId) {
+        return newNoteService.getNoteInfoByRefUUId(refUUId);
     }
 }

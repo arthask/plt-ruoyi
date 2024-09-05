@@ -18,9 +18,9 @@ export function getNote(id) {
 }
 
 // 新增笔记
-export function addNote(data) {
+export function saveOrUpdateNote(data) {
   return request({
-    url: '/system/note/addNote',
+    url: '/system/note/saveOrUpdateNote',
     method: 'post',
     data: data
   })
@@ -57,5 +57,12 @@ export function updateNoteInfo(data) {
     url: '/system/note/updateNoteInfo',
     method: 'post',
     data: data
+  })
+}
+
+export function getNoteInfoByRefUUId(refUUId) {
+  return request({
+    url: '/system/note/getNoteInfoByRefUUId/' + refUUId,
+    method: 'get'
   })
 }

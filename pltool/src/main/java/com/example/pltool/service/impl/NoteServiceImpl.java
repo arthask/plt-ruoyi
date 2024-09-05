@@ -1,6 +1,8 @@
 package com.example.pltool.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.domain.dto.note.NoteDto;
 import com.example.pltool.domain.entity.Note;
@@ -37,7 +39,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     private QuestionMapper questionMapper;
 
     @Override
-    public NoteInfoVo getNoteInfo(Long id) {
+    public NoteInfoVo getQuestionNoteInfo(Long id) {
         NoteInfoVo noteInfoVo = new NoteInfoVo();
         Note note = baseMapper.selectById(id);
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
@@ -59,7 +61,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public int updateNoteInfo(NoteInfoVo noteInfoVo) {
+    public int updateQuestionNoteInfo(NoteInfoVo noteInfoVo) {
         QueryWrapper<Note> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", noteInfoVo.getNote().getUuid());
         Note note = getBaseMapper().selectOne(queryWrapper);
@@ -73,21 +75,36 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public AjaxResult addNote(NoteDto noteDto) {
-        Note note = new Note();
-        note.setTitle(noteDto.getTitle());
-        note.setUserId(noteDto.getUserId());
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        note.setUuid(uuid);
-        note.setType(noteDto.getType());
-        note.setContent(noteDto.getContent());
-        if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
-            note.setSummary(noteDto.getSummary());
+    public AjaxResult saveOrUpdateNote(NoteDto noteDto) {
+        if (StringUtils.isNotBlank(noteDto.getUuid())) {
+            LambdaUpdateWrapper<Note> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+            lambdaQueryWrapper.eq(Note::getUuid, noteDto.getUuid())
+                    .set(Note::getContent, noteDto.getContent());
+            update(lambdaQueryWrapper);
+        } else {
+            Note note = new Note();
+            note.setTitle(noteDto.getTitle());
+            note.setUserId(noteDto.getUserId());
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            note.setUuid(uuid);
+            note.setType(noteDto.getType());
+            note.setContent(noteDto.getContent());
+            if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
+                note.setSummary(noteDto.getSummary());
+            }
+            if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
+                note.setRefUuid(noteDto.getRefUUId());
+            }
+            save(note);
         }
-        if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
-            note.setRefUuid(noteDto.getRefUUId());
-        }
-        save(note);
         return AjaxResult.success(true);
+    }
+
+    @Override
+    public AjaxResult getNoteInfoByRefUUId(String refUUId) {
+        LambdaQueryWrapper<Note> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Note::getRefUuid, refUUId);
+        Note note = getOne(lambdaQueryWrapper);
+        return AjaxResult.success(note);
     }
 }
