@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,6 +29,7 @@ public class Note implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 

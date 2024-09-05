@@ -281,7 +281,7 @@ import WordPanel from "@/views/business/language/word/wordPanel.vue";
 import Word2Collection from "@/views/business/language/word/word2Collection.vue";
 import CollectionView from "./CollectionView.vue";
 import {editSentenceOfWord, getSentence} from "../../../../api/bussiness/wordsentence";
-import {addNote} from "../../../../api/bussiness/note";
+import {getNoteInfoByRefUUId, saveOrUpdateNote} from "../../../../api/bussiness/note";
 import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {
@@ -345,6 +345,7 @@ export default {
       removeSentenceUUIdList: [],
       showNote: false,
       noteDto: {
+        uuid: null,
         type: 1,
         content: '',
       }
@@ -560,19 +561,31 @@ export default {
       this.wordUUId = row.uuid
       this.word = row.word
       this.showNote = true
+      this.noteDto.content = null
+      this.noteDto.uuid = null
+      getNoteInfoByRefUUId(this.wordUUId).then(res => {
+        if (res.data) {
+          let {uuid, content} = res.data
+          this.noteDto.uuid = uuid
+          this.noteDto.content = content
+        }
+      })
     },
     closeWordNote() {
       this.showNote = false
       this.word = ''
+      this.noteDto.content = null
+      this.noteDto.uuid = null
     },
     submitWordNote() {
       let params = {
-        title: this.word + '笔记',
+        uuid: this.noteDto.uuid,
         type: this.noteDto.type,
         content: this.noteDto.content,
+        title: this.word + '的笔记',
         refUUId: this.wordUUId,
       }
-      addNote(params).then(res => {
+      saveOrUpdateNote(params).then(res => {
         if (res.data) {
           this.$modal.msgSuccess("操作成功");
         } else {
