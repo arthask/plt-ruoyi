@@ -53,6 +53,7 @@ public class Note implements Serializable {
 
     /**
      * 笔记类型
+     * @see com.example.pltool.controller.business.constant.enums.NoteTypeEnum
      */
     @TableField("type")
     private Integer type;

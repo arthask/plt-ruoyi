@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -39,9 +40,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     private QuestionMapper questionMapper;
 
     @Override
-    public NoteInfoVo getQuestionNoteInfo(Long id) {
+    public NoteInfoVo getQuestionNoteInfo(String noteUUId) {
         NoteInfoVo noteInfoVo = new NoteInfoVo();
-        Note note = baseMapper.selectById(id);
+        LambdaQueryWrapper<Note> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Note::getUuid, noteUUId);
+        Note note = this.getOne(lambdaQueryWrapper);
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("note_id", note.getId());
         List<Question> questions = questionMapper.selectList(queryWrapper);
@@ -61,16 +64,32 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public int updateQuestionNoteInfo(NoteInfoVo noteInfoVo) {
+    public AjaxResult updateNoteInfo(NoteInfoVo noteInfoVo) {
         QueryWrapper<Note> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", noteInfoVo.getNote().getUuid());
         Note note = getBaseMapper().selectOne(queryWrapper);
-        note.setTitle(noteInfoVo.getNote().getTitle());
-        note.setSummary(noteInfoVo.getNote().getSummary());
-        getBaseMapper().updateById(note);
-        List<Question> questionList = noteInfoVo.getQuestionList();
-        questionList.forEach(e -> e.setUpdateTime(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault())));
-        return questionMapper.updateQuestionBatch(questionList);
+        boolean updateFlag = false;
+        if (!StringUtils.equals(note.getTitle(), noteInfoVo.getNote().getTitle())) {
+            note.setTitle(noteInfoVo.getNote().getTitle());
+            updateFlag = true;
+        }
+        if (StringUtils.isNotBlank(noteInfoVo.getNote().getSummary())) {
+            note.setSummary(noteInfoVo.getNote().getSummary());
+            updateFlag = true;
+        }
+        if (StringUtils.isNotBlank(noteInfoVo.getNote().getContent())) {
+            note.setContent(noteInfoVo.getNote().getContent());
+            updateFlag = true;
+        }
+        if (updateFlag) {
+            getBaseMapper().updateById(note);
+        }
+        if (!CollectionUtils.isEmpty(noteInfoVo.getQuestionList())) {
+            List<Question> questionList = noteInfoVo.getQuestionList();
+            questionList.forEach(e -> e.setUpdateTime(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault())));
+            questionMapper.updateQuestionBatch(questionList);
+        }
+        return AjaxResult.success(true);
     }
 
     @Transactional(rollbackFor = Exception.class)

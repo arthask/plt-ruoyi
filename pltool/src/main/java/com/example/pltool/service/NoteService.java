@@ -17,9 +17,9 @@ import com.ruoyi.common.core.domain.AjaxResult;
  */
 public interface NoteService extends IService<Note> {
 
-    NoteInfoVo getQuestionNoteInfo(Long id);
+    NoteInfoVo getQuestionNoteInfo(String noteUUId);
 
-    int updateQuestionNoteInfo(NoteInfoVo noteInfoVo);
+    AjaxResult updateNoteInfo(NoteInfoVo noteInfoVo);
 
     AjaxResult saveOrUpdateNote(NoteDto noteDto);
 
