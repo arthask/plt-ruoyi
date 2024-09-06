@@ -1,19 +1,18 @@
 <script>
-import { getNoteInfo } from "@/api/bussiness/note";
-import { updateNoteInfo } from "@/api/bussiness/note";
+import {getNoteInfo, updateNoteInfo} from "@/api/bussiness/note";
 import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {
   components: {CkEditor},
   props: {
-    noteId: {
-      type: Number,
-      default: 0
+    noteUuid: {
+      type: String,
+      default: null
     },
   },
   watch: {
-    noteId(){
-      this.getNoteInfo(this.noteId);
+    noteUuid() {
+      this.getNoteInfo(this.noteUuid);
     }
   },
   data() {
@@ -26,23 +25,26 @@ export default {
         title: '',
         summary: '',
         uuid: '',
+        content: ''
       },
       questionData: {
         value: ''
       },
-      noteUUID: '',
-      questionList: []
+      questionList: [],
+      noteType: null
     };
   },
   created() {
-    this.getNoteInfo(this.noteId);
+    this.getNoteInfo(this.noteUuid);
   },
   methods: {
-    getNoteInfo(noteId) {
-      getNoteInfo(noteId).then(res => {
+    getNoteInfo(noteUuid) {
+      getNoteInfo(noteUuid).then(res => {
         this.summaryForm.title = res.data.note.title;
         this.summaryForm.summary = res.data.note.summary;
         this.summaryForm.uuid = res.data.note.uuid;
+        this.summaryForm.content = res.data.note.content;
+        this.noteType = res.data.note.type
         this.answerForm.data.splice(0, this.answerForm.data.length)
         for (let i = 0; i < res.data.questionList.length; i++) {
           this.answerForm.data.push(res.data.questionList[i]);
@@ -69,10 +71,10 @@ export default {
       this.$emit("closeDialog")
     },
     submitData() {
-      var data = {
+      const data = {
         note: this.summaryForm,
-        questionList:this.answerForm.data
-      }
+        questionList: this.answerForm.data
+      };
       updateNoteInfo(data).then(res => {
         if (res.code === 200) {
           this.$notify({
@@ -114,33 +116,47 @@ export default {
           </el-row>
         </el-form-item>
       </el-form>
-      <el-row :gutter="20" type="flex" justify="center">
-        <el-col :span="8">
-          <el-form :label-position="labelPosition" label-width="100px" :model="answerForm" ref="answerForm">
-            <el-form-item v-for="(data, index) in answerForm.data"
-                          :prop="data.answer"
-                          :label="data.question"
-                          :rules="{required: true, message: '问题不能为空', trigger: 'blur'}">
-<!--              <editor class="bb" v-model="data.answer" :min-height="192"/>-->
-              <ck-editor class="bb" v-model="data.answer" :min-height="192"></ck-editor>
-            </el-form-item>
-            <el-form-item>
-            </el-form-item>
-          </el-form>
-        </el-col>
-        <el-col :span="12"></el-col>
-      </el-row>
-      <el-row :gutter="20" type="flex" justify="center">
-        <el-col :span="8">
-          <el-form :label-position="labelPosition" label-width="100px" :model="summaryForm" ref="summaryForm2">
-            <el-form-item label="总结" prop="summary">
-<!--              <editor class="bb" v-model="summaryForm.summary" :min-height="192"/>-->
-              <ck-editor class="bb" v-model="summaryForm.summary" :min-height="192"></ck-editor>
-            </el-form-item>
-          </el-form>
-        </el-col>
-        <el-col :span="12"></el-col>
-      </el-row>
+      <div v-if="answerForm.data && answerForm.data.length > 0">
+        <el-row :gutter="20" justify="center" type="flex">
+          <el-col :span="8">
+            <el-form ref="answerForm" :label-position="labelPosition" :model="answerForm" label-width="100px">
+              <el-form-item v-for="(data, index) in answerForm.data"
+                            :label="data.question"
+                            :prop="data.answer"
+                            :rules="{required: true, message: '问题不能为空', trigger: 'blur'}">
+                <ck-editor v-model="data.answer" :min-height="192" class="bb"></ck-editor>
+              </el-form-item>
+              <el-form-item>
+              </el-form-item>
+            </el-form>
+          </el-col>
+          <el-col :span="12"></el-col>
+        </el-row>
+      </div>
+      <div v-if="summaryForm.content">
+        <el-row :gutter="20" justify="center" type="flex">
+          <el-col :span="8">
+            <el-form ref="summaryForm2" :label-position="labelPosition" :model="summaryForm" label-width="100px">
+              <el-form-item label="内容" prop="content">
+                <ck-editor v-model="summaryForm.content" :min-height="192" class="bb"></ck-editor>
+              </el-form-item>
+            </el-form>
+          </el-col>
+          <el-col :span="12"></el-col>
+        </el-row>
+      </div>
+      <div v-if="summaryForm.summary">
+        <el-row :gutter="20" justify="center" type="flex">
+          <el-col :span="8">
+            <el-form ref="summaryForm2" :label-position="labelPosition" :model="summaryForm" label-width="100px">
+              <el-form-item label="总结" prop="summary">
+                <ck-editor v-model="summaryForm.summary" :min-height="192" class="bb"></ck-editor>
+              </el-form-item>
+            </el-form>
+          </el-col>
+          <el-col :span="12"></el-col>
+        </el-row>
+      </div>
     </el-main>
     <el-footer>
       <el-row :gutter="20" type="flex" justify="end">

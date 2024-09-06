@@ -93,9 +93,9 @@ public class NoteController extends BaseController {
      * 获取笔记详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:note:query')")
-    @GetMapping(value = "/getNoteInfo/{id}")
-    public AjaxResult getNoteInfo(@PathVariable("id") Long id) {
-        return success(newNoteService.getQuestionNoteInfo(id));
+    @GetMapping(value = "/getNoteInfo/{noteUUId}")
+    public AjaxResult getNoteInfo(@PathVariable("noteUUId") String noteUUId) {
+        return success(newNoteService.getQuestionNoteInfo(noteUUId));
     }
 
     /**
@@ -104,7 +104,7 @@ public class NoteController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:note:query')")
     @PostMapping(value = "/updateNoteInfo")
     public AjaxResult updateNoteInfo(@RequestBody NoteInfoVo noteInfoVo) {
-        return success(newNoteService.updateQuestionNoteInfo(noteInfoVo));
+        return newNoteService.updateNoteInfo(noteInfoVo);
     }
 
     @GetMapping(value = "/getNoteInfoByRefUUId/{refUUId}")

@@ -85,23 +85,24 @@
       <note-component @closeDialog = "closeMyDialog"/>
     </el-dialog>
 
-    <el-dialog :title="editTitle" :visible.sync="editOpen" width="1000px" :destroy-on-close="true">
-      <edit-note :note-id="noteId" @closeDialog = "closeMyDialog"/>
+    <el-dialog v-if="editOpen" :destroy-on-close="true" :title="editTitle" :visible.sync="editOpen" width="1000px">
+      <edit-note :note-uuid="noteUUId" @closeDialog="closeMyDialog"/>
     </el-dialog>
 
     <el-dialog
+      v-if="noteInfoOpen"
       :visible.sync="noteInfoOpen"
       :destroy-on-close="true">
-      <note-info :note-id="noteId"/>
+      <note-info :note-uuid="noteUUId"/>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listNote, getNote, delNote, addNote, updateNote } from "@/api/bussiness/note";
-import  NoteComponent  from "./NoteComponent.vue";
-import  EditNote  from "./EditNote.vue";
-import  NoteInfo  from "./NoteInfo.vue";
+import {addNote, delNote, listNote, updateNote} from "@/api/bussiness/note";
+import NoteComponent from "./NoteComponent.vue";
+import EditNote from "./EditNote.vue";
+import NoteInfo from "./NoteInfo.vue";
 
 export default {
   name: "Note",
@@ -157,7 +158,7 @@ export default {
       },
       editOpen: false,
       editTitle: "",
-      noteId: null,
+      noteUUId: null,
       noteInfoOpen: false
     };
   },
@@ -203,7 +204,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
+      this.ids = selection.map(item => item.uuid)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -229,7 +230,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
+      const ids = row.uuid || this.ids;
       this.$modal.confirm('是否确认删除笔记编号为"' + ids + '"的数据项？').then(function() {
         return delNote(ids);
       }).then(() => {
@@ -249,12 +250,12 @@ export default {
     },
     editNote(row) {
       this.editOpen = true;
-      this.editTitle = "修改笔记";
-      this.noteId = row.id
+      this.editTitle = "修改笔记"
+      this.noteUUId = row.uuid
     },
     showNoteInfo(row) {
-      this.noteInfoOpen = true;
-      this.noteId = row.id
+      this.noteInfoOpen = true
+      this.noteUUId = row.uuid
     }
   },
 };
