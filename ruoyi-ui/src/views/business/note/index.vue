@@ -85,7 +85,7 @@
       <note-component @closeDialog = "closeMyDialog"/>
     </el-dialog>
 
-    <el-dialog v-if="editOpen" :destroy-on-close="true" :title="editTitle" :visible.sync="editOpen" width="1000px">
+    <el-dialog v-if="editOpen" :destroy-on-close="true" :title="editTitle" :visible.sync="editOpen" width="800px">
       <edit-note :note-uuid="noteUUId" @closeDialog="closeMyDialog"/>
     </el-dialog>
 

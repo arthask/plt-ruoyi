@@ -95,77 +95,67 @@ export default {
 </script>
 
 <template>
-  <el-container>
-    <el-header>
-    </el-header>
-    <el-main>
-      <el-form :model="summaryForm" ref="summaryForm1" label-width="115px" title="标题"
-      >
-        <el-form-item
-          prop="title"
-          :label="`标题`"
-          :rules="{required: true, message: '问题不能为空', trigger: 'blur'}"
-        >
-          <el-row :gutter="20" type="flex" justify="center">
-            <el-col :span="16">
-              <el-input v-model="summaryForm.title"></el-input>
-            </el-col>
-            <el-col :span="6">
-            </el-col>
-            <el-col :span="2"></el-col>
-          </el-row>
-        </el-form-item>
-      </el-form>
-      <div v-if="answerForm.data && answerForm.data.length > 0">
-        <el-row :gutter="20" justify="center" type="flex">
-          <el-col :span="8">
-            <el-form ref="answerForm" :label-position="labelPosition" :model="answerForm" label-width="100px">
-              <el-form-item v-for="(data, index) in answerForm.data"
-                            :label="data.question"
-                            :prop="data.answer"
-                            :rules="{required: true, message: '问题不能为空', trigger: 'blur'}">
-                <ck-editor v-model="data.answer" :min-height="192" class="bb"></ck-editor>
-              </el-form-item>
-              <el-form-item>
-              </el-form-item>
-            </el-form>
-          </el-col>
-          <el-col :span="12"></el-col>
-        </el-row>
-      </div>
-      <div v-if="summaryForm.content">
-        <el-row :gutter="20" justify="center" type="flex">
-          <el-col :span="8">
-            <el-form ref="summaryForm2" :label-position="labelPosition" :model="summaryForm" label-width="100px">
-              <el-form-item label="内容" prop="content">
-                <ck-editor v-model="summaryForm.content" :min-height="192" class="bb"></ck-editor>
-              </el-form-item>
-            </el-form>
-          </el-col>
-          <el-col :span="12"></el-col>
-        </el-row>
-      </div>
-      <div v-if="summaryForm.summary">
-        <el-row :gutter="20" justify="center" type="flex">
-          <el-col :span="8">
-            <el-form ref="summaryForm2" :label-position="labelPosition" :model="summaryForm" label-width="100px">
-              <el-form-item label="总结" prop="summary">
-                <ck-editor v-model="summaryForm.summary" :min-height="192" class="bb"></ck-editor>
-              </el-form-item>
-            </el-form>
-          </el-col>
-          <el-col :span="12"></el-col>
-        </el-row>
-      </div>
-    </el-main>
-    <el-footer>
-      <el-row :gutter="20" type="flex" justify="end">
-        <el-col :span="4">
-          <el-button type="primary" style="margin-top: 12px;" @click="submitData()">提交</el-button>
+  <div>
+    <el-row :gutter="20">
+      <el-col>
+        <el-form ref="summaryForm1" :label-position="labelPosition" :model="summaryForm" label-width="100px"
+                 title="标题">
+          <el-form-item
+            :label="`标题`"
+            :rules="{required: true, message: '问题不能为空', trigger: 'blur'}"
+            prop="title"
+          >
+            <el-input v-model="summaryForm.title"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+    <div v-if="answerForm.data && answerForm.data.length > 0">
+      <el-row :gutter="20">
+        <el-col>
+          <el-form ref="answerForm" :label-position="labelPosition" :model="answerForm" label-width="100px">
+            <el-form-item v-for="(data, index) in answerForm.data"
+                          :label="data.question"
+                          :prop="data.answer"
+                          :rules="{required: true, message: '问题不能为空', trigger: 'blur'}">
+              <ck-editor v-model="data.answer" :min-height="192" class="bb"></ck-editor>
+            </el-form-item>
+            <el-form-item>
+            </el-form-item>
+          </el-form>
         </el-col>
       </el-row>
-    </el-footer>
-  </el-container>
+    </div>
+    <div v-if="summaryForm.content">
+      <el-row :gutter="20">
+        <el-col>
+          <el-form ref="summaryForm2" :label-position="labelPosition" :model="summaryForm" label-width="100px">
+            <el-form-item label="内容" prop="content">
+              <ck-editor v-model="summaryForm.content" :min-height="192" class="bb"></ck-editor>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+    </div>
+    <div v-if="summaryForm.summary">
+      <el-row :gutter="20">
+        <el-col>
+          <el-form ref="summaryForm2" :label-position="labelPosition" :model="summaryForm" label-width="100px">
+            <el-form-item label="总结" prop="summary">
+              <ck-editor v-model="summaryForm.summary" :min-height="192" class="bb"></ck-editor>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+    </div>
+    <el-row :gutter="20" justify="end" style="margin-top: 20px" type="flex">
+      <el-col :span="10"></el-col>
+      <el-col :span="6">
+        <el-button type="primary" @click="submitData()">提交</el-button>
+        <el-button type="danger" @click="closeDialog">取消</el-button>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -178,6 +168,5 @@ export default {
 }
 
 .bb {
-  width: 800px;
 }
 </style>

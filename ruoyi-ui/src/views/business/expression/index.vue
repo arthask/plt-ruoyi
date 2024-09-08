@@ -355,7 +355,7 @@ export default {
       @pagination="getList"
     />
     <el-dialog :title="title"
-               :visible.sync="showDialog" width="800px" height="500px"
+               :visible.sync="showDialog" width="800px"
                :center="true"
                :before-close="closeDialog"
                :destroy-on-close="true">
@@ -379,11 +379,9 @@ export default {
       </el-form>
       <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
         <el-col :span="10"></el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-button type="primary" @click="onSubmit">提交</el-button>
-        </el-col>
-        <el-col :span="4">
-          <el-button type="primary" @click="closeDialog">取消</el-button>
+          <el-button type="danger" @click="closeDialog">取消</el-button>
         </el-col>
       </el-row>
     </el-dialog>
