@@ -249,7 +249,7 @@ export default {
                :center="true"
                :destroy-on-close="true" :title="title"
                :visible.sync="showAdd"
-               width="500px">
+               width="800px">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="名称">
           <el-input v-model="form.name"></el-input>
@@ -267,11 +267,9 @@ export default {
       </el-form>
       <el-row :gutter="20" justify="end" style="margin-top: 20px" type="flex">
         <el-col :span="10"></el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-button type="primary" @click="onSubmit">提交</el-button>
-        </el-col>
-        <el-col :span="4">
-          <el-button type="primary" @click="closeDialog">取消</el-button>
+          <el-button type="danger" @click="closeDialog">取消</el-button>
         </el-col>
       </el-row>
     </el-dialog>
