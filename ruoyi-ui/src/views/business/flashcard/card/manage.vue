@@ -87,45 +87,47 @@
     />
 
     <!-- 添加或修改用户单词对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body destroy-on-close>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="卡片类型" prop="type">
-          <el-select v-model="form.type" placeholder="请选择卡片类型" @change="cardTypeChange">
-            <el-option v-for="item in typeOptions"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="选择单词" v-if="showSelectWord">
-          <el-select filterable remote :remote-method="queryWord" v-model="form.wordUUID" placeholder="请选择单词">
-            <el-option v-for="item in wordOptions"
-                       :key="item.value"
-                       :label="item.word"
-                       :value="item.uuid">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="选择问题" v-if="showSelectQuestion">
-          <el-select filterable remote :remote-method="searchQuestion" v-model="form.questionUUID" placeholder="请选择问题">
-            <el-option v-for="item in questionOptions"
-                       :key="item.value"
-                       :label="item.question"
-                       :value="item.uuid">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="选择卡包">
-          <el-select filterable v-model="form.packageUUID" placeholder="请选择卡包">
-            <el-option v-for="item in packageOptions"
-                       :key="item.value"
-                       :label="item.name"
-                       :value="item.uuid">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
+    <el-dialog :title="title" :visible.sync="open"
+               append-to-body destroy-on-close width="800px">
+      <!--      <el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
+      <!--        <el-form-item label="卡片类型" prop="type">-->
+      <!--          <el-select v-model="form.type" placeholder="请选择卡片类型" @change="cardTypeChange">-->
+      <!--            <el-option v-for="item in typeOptions"-->
+      <!--                       :key="item.value"-->
+      <!--                       :label="item.label"-->
+      <!--                       :value="item.value">-->
+      <!--            </el-option>-->
+      <!--          </el-select>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="选择单词" v-if="showSelectWord">-->
+      <!--          <el-select filterable remote :remote-method="queryWord" v-model="form.wordUUID" placeholder="请选择单词">-->
+      <!--            <el-option v-for="item in wordOptions"-->
+      <!--                       :key="item.value"-->
+      <!--                       :label="item.word"-->
+      <!--                       :value="item.uuid">-->
+      <!--            </el-option>-->
+      <!--          </el-select>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="选择问题" v-if="showSelectQuestion">-->
+      <!--          <el-select filterable remote :remote-method="searchQuestion" v-model="form.questionUUID" placeholder="请选择问题">-->
+      <!--            <el-option v-for="item in questionOptions"-->
+      <!--                       :key="item.value"-->
+      <!--                       :label="item.question"-->
+      <!--                       :value="item.uuid">-->
+      <!--            </el-option>-->
+      <!--          </el-select>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="选择卡包">-->
+      <!--          <el-select filterable v-model="form.packageUUID" placeholder="请选择卡包">-->
+      <!--            <el-option v-for="item in packageOptions"-->
+      <!--                       :key="item.value"-->
+      <!--                       :label="item.name"-->
+      <!--                       :value="item.uuid">-->
+      <!--            </el-option>-->
+      <!--          </el-select>-->
+      <!--        </el-form-item>-->
+      <!--      </el-form>-->
+      <EditCustomizeCard></EditCustomizeCard>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -174,19 +176,20 @@
 
 <script>
 import LabelTag from "@/components/Tag/index.vue";
-import {add, del, getCardInfo, listCards, update} from "@/api/bussiness/flashcard";
+import {add, addCardsToPackage, del, getCardInfo, listCards, update} from "@/api/bussiness/flashcard";
 import {searchWord} from "@/api/bussiness/word";
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
 import WordView from "@/views/business/language/wordcollection/wordView.vue";
 import PackageView from "@/views/business/flashcard/card/PackageView.vue";
-import {addCardsToPackage} from "../../../../api/bussiness/flashcard";
+import EditCustomizeCard from "@/views/business/flashcard/card/EditCustomizeCard.vue";
 
 export default {
   name: "card_manage",
   components: {
+    EditCustomizeCard,
     PackageView,
     WordView,
-    LabelTag
+    LabelTag,
   },
   data() {
     return {

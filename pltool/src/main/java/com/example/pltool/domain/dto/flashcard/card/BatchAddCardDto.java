@@ -9,4 +9,5 @@ public class BatchAddCardDto {
     private Long userId;
     private Integer cardType;
     private List<String> uuidList;
+    private List<CardContent> cardContents;
 }

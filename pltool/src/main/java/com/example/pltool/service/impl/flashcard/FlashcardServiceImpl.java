@@ -124,18 +124,30 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
                 return AjaxResult.success("添加失败,构造数据为空", false);
             }
             List<Flashcard> cardList = new ArrayList<>();
-            Long userId = batchAddCardDto.getUserId();
             for (ExpressionData expression : expressionDataList) {
                 List<String> detailContentList = new ArrayList<>();
                 expression.getExpressionDetailData().forEach(e -> {
                     detailContentList.add(e.getContent());
                 });
                 String back = JSON.toJSONString(detailContentList);
-                Flashcard flashcard = buildFlashCard(userId, expression.getContent(), back,
+                Flashcard flashcard = buildFlashCard(batchAddCardDto.getUserId(), expression.getContent(), back,
                         batchAddCardDto.getCardType(), expression.getUuid());
                 cardList.add(flashcard);
             }
             saveBatch(cardList);
+        } else if (Objects.equals(batchAddCardDto.getCardType(), CardTypeEnum.CUSTOMIZE.getValue())) {
+            List<Flashcard> cardList = new ArrayList<>();
+            batchAddCardDto.getCardContents().forEach(e -> {
+                if (StringUtils.isAnyBlank(e.getFront(), e.getBack())) {
+                    return;
+                }
+                Flashcard flashcard = buildFlashCard(batchAddCardDto.getUserId(), e.getFront(), e.getBack(),
+                        batchAddCardDto.getCardType(), null);
+                cardList.add(flashcard);
+            });
+            if (!CollectionUtils.isEmpty(cardList)) {
+                saveBatch(cardList);
+            }
         }
         return AjaxResult.success(true);
     }
