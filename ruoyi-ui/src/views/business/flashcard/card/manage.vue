@@ -87,51 +87,9 @@
     />
 
     <!-- 添加或修改用户单词对话框 -->
-    <el-dialog :title="title" :visible.sync="open"
-               append-to-body destroy-on-close width="800px">
-      <!--      <el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
-      <!--        <el-form-item label="卡片类型" prop="type">-->
-      <!--          <el-select v-model="form.type" placeholder="请选择卡片类型" @change="cardTypeChange">-->
-      <!--            <el-option v-for="item in typeOptions"-->
-      <!--                       :key="item.value"-->
-      <!--                       :label="item.label"-->
-      <!--                       :value="item.value">-->
-      <!--            </el-option>-->
-      <!--          </el-select>-->
-      <!--        </el-form-item>-->
-      <!--        <el-form-item label="选择单词" v-if="showSelectWord">-->
-      <!--          <el-select filterable remote :remote-method="queryWord" v-model="form.wordUUID" placeholder="请选择单词">-->
-      <!--            <el-option v-for="item in wordOptions"-->
-      <!--                       :key="item.value"-->
-      <!--                       :label="item.word"-->
-      <!--                       :value="item.uuid">-->
-      <!--            </el-option>-->
-      <!--          </el-select>-->
-      <!--        </el-form-item>-->
-      <!--        <el-form-item label="选择问题" v-if="showSelectQuestion">-->
-      <!--          <el-select filterable remote :remote-method="searchQuestion" v-model="form.questionUUID" placeholder="请选择问题">-->
-      <!--            <el-option v-for="item in questionOptions"-->
-      <!--                       :key="item.value"-->
-      <!--                       :label="item.question"-->
-      <!--                       :value="item.uuid">-->
-      <!--            </el-option>-->
-      <!--          </el-select>-->
-      <!--        </el-form-item>-->
-      <!--        <el-form-item label="选择卡包">-->
-      <!--          <el-select filterable v-model="form.packageUUID" placeholder="请选择卡包">-->
-      <!--            <el-option v-for="item in packageOptions"-->
-      <!--                       :key="item.value"-->
-      <!--                       :label="item.name"-->
-      <!--                       :value="item.uuid">-->
-      <!--            </el-option>-->
-      <!--          </el-select>-->
-      <!--        </el-form-item>-->
-      <!--      </el-form>-->
-      <EditCustomizeCard></EditCustomizeCard>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
+    <el-dialog v-if="open" :title="title" :visible.sync="open"
+               append-to-body destroy-on-close width="800px" @before-close="cancel">
+      <EditCustomizeCard @closeDialog="closeEditCustomizeCard"></EditCustomizeCard>
     </el-dialog >
     <el-dialog title="修改卡片" :visible.sync="showEditor" width="500px" append-to-body destroy-on-close>
       <el-form ref="editForm" :model="editForm" label-width="80px" style="overflow-y: auto; max-height: 420px;padding: 0 20px">
@@ -176,7 +134,7 @@
 
 <script>
 import LabelTag from "@/components/Tag/index.vue";
-import {add, addCardsToPackage, del, getCardInfo, listCards, update} from "@/api/bussiness/flashcard";
+import {addCardsToPackage, del, getCardInfo, listCards, update} from "@/api/bussiness/flashcard";
 import {searchWord} from "@/api/bussiness/word";
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
 import WordView from "@/views/business/language/wordcollection/wordView.vue";
@@ -335,21 +293,6 @@ export default {
         this.title = "修改卡片";
       });
     },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-          } else {
-            add(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
     editSubmit() {
       this.$refs["editForm"].validate(valid => {
         if (valid) {
@@ -416,6 +359,8 @@ export default {
         return "问题卡片"
       } else if (type === 3) {
         return "表达卡片"
+      } else if (type === 4) {
+        return "自定义卡片"
       }
     },
     showPackages(row) {
@@ -442,7 +387,7 @@ export default {
       addCardsToPackage(data).then(response => {
         if (response.data.code === 200) {
           if(response.data.msg){
-            this.$modal.msgWarning(response.data.msg);
+            this.$modal.msgSuccess(response.data.msg);
           } else {
             this.$modal.msgSuccess("添加成功");
           }
@@ -456,6 +401,10 @@ export default {
     cancelCardsToPackage() {
       this.showPackageSelect = false
       this.reset()
+    },
+    closeEditCustomizeCard() {
+      this.open = false
+      this.getList()
     }
   }
 };
