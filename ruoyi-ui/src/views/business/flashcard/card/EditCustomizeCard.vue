@@ -1,6 +1,6 @@
 <script>
 import CkEditor from "@/components/Editor/CKEditor.vue";
-import {batchAddCard} from "../../../../api/bussiness/flashcard";
+import {batchAddCard} from "@/api/bussiness/flashcard";
 
 export default {
   components: {CkEditor},

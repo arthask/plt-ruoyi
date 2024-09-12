@@ -1,20 +1,5 @@
 <template>
   <div class="app-container">
-    <!--    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">-->
-    <!--      <el-form-item label="卡包名" prop="name">-->
-    <!--        <el-input-->
-    <!--          v-model="queryParams.name"-->
-    <!--          placeholder="请输入单词"-->
-    <!--          clearable-->
-    <!--          @keyup.enter.native="handleQuery"-->
-    <!--        />-->
-    <!--      </el-form-item>-->
-    <!--      <el-form-item>-->
-    <!--        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
-    <!--        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
-    <!--      </el-form-item>-->
-    <!--    </el-form>-->
-
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -91,19 +76,9 @@
                append-to-body destroy-on-close width="800px" @before-close="cancel">
       <EditCustomizeCard @closeDialog="closeEditCustomizeCard"></EditCustomizeCard>
     </el-dialog >
-    <el-dialog title="修改卡片" :visible.sync="showEditor" width="500px" append-to-body destroy-on-close>
-      <el-form ref="editForm" :model="editForm" label-width="80px" style="overflow-y: auto; max-height: 420px;padding: 0 20px">
-        <el-form-item label="正面">
-          <el-input type="textarea" v-model="editForm.front" rows="3" resize="none"></el-input>
-        </el-form-item>
-        <el-form-item label="反面" >
-          <el-input type="textarea" v-model="editForm.back"  rows="4" resize="none"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editSubmit">确 定</el-button>
-        <el-button @click="editorCancel">取 消</el-button>
-      </div>
+    <el-dialog v-if="showEditor" :visible.sync="showEditor" append-to-body destroy-on-close
+               title="修改卡片" width="800px">
+      <EditCard :card-uuid="this.cardUUID" @closeEditCard="cancelEdit" @refreshList="getList"></EditCard>
     </el-dialog>
     <el-dialog title="查看卡包"
                v-if="showPackageView"
@@ -134,16 +109,18 @@
 
 <script>
 import LabelTag from "@/components/Tag/index.vue";
-import {addCardsToPackage, del, getCardInfo, listCards, update} from "@/api/bussiness/flashcard";
+import {addCardsToPackage, del, listCards} from "@/api/bussiness/flashcard";
 import {searchWord} from "@/api/bussiness/word";
 import {getPackageList} from "@/api/bussiness/flashcardpackage";
 import WordView from "@/views/business/language/wordcollection/wordView.vue";
 import PackageView from "@/views/business/flashcard/card/PackageView.vue";
 import EditCustomizeCard from "@/views/business/flashcard/card/EditCustomizeCard.vue";
+import EditCard from "@/views/business/flashcard/card/EditCard.vue";
 
 export default {
   name: "card_manage",
   components: {
+    EditCard,
     EditCustomizeCard,
     PackageView,
     WordView,
@@ -181,11 +158,6 @@ export default {
         wordUUID: "",
         questionUUID: "",
         packageUUID: ""
-      },
-      editForm: {
-        uuid: "",
-        front: "",
-        back: ""
       },
       typeOptions: [{
         value: 1,
@@ -250,11 +222,6 @@ export default {
         type: null,
         labelInfos: [],
       };
-      this.editForm = {
-        cardUUID: "",
-        front: "",
-        back: ""
-      }
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -287,27 +254,12 @@ export default {
         this.$modal.msgError("请选择一条记录");
         return
       }
-      getCardInfo(id).then(response => {
-        this.editForm = response.data;
-        this.showEditor = true;
-        this.title = "修改卡片";
-      });
+      this.cardUUID = id[0];
+      this.showEditor = true;
+      this.title = "修改卡片";
     },
-    editSubmit() {
-      this.$refs["editForm"].validate(valid => {
-        if (valid) {
-          this.editForm.uuid = this.ids[0]
-          update(this.editForm).then(res => {
-            this.$modal.msgSuccess("修改成功");
-            this.showEditor = false;
-            this.getList();
-          })
-        }
-      });
-    },
-    editorCancel() {
-      this.showEditor = false;
-      this.reset();
+    cancelEdit() {
+      this.showEditor = false
     },
     /** 删除按钮操作 */
     handleDelete(row) {
