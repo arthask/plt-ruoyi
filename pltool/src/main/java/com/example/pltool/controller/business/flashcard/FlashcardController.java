@@ -3,6 +3,7 @@ package com.example.pltool.controller.business.flashcard;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
 import com.example.pltool.domain.dto.flashcard.card.BatchAddCardDto;
+import com.example.pltool.domain.dto.flashcard.card.CancelAssociationDto;
 import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
 import com.example.pltool.domain.entity.Flashcard;
 import com.example.pltool.service.flashcard.FlashcardService;
@@ -118,5 +119,14 @@ public class FlashcardController extends BaseController {
     public TableDataInfo getPackageInfoOfCard(@RequestParam("cardUUId") String cardUUId) {
         startPage();
         return getDataTable(flashcardService.getPackageInfoOfCard(cardUUId));
+    }
+
+    /**
+     * 卡片关联卡包
+     */
+    @PostMapping("/cancelAssociation2Package")
+    public AjaxResult cancelAssociation2Package(@RequestBody CancelAssociationDto cancelAssociationDto) {
+        cancelAssociationDto.setUserId(getUserId());
+        return flashcardService.cancelAssociation2Package(cancelAssociationDto);
     }
 }
