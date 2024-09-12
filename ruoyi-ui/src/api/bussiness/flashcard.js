@@ -101,3 +101,11 @@ export function getCardListInPackage(params) {
   })
 }
 
+export function cancelAssociation2Package(data) {
+  return request({
+    url: '/flashcard/cancelAssociation2Package',
+    method: 'post',
+    data: data
+  })
+}
+

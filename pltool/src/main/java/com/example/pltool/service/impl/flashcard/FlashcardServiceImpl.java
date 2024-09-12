@@ -1,14 +1,12 @@
 package com.example.pltool.service.impl.flashcard;
 
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.controller.business.constant.enums.CardTypeEnum;
 import com.example.pltool.domain.dto.expression.ExpressionData;
-import com.example.pltool.domain.dto.flashcard.card.AddCardDto;
-import com.example.pltool.domain.dto.flashcard.card.BatchAddCardDto;
-import com.example.pltool.domain.dto.flashcard.card.CardInfo;
-import com.example.pltool.domain.dto.flashcard.card.PackageCardInfo;
+import com.example.pltool.domain.dto.flashcard.card.*;
 import com.example.pltool.domain.dto.flashcard.cardpackage.OperateWordInCollection;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageCollectionData;
 import com.example.pltool.domain.dto.flashcard.cardpackage.PackageInfoDto;
@@ -67,7 +65,6 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
 
     @Autowired
     private ExpressionService expressionService;
-
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -273,6 +270,20 @@ public class FlashcardServiceImpl extends ServiceImpl<FlashcardMapper, Flashcard
         }
         packageCardRefService.saveBatch(needToAddList);
         return AjaxResult.success(true);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult cancelAssociation2Package(CancelAssociationDto cancelAssociationDto) {
+        LambdaQueryWrapper<PackageCardRef> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(PackageCardRef::getCardUuid, cancelAssociationDto.getCardUUId())
+                .in(PackageCardRef::getPackageUuid, cancelAssociationDto.getPackageUUIdList());
+        boolean remove = packageCardRefService.remove(queryWrapper);
+        if (remove) {
+            return AjaxResult.success(true);
+        } else {
+            return AjaxResult.error("取消关联失败");
+        }
     }
 
     private Flashcard buildFlashCard(Long userId, String front, String back,
