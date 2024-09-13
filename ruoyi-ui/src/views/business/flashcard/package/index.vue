@@ -198,6 +198,9 @@ export default {
       }, {
         value: 3,
         label: '表达卡包',
+      }, {
+        value: 4,
+        label: '自定义类型卡包',
       }],
       labelOptions: [],
       labelType: 3,
@@ -335,6 +338,8 @@ export default {
         return "问题卡包"
       } else if (type === 3) {
         return "表达卡包"
+      } else if (type === 4) {
+        return "自定义卡包"
       }
     },
     addCardOfPackage(row) {
