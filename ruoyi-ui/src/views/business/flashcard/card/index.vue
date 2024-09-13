@@ -27,6 +27,12 @@
               :is-toggle="showBack"
             >
             </word-card>
+            <CustomizeCard
+              v-if="packageType === 4"
+              :back="item.back"
+              :front="item.front"
+              :is-toggle="showBack">
+            </CustomizeCard>
           </el-carousel-item>
         </el-carousel>
       </el-col>
@@ -110,14 +116,13 @@
 </template>
 <script>
 import WordCard from './WordCard.vue'
-import {getPackageList} from "@/api/bussiness/flashcardpackage";
-import {getClassifyCount, searchClassifyCard} from "@/api/bussiness/flashcard";
+import {getPackageInfo, getPackageList} from "@/api/bussiness/flashcardpackage";
+import {getCardListInPackage, getClassifyCount, searchClassifyCard} from "@/api/bussiness/flashcard";
 import ExpressionCard from "./ExpressionCard.vue";
-import {getPackageInfo} from "../../../../api/bussiness/flashcardpackage";
-import {getCardListInPackage} from "../../../../api/bussiness/flashcard";
+import CustomizeCard from "./CustomizeCard.vue";
 
 export default {
-  components: {ExpressionCard, WordCard},
+  components: {CustomizeCard, ExpressionCard, WordCard},
   name: "CardIndex",
   data() {
     return {
