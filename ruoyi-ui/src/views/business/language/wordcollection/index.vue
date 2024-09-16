@@ -1,7 +1,8 @@
 <script>
 import {getWordCollection, listWordCollection, updateWordCollection} from "@/api/bussiness/wordcollection";
 import WordView from "@/views/business/language/wordcollection/wordView.vue";
-import WordPanel from "../word/wordPanel.vue";
+import WordPanel from "@/views/business/language/word/wordPanel.vue";
+
 
 export default {
   name: "WordCollectionIndex.vue",

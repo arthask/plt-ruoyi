@@ -100,7 +100,7 @@ import {getOneWord, getOneWordInCollection} from "@/api/bussiness/word";
 import {addUserWord} from "@/api/bussiness/userword";
 import {addRecord} from "@/api/bussiness/record";
 import {getCollectionTotalAndNotStudyNum, getTotalAndNotStudyNum} from "@/api/statistics/statistics";
-import {getReviewWord} from "../../../../api/review/review";
+import {getReviewWord} from "@/api/review/review";
 
 export default {
   name: "WordPanel",

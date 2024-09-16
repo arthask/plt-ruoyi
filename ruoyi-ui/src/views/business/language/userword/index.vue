@@ -132,7 +132,7 @@
 
 <script>
 import {delWord, listWord} from "@/api/bussiness/userword";
-import {getStudyRecordsOfWord} from "../../../../api/bussiness/record";
+import {getStudyRecordsOfWord} from "@/api/bussiness/record";
 
 
 export default {
