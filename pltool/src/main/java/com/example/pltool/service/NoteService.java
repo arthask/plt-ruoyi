@@ -6,6 +6,8 @@ import com.example.pltool.domain.entity.Note;
 import com.example.pltool.domain.vo.NoteInfoVo;
 import com.ruoyi.common.core.domain.AjaxResult;
 
+import java.util.List;
+
 
 /**
  * <p>
@@ -24,5 +26,7 @@ public interface NoteService extends IService<Note> {
     AjaxResult saveOrUpdateNote(NoteDto noteDto);
 
     AjaxResult getNoteInfoByRefUUId(String refUUId);
+
+    AjaxResult removeByUUIdList(List<String> uuidList);
 
 }

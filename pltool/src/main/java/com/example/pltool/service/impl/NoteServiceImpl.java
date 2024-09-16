@@ -108,7 +108,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
             note.setUuid(uuid);
             note.setType(noteDto.getType());
             note.setContent(noteDto.getContent());
-            if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
+            if (StringUtils.isNotBlank(noteDto.getSummary())) {
                 note.setSummary(noteDto.getSummary());
             }
             if (StringUtils.isNotBlank(noteDto.getRefUUId())) {
@@ -125,5 +125,17 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
         lambdaQueryWrapper.eq(Note::getRefUuid, refUUId);
         Note note = getOne(lambdaQueryWrapper);
         return AjaxResult.success(note);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult removeByUUIdList(List<String> uuidList) {
+        LambdaQueryWrapper<Note> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Note::getUuid, uuidList);
+        boolean removeFlag = remove(lambdaQueryWrapper);
+        if (removeFlag) {
+            return AjaxResult.success(true);
+        }
+        return AjaxResult.error("删除失败", false);
     }
 }

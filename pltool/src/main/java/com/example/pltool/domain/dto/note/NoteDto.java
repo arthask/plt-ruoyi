@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 public class NoteDto {
     private String uuid;
     private String title;
+    /**
+     * @see com.example.pltool.controller.business.constant.enums.NoteTypeEnum
+     */
     private Integer type;
     private String content;
     private String refUUId;

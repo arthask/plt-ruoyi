@@ -22,9 +22,19 @@
           plain
           icon="el-icon-plus"
           size="mini"
-          @click="addMyNote"
-          v-hasPermi="['system:note:add']"
-        >新增笔记</el-button>
+          @click="addNormalNote"
+        >新增自定义笔记
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          icon="el-icon-plus"
+          plain
+          size="mini"
+          type="primary"
+          @click="addQuestionNote"
+        >新增问题笔记
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -34,7 +44,6 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:note:remove']"
         >删除</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -52,21 +61,18 @@
             type="text"
             icon="el-icon-search"
             @click="showNoteInfo(scope.row)"
-            v-hasPermi="['system:note:edit']"
           >查看</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="editNote(scope.row)"
-            v-hasPermi="['system:note:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:note:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -81,12 +87,18 @@
     />
 
     <!-- 添加或修改笔记对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="1000px" :destroy-on-close="true">
-      <note-component @closeDialog = "closeMyDialog"/>
+    <el-dialog v-if="open" :before-close="closeQuestionDialog" :destroy-on-close="true" :title="title"
+               :visible.sync="open" width="1000px">
+      <question-note @closeDialog="closeQuestionDialog"/>
+    </el-dialog>
+
+    <el-dialog v-if="showNormalNote" :before-close="closeNormalNoteDialog" :destroy-on-close="true" :title="title"
+               :visible.sync="showNormalNote" width="1000px">
+      <normal-note @closeDialog="closeNormalNoteDialog"/>
     </el-dialog>
 
     <el-dialog v-if="editOpen" :destroy-on-close="true" :title="editTitle" :visible.sync="editOpen" width="800px">
-      <edit-note :note-uuid="noteUUId" @closeDialog="closeMyDialog"/>
+      <edit-note :note-uuid="noteUUId" @closeDialog="closeQuestionDialog"/>
     </el-dialog>
 
     <el-dialog
@@ -99,15 +111,19 @@
 </template>
 
 <script>
-import {addNote, delNote, listNote, updateNote} from "@/api/bussiness/note";
-import NoteComponent from "@/views/business/note/NoteComponent.vue";
+import {delNote, listNote} from "@/api/bussiness/note";
+import NoteComponent from "@/views/business/note/QuestionNote.vue";
+import QuestionNote from "@/views/business/note/QuestionNote.vue";
 import EditNote from "@/views/business/note/EditNote.vue";
 import NoteInfo from "@/views/business/note/NoteInfo.vue";
+import NormalNote from "@/views/business/note/NormalNote.vue";
 
 
 export default {
   name: "Note",
   components: {
+    NormalNote,
+    QuestionNote,
     NoteComponent,
     EditNote,
     NoteInfo
@@ -160,7 +176,8 @@ export default {
       editOpen: false,
       editTitle: "",
       noteUUId: null,
-      noteInfoOpen: false
+      noteInfoOpen: false,
+      showNormalNote: false
     };
   },
   created() {
@@ -209,26 +226,6 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateNote(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addNote(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.uuid || this.ids;
@@ -239,19 +236,27 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    addMyNote() {
+    addQuestionNote() {
       this.reset();
       this.open = true;
-      this.title = "添加笔记";
+      this.title = "添加问题笔记";
     },
-    closeMyDialog() {
+    closeQuestionDialog() {
       this.open = false;
       this.editOpen = false;
       this.getList();
     },
+    addNormalNote() {
+      this.showNormalNote = true;
+      this.title = "添加问题笔记";
+    },
+    closeNormalNoteDialog() {
+      this.showNormalNote = false;
+      this.getList();
+    },
     editNote(row) {
       this.editOpen = true;
-      this.editTitle = "修改笔记"
+      this.editTitle = "修改问题笔记"
       this.noteUUId = row.uuid
     },
     showNoteInfo(row) {
