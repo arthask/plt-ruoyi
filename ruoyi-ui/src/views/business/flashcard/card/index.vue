@@ -115,11 +115,13 @@
   </div>
 </template>
 <script>
-import WordCard from './WordCard.vue'
+
 import {getPackageInfo, getPackageList} from "@/api/bussiness/flashcardpackage";
 import {getCardListInPackage, getClassifyCount, searchClassifyCard} from "@/api/bussiness/flashcard";
-import ExpressionCard from "./ExpressionCard.vue";
-import CustomizeCard from "./CustomizeCard.vue";
+import CustomizeCard from "@/views/business/flashcard/card/CustomizeCard.vue";
+import ExpressionCard from "@/views/business/flashcard/card/ExpressionCard.vue";
+import WordCard from "@/views/business/flashcard/card/WordCard.vue";
+
 
 export default {
   components: {CustomizeCard, ExpressionCard, WordCard},

@@ -7,7 +7,7 @@ import {
   updateExpression
 } from "@/api/bussiness/expression";
 import ExpressionDetail from "@/views/business/expression/ExpressionDetail.vue";
-import {batchAddCard} from "../../../api/bussiness/flashcard";
+import {batchAddCard} from "@/api/bussiness/flashcard";
 
 
 export default {

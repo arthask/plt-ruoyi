@@ -1,7 +1,8 @@
 <script>
 import {listRecord} from "@/api/bussiness/record";
 import {getWordInfo} from "@/api/bussiness/word";
-import WordPanel from "../word/wordPanel.vue";
+import WordPanel from "@/views/business/language/word/wordPanel.vue";
+
 
 export default {
   name: "review",

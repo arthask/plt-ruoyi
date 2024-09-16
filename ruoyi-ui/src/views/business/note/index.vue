@@ -100,9 +100,10 @@
 
 <script>
 import {addNote, delNote, listNote, updateNote} from "@/api/bussiness/note";
-import NoteComponent from "./NoteComponent.vue";
-import EditNote from "./EditNote.vue";
-import NoteInfo from "./NoteInfo.vue";
+import NoteComponent from "@/views/business/note/NoteComponent.vue";
+import EditNote from "@/views/business/note/EditNote.vue";
+import NoteInfo from "@/views/business/note/NoteInfo.vue";
+
 
 export default {
   name: "Note",

@@ -280,8 +280,8 @@ import {getToken} from "@/utils/auth";
 import WordPanel from "@/views/business/language/word/wordPanel.vue";
 import Word2Collection from "@/views/business/language/word/word2Collection.vue";
 import CollectionView from "./CollectionView.vue";
-import {editSentenceOfWord, getSentence} from "../../../../api/bussiness/wordsentence";
-import {getNoteInfoByRefUUId, saveOrUpdateNote} from "../../../../api/bussiness/note";
+import {editSentenceOfWord, getSentence} from "@/api/bussiness/wordsentence";
+import {getNoteInfoByRefUUId, saveOrUpdateNote} from "@/api/bussiness/note";
 import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {
