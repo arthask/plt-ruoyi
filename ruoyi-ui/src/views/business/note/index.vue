@@ -18,7 +18,7 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="warning"
           plain
           icon="el-icon-plus"
           size="mini"
@@ -88,16 +88,17 @@
 
     <!-- 添加或修改笔记对话框 -->
     <el-dialog v-if="open" :before-close="closeQuestionDialog" :destroy-on-close="true" :title="title"
-               :visible.sync="open" width="1000px">
+               :visible.sync="open" width="800px">
       <question-note @closeDialog="closeQuestionDialog"/>
     </el-dialog>
 
     <el-dialog v-if="showNormalNote" :before-close="closeNormalNoteDialog" :destroy-on-close="true" :title="title"
-               :visible.sync="showNormalNote" width="1000px">
+               :visible.sync="showNormalNote" width="800px">
       <normal-note @closeDialog="closeNormalNoteDialog"/>
     </el-dialog>
 
-    <el-dialog v-if="editOpen" :destroy-on-close="true" :title="editTitle" :visible.sync="editOpen" width="800px">
+    <el-dialog v-if="editOpen" :destroy-on-close="true" :title="editTitle" :visible.sync="editOpen"
+               width="800px">
       <edit-note :note-uuid="noteUUId" @closeDialog="closeQuestionDialog"/>
     </el-dialog>
 

@@ -20,7 +20,7 @@ export default {
       answerForm: {
         data: []
       },
-      summaryForm: {
+      note: {
         title: '',
         summary: '',
         uuid: '',
@@ -39,10 +39,10 @@ export default {
   methods: {
     getNoteInfo(noteUuid) {
       getNoteInfo(noteUuid).then(res => {
-        this.summaryForm.title = res.data.note.title;
-        this.summaryForm.summary = res.data.note.summary;
-        this.summaryForm.uuid = res.data.note.uuid;
-        this.summaryForm.content = res.data.note.content;
+        this.note.title = res.data.note.title;
+        this.note.summary = res.data.note.summary;
+        this.note.uuid = res.data.note.uuid;
+        this.note.content = res.data.note.content;
         this.noteType = res.data.note.type
         this.answerForm.data.splice(0, this.answerForm.data.length)
         for (let i = 0; i < res.data.questionList.length; i++) {
@@ -61,7 +61,7 @@ export default {
   <div>
     <div class="ck-content">
       <div class="title">
-        <h1>{{ this.summaryForm.title }}</h1>
+        <h1>{{ this.note.title }}</h1>
       </div>
       <div v-if="noteType===0">
         <h3>问题</h3>
@@ -76,12 +76,12 @@ export default {
           </el-row>
         </div>
       </div>
-      <div v-if="noteType===1">
-        <div v-html="this.summaryForm.content"></div>
+      <div v-if="noteType===1 || noteType===2">
+        <div v-html="this.note.content"></div>
       </div>
-      <div v-if="this.summaryForm.summary">
+      <div v-if="this.note.summary">
         <h3>总结</h3>
-        <div v-html="this.summaryForm.summary"></div>
+        <div v-html="this.note.summary"></div>
       </div>
     </div>
   </div>
