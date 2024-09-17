@@ -170,7 +170,7 @@ export default {
     removeDomain(item) {
       if (this.dynamicValidateForm.questions.length === 1) {
         this.$notify({
-          type: "success",
+          type: "warning",
           message: "只有一个了，不能删除"
         });
         return;
@@ -235,59 +235,49 @@ export default {
       </el-row>
     </el-header>
     <el-main>
-      <el-row :gutter="20" type="flex" justify="center" v-show="showStep2">
-        <el-col :span="3"><h3>问题列表</h3></el-col>
-        <el-col :span="17"></el-col>
+      <el-row v-show="showStep2" :gutter="20">
+        <el-col><h3>问题列表</h3></el-col>
       </el-row>
-      <el-row :gutter="20" type="flex" justify="center" v-show="showStep3">
-        <el-col :span="3"><h3>详细列表</h3></el-col>
-        <el-col :span="17"></el-col>
+      <el-row v-show="showStep3" :gutter="20">
+        <el-col><h3>详细列表</h3></el-col>
       </el-row>
-      <el-form :model="summaryForm" ref="summaryForm1" label-width="115px" v-show="showStep1"
-               title="标题"
-      >
-        <el-form-item
-          prop="title"
-          :label="`标题`"
-          :rules="{required: true, message: '问题不能为空', trigger: 'blur'}"
-        >
-          <el-row :gutter="20" type="flex" justify="center">
-            <el-col :span="16">
+      <el-row v-show="showStep1" :gutter="20">
+        <el-col :span="18">
+          <el-form ref="summaryForm1" :model="summaryForm" label-width="115px" title="标题">
+            <el-form-item
+              :label="`标题`" :rules="{required: true, message: '问题不能为空', trigger: 'blur'}"
+              prop="title">
               <el-input v-model="summaryForm.title"></el-input>
-            </el-col>
-            <el-col :span="2">
-              <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
-            </el-col>
-            <el-col :span="2"></el-col>
-          </el-row>
-        </el-form-item>
-      </el-form>
-      <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="115px" v-show="showStep2"
-               title="问题列表">
-        <el-form-item
-          v-for="(question, index) in dynamicValidateForm.questions"
-          :prop="'questions.'+index+'.value'"
-          :label="'问题'"
-          :rules="{required: true, message: '问题不能为空', trigger: 'blur'}"
-        >
-          <el-row :gutter="20" type="flex" justify="center">
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="4">
+          <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+        </el-col>
+      </el-row>
+      <el-row v-show="showStep2" :gutter="20">
+        <el-form ref="dynamicValidateForm" :model="dynamicValidateForm" label-width="115px"
+                 title="问题列表">
+          <el-form-item
+            v-for="(question, index) in dynamicValidateForm.questions"
+            :label="'问题'"
+            :prop="'questions.'+index+'.value'"
+            :rules="{required: true, message: '问题不能为空', trigger: 'blur'}"
+          >
             <el-col :span="16">
               <el-input v-model="question.value"></el-input>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-button @click.prevent="removeDomain(question)">删除</el-button>
               <el-button @click="addDomain">新增</el-button>
             </el-col>
-            <el-col :span="2"></el-col>
-          </el-row>
-        </el-form-item>
+          </el-form-item>
+        </el-form>
 
-        <el-form-item>
-          <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
-      <el-row :gutter="20" type="flex" justify="center">
-        <el-col :span="8">
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col>
           <el-form :label-position="labelPosition" label-width="100px" :model="answerForm" ref="answerForm"
                    v-show="showStep3">
             <el-form-item v-for="(data, index) in answerForm.data"
@@ -295,7 +285,7 @@ export default {
                           :label="data.question"
                           :key="data.key"
                           :rules="{required: true, message: '答案不能为空', trigger: 'blur'}">
-<!--              <editor class="bb" v-model="data.answer" :min-height="192"/>-->
+              <!--              <editor class="bb" v-model="data.answer" :min-height="192"/>-->
               <ck-editor class="bb" v-model="data.answer" :min-height="192"></ck-editor>
             </el-form-item>
             <el-form-item>
@@ -303,14 +293,13 @@ export default {
             </el-form-item>
           </el-form>
         </el-col>
-        <el-col :span="12"></el-col>
       </el-row>
-      <el-row :gutter="20" type="flex" justify="center">
-        <el-col :span="8">
-          <el-form :label-position="labelPosition" label-width="100px" :model="summaryForm" v-show="showStep4"
-                   ref="summaryForm2">
+      <el-row :gutter="20">
+        <el-col>
+          <el-form v-show="showStep4" ref="summaryForm2"
+                   :label-position="labelPosition" :model="summaryForm" label-width="100px">
             <el-form-item label="总结" prop="summary">
-<!--              <editor class="bb" v-model="summaryForm.summary" :min-height="192"/>-->
+              <!--              <editor class="bb" v-model="summaryForm.summary" :min-height="192"/>-->
               <ck-editor class="bb" v-model="summaryForm.summary" :min-height="192"></ck-editor>
             </el-form-item>
             <el-form-item>
@@ -318,7 +307,6 @@ export default {
             </el-form-item>
           </el-form>
         </el-col>
-        <el-col :span="12"></el-col>
       </el-row>
     </el-main>
     <el-footer>
@@ -350,6 +338,5 @@ export default {
 }
 
 .bb {
-  width: 800px;
 }
 </style>
