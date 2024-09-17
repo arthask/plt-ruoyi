@@ -85,8 +85,8 @@ public class NoteController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:note:remove')")
     @Log(title = "笔记", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(newNoteService.removeBatchByIds(Arrays.asList(ids)));
+    public AjaxResult remove(@PathVariable String[] ids) {
+        return newNoteService.removeByUUIdList(Arrays.asList(ids));
     }
 
     /**

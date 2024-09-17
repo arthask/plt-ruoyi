@@ -54,19 +54,6 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    removeDomain(item) {
-      if (this.dynamicValidateForm.questions.length === 1) {
-        this.$notify({
-          type: "success",
-          message: "只有一个了，不能删除"
-        });
-        return;
-      }
-      const index = this.dynamicValidateForm.questions.indexOf(item);
-      if (index !== -1) {
-        this.dynamicValidateForm.questions.splice(index, 1)
-      }
-    },
     closeDialog() {
       this.$emit("closeDialog")
     },
