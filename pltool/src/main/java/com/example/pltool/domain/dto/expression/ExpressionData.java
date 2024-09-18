@@ -25,4 +25,6 @@ public class ExpressionData{
      * 具体表达详情
      */
     private List<ExpressionDetailData> expressionDetailData;
+
+    private List<BatchAddExpressionDto> batchAddExpressionDtoList;
 }

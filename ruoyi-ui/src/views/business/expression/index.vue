@@ -55,7 +55,9 @@ export default {
       showDialog: false,
       showHistory: false,
       expressionUUID: '',
-      details: []
+      details: [],
+      showBatchAdd: false,
+      multiExpressionList: []
     };
   },
   created() {
@@ -253,6 +255,33 @@ export default {
           this.$modal.msgError("生成卡片失败！");
         }
       })
+    },
+    handleBatchAdd() {
+      this.showBatchAdd = true
+    },
+    handleExpressionAdd() {
+      this.multiExpressionList.push({
+        content: "",
+        expression: "",
+      },)
+    },
+    removeExpression(index) {
+      this.multiExpressionList.splice(index, 1)
+    },
+    submitBatchExpression() {
+      let params = {
+        batchAddExpressionDtoList: this.multiExpressionList
+      }
+      addExpression(params).then(res => {
+        if (res.data === true) {
+          this.$modal.msgSuccess("添加成功");
+          this.showDialog = false
+          this.reset()
+          this.getList()
+        } else {
+          this.$modal.msgError("添加失败");
+        }
+      })
     }
   }
 }
@@ -278,12 +307,22 @@ export default {
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="success"
           plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
         >新增
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          icon="el-icon-plus"
+          plain
+          size="mini"
+          type="primary"
+          @click="handleBatchAdd"
+        >批量新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
@@ -375,7 +414,6 @@ export default {
                       label="表达">
           <el-input type="textarea" v-model="item.content" rows="4" resize="none"></el-input>
         </el-form-item>
-
       </el-form>
       <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
         <el-col :span="10"></el-col>
@@ -392,6 +430,33 @@ export default {
       :before-close="closeHistory"
     >
       <expression-detail :items="details"></expression-detail>
+    </el-dialog>
+    <el-dialog v-if="showBatchAdd" :center="true" :destroy-on-close="true" :visible.sync="showBatchAdd">
+      <el-row justify="start" type="flex">
+        <el-button style="margin-top: 10px" @click.prevent="handleExpressionAdd">添加</el-button>
+      </el-row>
+      <el-row v-for="(item,index) in multiExpressionList" :key="index"
+              :gutter="20">
+        <el-col :span="10">
+          <el-input v-model="item.senderContent" maxlength="100" placeholder="想表达" resize="none"
+                    rows="2" show-word-limit
+                    style="margin-top: 10px" type="textarea"></el-input>
+        </el-col>
+        <el-col :span="10">
+          <el-input v-model="item.reply" maxlength="100" placeholder="如何说" resize="none"
+                    rows="2" show-word-limit
+                    style="margin-top: 10px" type="textarea"></el-input>
+        </el-col>
+        <el-col :span="4">
+          <el-button style="margin-top: 10px" @click.prevent="removeExpression(index)">删除</el-button>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" justify="end" style="margin-top: 20px" type="flex">
+        <el-col :span="10"></el-col>
+        <el-col :span="4">
+          <el-button type="primary" @click="submitBatchExpression">提交</el-button>
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>
