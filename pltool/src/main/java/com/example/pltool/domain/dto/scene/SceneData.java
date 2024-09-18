@@ -1,7 +1,10 @@
 package com.example.pltool.domain.dto.scene;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class SceneData {
     /**
      * uuid
@@ -18,36 +21,9 @@ public class SceneData {
 
     private List<DialogueData> dialogueDataList;
 
-    public String getName() {
-        return name;
-    }
+    private String introduce;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String studyInfo;
 
-    public List<DialogueData> getDialogueDataList() {
-        return dialogueDataList;
-    }
-
-    public void setDialogueDataList(List<DialogueData> dialogueDataList) {
-        this.dialogueDataList = dialogueDataList;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public SceneData setUuid(String uuid) {
-        this.uuid = uuid;
-        return this;
-    }
+    private String summary;
 }

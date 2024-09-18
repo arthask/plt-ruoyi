@@ -1,7 +1,6 @@
 package com.example.pltool.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.example.pltool.domain.dto.scene.DialogueData;
 import com.example.pltool.domain.entity.DialogueScene;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,7 +14,7 @@ import java.util.List;
  * </p>
  *
  * @author author
- * @since 2024-06-10
+ * @since 2024-09-18
  */
 @Mapper
 public interface DialogueSceneMapper extends BaseMapper<DialogueScene> {

@@ -1,12 +1,24 @@
 <template>
-  <div style="overflow-y: auto; max-height: 450px;padding: 0 20px">
+  <div style="padding: 0 20px">
+    <div class="ck-content">
+      <h3 class="bold-text">背景介绍</h3>
+      <div v-html="this.sceneData.introduce"></div>
+      <el-divider></el-divider>
+      <h3 class="bold-text">学习内容</h3>
+      <div v-html="this.sceneData.studyInfo"></div>
+      <el-divider></el-divider>
+      <h3 class="bold-text">总结</h3>
+      <div v-html="this.sceneData.summary"></div>
+    </div>
+    <el-divider></el-divider>
+    <h3 class="title bold-text">对话内容</h3>
     <el-row :gutter="20" type="flex" justify="end">
       <el-col :span="10"></el-col>
       <el-col :span="4">
         <el-button type="primary" @click="autoPlay">自动播放</el-button>
       </el-col>
     </el-row>
-    <div v-for="(item, index) in contentList"
+    <div v-for="(item, index) in sceneData.dialogueDataList"
          :key="item.uuid"
          style="margin-top: 10px">
       <el-row :gutter="20" type="flex" justify="space-around">
@@ -36,12 +48,12 @@
 
 export default {
   props: {
-    diagContentList: Array
+    sceneData: Object
   },
   watch: {
-    diagContentList(newValue) {
+    sceneData(newValue) {
       if (newValue) {
-        this.contentList = newValue
+        this.sceneData = newValue
       }
     }
   },
@@ -52,16 +64,15 @@ export default {
   computed: {
     getAllContent() {
       let allContent = "";
-      for (let i = 0; i < this.contentList.length; i++) {
-        allContent += this.contentList[i].senderContent
-        allContent += this.contentList[i].reply
+      for (let i = 0; i < this.sceneData.dialogueDataList.length; i++) {
+        allContent += this.sceneData.dialogueDataList[i].senderContent
+        allContent += this.sceneData.dialogueDataList[i].reply
       }
       return allContent;
     }
   },
   data() {
     return {
-      contentList: []
     }
   },
   methods: {
@@ -109,5 +120,14 @@ export default {
 .chat-bubble-right:hover {
   cursor: pointer; /* 鼠标样式变为手型 */
   transform: scale(1.1); /* 放大效果 */
+}
+
+.title {
+  text-align: center;
+  padding-bottom: 10px
+}
+
+.bold-text {
+  font-weight: bold;
 }
 </style>

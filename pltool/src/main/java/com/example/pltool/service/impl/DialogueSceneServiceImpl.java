@@ -13,7 +13,6 @@ import com.example.pltool.service.DialogueSceneRefService;
 import com.example.pltool.service.DialogueSceneService;
 import com.example.pltool.service.DialogueService;
 import com.ruoyi.common.utils.StringUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +50,7 @@ public class DialogueSceneServiceImpl extends ServiceImpl<DialogueSceneMapper, D
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Map<String, Object> addDialogueScene(SceneData sceneData) {
-        if (StringUtils.isEmpty(sceneData.getName())
-                || CollectionUtil.isEmpty(sceneData.getDialogueDataList())) {
+        if (StringUtils.isEmpty(sceneData.getName())) {
             throw new IllegalArgumentException("必填参数为空");
         }
         Map<String, Object> resultMap = new HashMap<>();
@@ -60,11 +58,22 @@ public class DialogueSceneServiceImpl extends ServiceImpl<DialogueSceneMapper, D
         // 先插入场景，再新增对话
         DialogueScene dialogueScene = new DialogueScene();
         dialogueScene.setName(sceneData.getName());
+        if (StringUtils.isNotBlank(sceneData.getIntroduce())) {
+            dialogueScene.setIntroduce(sceneData.getIntroduce());
+        }
+        if (StringUtils.isNotBlank(sceneData.getStudyInfo())) {
+            dialogueScene.setStudyInfo(sceneData.getStudyInfo());
+        }
         dialogueScene.setUserId(sceneData.getUserId());
         String sceneUUID = UUID.randomUUID().toString().replace("-", "");
         dialogueScene.setUuid(sceneUUID);
         int affectRow = getBaseMapper().insert(dialogueScene);
         if (affectRow > 0) {
+            if (CollectionUtils.isEmpty(sceneData.getDialogueDataList())) {
+                resultMap.put(IS_SUCCESS, Boolean.TRUE);
+                resultMap.put(NOTE_UUID, sceneUUID);
+                return resultMap;
+            }
             List<Dialogue> addDataList = new ArrayList<>();
             List<DialogueSceneRef> dialogueSceneRefList = new ArrayList<>();
             sceneData.getDialogueDataList().forEach(e -> {
@@ -99,11 +108,27 @@ public class DialogueSceneServiceImpl extends ServiceImpl<DialogueSceneMapper, D
     @Override
     public Boolean updateDialogueScene(SceneData sceneData) {
         DialogueScene dialogueSceneFromBb = getDialogueSceneByUUID(sceneData.getUuid());
+        boolean updateSceneFlag = false;
+        DialogueScene updateDialogueScene = new DialogueScene();
         // 修改场景名称
         if (StringUtils.isNoneBlank(sceneData.getName())
                 && !dialogueSceneFromBb.getName().equals(sceneData.getName())) {
-            DialogueScene updateDialogueScene = new DialogueScene();
             updateDialogueScene.setName(sceneData.getName());
+            updateSceneFlag = true;
+        }
+        if (StringUtils.isNotBlank(sceneData.getIntroduce())) {
+            updateDialogueScene.setIntroduce(sceneData.getIntroduce());
+            updateSceneFlag = true;
+        }
+        if (StringUtils.isNotBlank(sceneData.getStudyInfo())) {
+            updateDialogueScene.setStudyInfo(sceneData.getStudyInfo());
+            updateSceneFlag = true;
+        }
+        if (StringUtils.isNotBlank(sceneData.getSummary())) {
+            updateDialogueScene.setSummary(sceneData.getSummary());
+            updateSceneFlag = true;
+        }
+        if (updateSceneFlag) {
             updateDialogueScene.setUpdateTime(LocalDateTime.now());
             updateDialogueScene.setId(dialogueSceneFromBb.getId());
             updateById(updateDialogueScene);
@@ -195,6 +220,9 @@ public class DialogueSceneServiceImpl extends ServiceImpl<DialogueSceneMapper, D
         Assert.notNull(dialogueScene, "请求参数错误");
         SceneData sceneData = new SceneData();
         sceneData.setName(dialogueScene.getName());
+        sceneData.setIntroduce(dialogueScene.getIntroduce());
+        sceneData.setStudyInfo(dialogueScene.getStudyInfo());
+        sceneData.setSummary(dialogueScene.getSummary());
         sceneData.setUuid(dialogueScene.getUuid());
         List<DialogueData> dialoguesOfScene = dialogueSceneMapper.getDialoguesOfScene(sceneUUID);
         if (!CollectionUtils.isEmpty(dialoguesOfScene)) {

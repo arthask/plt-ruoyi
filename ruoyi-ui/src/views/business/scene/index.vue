@@ -18,13 +18,13 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="success"
           plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:scene:add']"
-        >新增
+        >新增场景
         </el-button>
       </el-col>
       <el-col :span="1.5">
@@ -62,7 +62,7 @@
             icon="el-icon-chat-line-round"
             @click="beginConversation(scope.row)"
             v-hasPermi="['system:scene:edit']"
-          >对话
+          >查看详情
           </el-button>
           <el-button
             size="mini"
@@ -84,13 +84,16 @@
       @pagination="getList"
     />
     <el-dialog :title="title"
-               :visible.sync="showConversation" height="500px" width="800px"
+               v-if="showConversation"
+               :fullscreen="true"
+               :visible.sync="showConversation" width="800px"
                :center="true"
                :destroy-on-close="true">
-      <conversation :diag-content-list="contentList"></conversation>
+      <conversation :sceneData="sceneData"></conversation>
     </el-dialog>
     <el-dialog :title="title"
-               :visible.sync="showEditScene" width="800px" height="500px"
+               v-if="showEditScene"
+               :visible.sync="showEditScene" width="800px"
                append-to-body
                :destroy-on-close="true">
       <edit-scene :sceneAndDialoguesData="sceneData" @closeAdd="closeAdd"></edit-scene>
@@ -99,7 +102,7 @@
 </template>
 
 <script>
-import {listScene, getScene, delScene, addScene, updateScene} from "@/api/conversation/scene";
+import {delScene, getScene, listScene} from "@/api/conversation/scene";
 import EditScene from "@/views/business/scene/EditScene.vue";
 import Conversation from "@/views/business/scene/Conversation.vue";
 
@@ -156,16 +159,8 @@ export default {
       sceneData: {
         name: '',
         uuid: '',
-        dialogueDataList: [
-          {
-            senderContent: "",
-            reply: "",
-            uuid: null,
-            sortNum: 1
-          }
-        ]
+        dialogueDataList: []
       },
-      contentList:[]
     };
   },
   created() {
@@ -219,14 +214,10 @@ export default {
       this.sceneData = {
         name: '',
         uuid: '',
-        dialogueDataList: [
-          {
-            senderContent: "",
-            reply: "",
-            uuid: null,
-            sortNum: 1
-          }
-        ]
+        introduce: '',
+        studyInfo: '',
+        summary: '',
+        dialogueDataList: []
       }
     },
     /** 修改按钮操作 */
@@ -260,14 +251,12 @@ export default {
     },
     beginConversation(row) {
       this.showConversation = true;
-      this.title = "对话详情";
+      this.title = "详情";
       let params = {
         sceneUUID: row.uuid
       }
       getScene(params).then(response => {
-        if(response.data.dialogueDataList && response.data.dialogueDataList.length > 0) {
-          this.contentList = response.data.dialogueDataList;
-        }
+        this.sceneData = response.data;
       });
     },
     closeConversation() {
