@@ -1,11 +1,18 @@
 <template>
   <div style="overflow-y: auto; max-height: 450px;padding: 0 20px">
-    <el-form ref="form" :model="sceneData" label-width="80px" v-if="showName">
-      <el-row>
-        <el-form-item label="场景名称">
-          <el-input v-model="sceneData.name"></el-input>
-        </el-form-item>
-      </el-row>
+    <el-form v-if="showName" ref="form" :model="sceneData" label-position="top" label-width="80px">
+      <el-form-item label="场景名称" prop="name">
+        <el-input v-model="sceneData.name"></el-input>
+      </el-form-item>
+      <el-form-item label="背景介绍" prop="introduce">
+        <ck-editor v-model="sceneData.introduce" :min-height="192" class="bb"></ck-editor>
+      </el-form-item>
+      <el-form-item label="学习内容" prop="studyInfo">
+        <ck-editor v-model="sceneData.studyInfo" :min-height="192" class="bb"></ck-editor>
+      </el-form-item>
+      <el-form-item label="总结" prop="summary">
+        <ck-editor v-model="sceneData.summary" :min-height="192" class="bb"></ck-editor>
+      </el-form-item>
     </el-form>
     <el-row :gutter="20" type="flex" justify="center">
       <h2>对话设置</h2>
@@ -16,12 +23,12 @@
     <el-row :gutter="20" v-for="(item,index) in contentList"
             :key="index">
       <el-col :span="10">
-        <el-input type="textarea" rows="2" maxlength="100"  show-word-limit
+        <el-input maxlength="100" rows="2" show-word-limit type="textarea"
                   resize="none" style="margin-top: 10px"
                   v-model="item.senderContent" placeholder="请输入问题"></el-input>
       </el-col>
       <el-col :span="10">
-        <el-input type="textarea" rows="2" maxlength="100"  show-word-limit
+        <el-input maxlength="100" rows="2" show-word-limit type="textarea"
                   resize="none" style="margin-top: 10px"
                   v-model="item.reply" placeholder="请输入回复"></el-input>
       </el-col>
@@ -41,6 +48,7 @@
 
 import {VueDraggable} from "vue-draggable-plus";
 import {addDialogueScene, updateScene} from "@/api/conversation/scene"
+import CkEditor from "@/components/Editor/CKEditor.vue";
 
 export default {
   props: {
@@ -66,29 +74,24 @@ export default {
   },
   computed: {
     showName() {
-      if (this.sceneData.uuid) {
-        return true
-      }
+      return true
     }
   },
   components: {
+    CkEditor,
     VueDraggable
   },
   data() {
     return {
       sceneData: {
         name: '',
+        introduce: '',
+        studyInfo: '',
+        summary: '',
         uuid: '',
         dialogueDataList: []
       },
-      contentList: [
-        {
-          senderContent: "",
-          reply: "",
-          sortNum: null,
-          uuid: null
-        },
-      ]
+      contentList: []
     }
   },
   methods: {
@@ -96,7 +99,7 @@ export default {
       for (let i = 0; i < this.contentList.length; i++) {
         this.contentList[i].sortNum = i + 1
       }
-      var validList = this.contentList.filter(e => {
+      const validList = this.contentList.filter(e => {
         if (e.senderContent || e.reply) {
           return true;
         }
@@ -105,6 +108,9 @@ export default {
       if (this.sceneData.uuid) {
         const data = {
           name: this.sceneData.name,
+          introduce: this.sceneData.introduce,
+          studyInfo: this.sceneData.studyInfo,
+          summary: this.sceneData.summary,
           uuid: this.sceneData.uuid,
           dialogueDataList: validList
         };
@@ -115,7 +121,10 @@ export default {
         })
       } else {
         const data = {
-          name: validList[0].senderContent,
+          name: this.sceneData.name,
+          introduce: this.sceneData.introduce,
+          studyInfo: this.sceneData.studyInfo,
+          summary: this.sceneData.summary,
           dialogueDataList: validList
         }
         addDialogueScene(data).then(res => {
@@ -126,7 +135,6 @@ export default {
       }
     },
     onEnd(event) {
-      console.log(this.contentList)
       for (let i = 0; i < this.contentList.length; i++) {
         this.contentList[i].sortNum = i + 1;
       }
@@ -140,14 +148,13 @@ export default {
       },)
     },
     remove(index) {
-      if (this.contentList.length === 1) {
-        this.$modal.msgWarning("再删除就没有了呢");
-        return
-      }
       this.contentList.splice(index, 1)
     },
     reset() {
       this.sceneData.name = null
+      this.sceneData.introduce = ''
+      this.sceneData.studyInfo = ''
+      this.sceneData.summary = ''
       this.uuid = null
       this.dialogueDataList = []
       this.contentList = [{

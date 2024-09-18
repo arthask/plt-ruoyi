@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author author
- * @since 2024-06-10
+ * @since 2024-09-18
  */
 @Getter
 @Setter
@@ -42,6 +42,24 @@ public class DialogueScene implements Serializable {
      */
     @TableField("name")
     private String name;
+
+    /**
+     * 场景介绍
+     */
+    @TableField("introduce")
+    private String introduce;
+
+    /**
+     * 总结
+     */
+    @TableField("summary")
+    private String summary;
+
+    /**
+     * 需要学习的信息
+     */
+    @TableField("study_info")
+    private String studyInfo;
 
     @TableField("user_id")
     private Long userId;
