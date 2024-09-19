@@ -1,7 +1,9 @@
 package com.example.pltool.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.pltool.domain.dto.expression.BatchAddExpressionDto;
 import com.example.pltool.domain.dto.expression.ExpressionData;
 import com.example.pltool.domain.dto.expression.ExpressionDetailData;
 import com.example.pltool.domain.entity.Expression;
@@ -80,6 +82,51 @@ public class ExpressionServiceImpl extends ServiceImpl<ExpressionMapper, Express
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    public boolean batchAddExpression(ExpressionData expressionData) {
+        if (CollectionUtils.isEmpty(expressionData.getBatchAddExpressionDtoList())) {
+            return false;
+        }
+        List<Expression> neddAddExpressionList = new ArrayList<>();
+        List<ExpressionDetail> expressionDetails = new ArrayList<>();
+        List<ExpressionDetailRef> expressionDetailRefs = new ArrayList<>();
+        Map<String, String> uuidMap = new HashMap<>();
+        for (BatchAddExpressionDto item : expressionData.getBatchAddExpressionDtoList()) {
+            String expressionUUID = UUID.randomUUID().toString().replace("-", "");
+            Expression expression = new Expression();
+            expression.setUuid(expressionUUID)
+                    .setContent(item.getContent())
+                    .setUserId(expressionData.getUserId());
+            neddAddExpressionList.add(expression);
+
+            ExpressionDetail expressionDetail = new ExpressionDetail();
+            String detailUUID = UUID.randomUUID().toString().replace("-", "");
+            expressionDetail.setUuid(detailUUID)
+                    .setUserId(expressionData.getUserId())
+                    .setContentDetail(item.getExpression());
+            expressionDetails.add(expressionDetail);
+            uuidMap.put(expressionUUID, detailUUID);
+        }
+        if (!CollectionUtils.isEmpty(neddAddExpressionList)) {
+            this.saveBatch(neddAddExpressionList);
+        }
+        if (!CollectionUtils.isEmpty(expressionDetails)) {
+            expressionDetailService.saveBatch(expressionDetails);
+        }
+        if (!CollectionUtils.isEmpty(uuidMap)) {
+            uuidMap.forEach((k, v) -> {
+                ExpressionDetailRef expressionDetailRef = new ExpressionDetailRef();
+                expressionDetailRef.setUuid(UUID.randomUUID().toString().replace("-", ""))
+                        .setExpressionUuid(k)
+                        .setExpressionDetailUuid(v);
+                expressionDetailRefs.add(expressionDetailRef);
+            });
+            expressionDetailRefService.saveBatch(expressionDetailRefs);
+        }
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateExpressionData(ExpressionData expressionData) {
         Expression expression = getExpressionByUUID(expressionData.getUuid());
         if (Objects.isNull(expression)) {
@@ -127,9 +174,26 @@ public class ExpressionServiceImpl extends ServiceImpl<ExpressionMapper, Express
         return getBaseMapper().getInfo(expressionUUID);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public int removeExpressionData(String[] ids) {
-        return 0;
+    public boolean removeExpressionData(List<String> uuidList) {
+        LambdaQueryWrapper<ExpressionDetailRef> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(ExpressionDetailRef::getExpressionUuid, uuidList);
+        List<ExpressionDetailRef> expressionDetailRefList = expressionDetailRefService.list(queryWrapper);
+        if (CollectionUtils.isEmpty(expressionDetailRefList)) {
+            return true;
+        }
+        List<String> expressionDetialUUIdList = expressionDetailRefList.stream()
+                .map(ExpressionDetailRef::getExpressionDetailUuid)
+                .collect(Collectors.toList());
+        LambdaQueryWrapper<Expression> expressionQueryWrapper = new LambdaQueryWrapper<>();
+        expressionQueryWrapper.in(Expression::getUuid, uuidList);
+        remove(expressionQueryWrapper);
+        LambdaQueryWrapper<ExpressionDetail> expressionDetailQueryWrapper = new LambdaQueryWrapper<>();
+        expressionDetailQueryWrapper.in(ExpressionDetail::getUuid, expressionDetialUUIdList);
+        expressionDetailService.remove(expressionDetailQueryWrapper);
+        expressionDetailRefService.remove(queryWrapper);
+        return true;
     }
 
     @Override

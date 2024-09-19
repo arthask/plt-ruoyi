@@ -85,7 +85,7 @@
     />
     <el-dialog :title="title"
                v-if="showConversation"
-               :fullscreen="true"
+               :fullscreen="false"
                :visible.sync="showConversation" width="800px"
                :center="true"
                :destroy-on-close="true">

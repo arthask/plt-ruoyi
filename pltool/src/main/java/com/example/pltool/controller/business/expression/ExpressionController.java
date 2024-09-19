@@ -7,11 +7,11 @@ import com.example.pltool.service.ExpressionService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,6 +53,15 @@ public class ExpressionController extends BaseController {
     }
 
     /**
+     * 新增
+     */
+    @PostMapping("/batchAddExpression")
+    public AjaxResult batchAddExpression(@RequestBody ExpressionData expressionData) {
+        expressionData.setUserId(getUserId());
+        return AjaxResult.success(expressionService.batchAddExpression(expressionData));
+    }
+
+    /**
      * 修改
      */
     @PostMapping("/update")
@@ -72,8 +81,8 @@ public class ExpressionController extends BaseController {
     /**
      * 删除
      */
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable String[] ids) {
-        return AjaxResult.success(expressionService.removeExpressionData(ids));
+    @DeleteMapping("/{uuidList}")
+    public AjaxResult remove(@PathVariable String[] uuidList) {
+        return AjaxResult.success(expressionService.removeExpressionData(Arrays.asList(uuidList)));
     }
 }

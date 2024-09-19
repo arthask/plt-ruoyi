@@ -38,8 +38,9 @@
     </el-row>
     <el-row style="margin-top: 20px" :gutter="20" type="flex" justify="end">
       <el-col :span="10"></el-col>
-      <el-col :span="4">
+      <el-col :span="6">
         <el-button type="primary" @click="submit">提交</el-button>
+        <el-button type="danger" @click="cancel">取消</el-button>
       </el-col>
     </el-row>
   </div>
@@ -163,6 +164,9 @@ export default {
         sortNum: null,
         uuid: null
       }]
+    },
+    cancel() {
+      this.$emit("closeAdd")
     }
   }
 }
