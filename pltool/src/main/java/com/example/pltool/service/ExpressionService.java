@@ -19,11 +19,13 @@ public interface ExpressionService extends IService<Expression> {
 
     boolean addExpressionData(ExpressionData expressionData);
 
+    boolean batchAddExpression(ExpressionData expressionData);
+
     boolean updateExpressionData(ExpressionData expressionData);
 
     ExpressionData getInfo(String expressionUUID);
 
-    int removeExpressionData(String[] ids);
+    boolean removeExpressionData(List<String> uuidList);
 
     List<ExpressionData> getExpressionListByUUIds(List<String> uuidList);
 }

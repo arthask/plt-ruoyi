@@ -36,6 +36,15 @@ export function addExpression(data) {
   })
 }
 
+// 批量新增对话场景
+export function batchAddExpression(data) {
+  return request({
+    url: '/expression/batchAddExpression',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改对话场景
 export function updateExpression(data) {
   return request({
