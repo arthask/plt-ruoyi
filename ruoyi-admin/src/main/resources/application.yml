@@ -126,4 +126,15 @@ xss:
   excludes: /system/notice,/system/question,/system/note/updateNoteInfo,/system/note/saveOrUpdateNote
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
-
+file:
+  storage:
+    use: true
+    local:
+      basePath: ${LOCAL_FILE_BASE_PATH}
+      domain: ${LOCAL_FILE_DOMAIN}
+    s3:
+      endpoint: ${S3_ENDPOINT}
+      domain: ${S3_DOMAIN}
+      bucket: ${S3_BUCKET}
+      accessKey: ${S3_ACCESS_KEY}
+      accessSecret: ${S3_ACCESS_SECRET}

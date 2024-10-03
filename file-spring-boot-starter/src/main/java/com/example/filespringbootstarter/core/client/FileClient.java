@@ -1,12 +1,6 @@
-package com.ruoyi.common.core.fileclient;
+package com.example.filespringbootstarter.core.client;
 
 public interface FileClient {
-    /**
-     * 获得客户端编号
-     *
-     * @return 客户端编号
-     */
-    Long getId();
 
     /**
      * 上传文件

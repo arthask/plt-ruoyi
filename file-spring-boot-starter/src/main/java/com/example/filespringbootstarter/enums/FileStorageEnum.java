@@ -1,18 +1,19 @@
-package com.ruoyi.common.enums;
+package com.example.filespringbootstarter.enums;
 
 import cn.hutool.core.util.ArrayUtil;
-import com.ruoyi.common.core.fileclient.FileClient;
-import com.ruoyi.common.core.fileclient.FileClientConfig;
-import com.ruoyi.common.core.fileclient.local.LocalFileClient;
-import com.ruoyi.common.core.fileclient.local.LocalFileClientConfig;
-import com.ruoyi.common.core.fileclient.s3.S3FileClient;
-import com.ruoyi.common.core.fileclient.s3.S3FileClientConfig;
+import com.example.filespringbootstarter.config.FileClientConfig;
+import com.example.filespringbootstarter.config.local.LocalFileClientConfig;
+import com.example.filespringbootstarter.config.s3.S3FileClientConfig;
+import com.example.filespringbootstarter.core.client.FileClient;
+import com.example.filespringbootstarter.core.client.local.LocalFileClient;
+import com.example.filespringbootstarter.core.client.s3.S3FileClient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
 public enum FileStorageEnum {
+
     LOCAL(10, LocalFileClientConfig.class, LocalFileClient.class),
 
     S3(20, S3FileClientConfig.class, S3FileClient.class),

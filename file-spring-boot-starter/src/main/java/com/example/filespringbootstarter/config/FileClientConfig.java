@@ -1,5 +1,4 @@
-package com.ruoyi.common.core.fileclient;
-
+package com.example.filespringbootstarter.config;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
@@ -9,8 +8,5 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @author author
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-// @JsonTypeInfo 注解的作用，Jackson 多态
-// 1. 序列化到时数据库时，增加 @class 属性。
-// 2. 反序列化到内存对象时，通过 @class 属性，可以创建出正确的类型
 public interface FileClientConfig {
 }
