@@ -1,10 +1,13 @@
-package com.ruoyi.common.core.fileclient.local;
+package com.example.filespringbootstarter.core.client.local;
+
+
 
 import cn.hutool.core.io.FileUtil;
-import com.ruoyi.common.core.fileclient.AbstractFileClient;
+import cn.hutool.core.util.StrUtil;
+import com.example.filespringbootstarter.config.local.LocalFileClientConfig;
+import com.example.filespringbootstarter.core.client.AbstractFileClient;
 
 import java.io.File;
-
 /**
  * 本地文件客户端
  *
@@ -12,8 +15,8 @@ import java.io.File;
  */
 public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
 
-    public LocalFileClient(Long id, LocalFileClientConfig config) {
-        super(id, config);
+    public LocalFileClient(LocalFileClientConfig config) {
+        super(config);
     }
 
     @Override
@@ -30,7 +33,7 @@ public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
         String filePath = getFilePath(path);
         FileUtil.writeBytes(content, filePath);
         // 拼接返回路径
-        return super.formatFileUrl(config.getDomain(), path);
+        return StrUtil.format("{}/{}", config.getDomain(), path);
     }
 
     @Override

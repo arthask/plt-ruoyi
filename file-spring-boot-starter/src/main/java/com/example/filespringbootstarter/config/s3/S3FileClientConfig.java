@@ -1,10 +1,12 @@
-package com.ruoyi.common.core.fileclient.s3;
+package com.example.filespringbootstarter.config.s3;
 
 import cn.hutool.core.util.StrUtil;
+import com.example.filespringbootstarter.config.FileClientConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ruoyi.common.core.fileclient.FileClientConfig;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,8 @@ import javax.validation.constraints.NotNull;
  *
  * @author author
  */
+@Component
+@ConfigurationProperties(prefix = "file.storage.s3")
 @Data
 public class S3FileClientConfig implements FileClientConfig {
 
