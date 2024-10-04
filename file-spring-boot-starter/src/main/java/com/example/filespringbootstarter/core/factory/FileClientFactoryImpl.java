@@ -6,9 +6,7 @@ import com.example.filespringbootstarter.core.client.AbstractFileClient;
 import com.example.filespringbootstarter.core.client.FileClient;
 import com.example.filespringbootstarter.enums.FileStorageEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -19,24 +17,18 @@ import java.util.concurrent.ConcurrentMap;
  * @author 芋道源码
  */
 @Slf4j
-@Service
 public class FileClientFactoryImpl implements FileClientFactory {
-
-    @Resource(name = "localFileClientConfig")
-    private FileClientConfig localFileClientConfig;
-
-    @Resource(name = "s3FileClientConfig")
-    private FileClientConfig s3FileClientConfig;
 
     /**
      * 文件客户端 Map
      * key：配置编号
      */
-    private final ConcurrentMap<FileStorageEnum, FileClient> clients = new ConcurrentHashMap<FileStorageEnum, FileClient>() {{
-        put(FileStorageEnum.LOCAL, createFileClient(FileStorageEnum.LOCAL, localFileClientConfig));
-        put(FileStorageEnum.S3, createFileClient(FileStorageEnum.S3, s3FileClientConfig));
-    }};
+    private final ConcurrentMap<FileStorageEnum, FileClient> clients = new ConcurrentHashMap<>();
 
+    public FileClientFactoryImpl(FileClientConfig localFileClientConfig, FileClientConfig s3FileClientConfig) {
+        clients.put(FileStorageEnum.LOCAL, createFileClient(FileStorageEnum.LOCAL, localFileClientConfig));
+        clients.put(FileStorageEnum.S3, createFileClient(FileStorageEnum.S3, s3FileClientConfig));
+    }
 
     @Override
     public FileClient getFileClient(FileStorageEnum fileStorageEnum) {

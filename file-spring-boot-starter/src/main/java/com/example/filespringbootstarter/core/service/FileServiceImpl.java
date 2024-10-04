@@ -8,8 +8,6 @@ import com.example.filespringbootstarter.enums.FileStorageEnum;
 import com.example.filespringbootstarter.utils.file.FileTypeUtils;
 import com.example.filespringbootstarter.utils.file.FileUtils;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 
 
@@ -18,12 +16,13 @@ import org.springframework.stereotype.Service;
  *
  * @author author
  */
-@Service
 public class FileServiceImpl implements FileService {
 
-    @Autowired
     private FileClientFactory fileClientFactory;
 
+    public FileServiceImpl(FileClientFactory fileClientFactory) {
+        this.fileClientFactory = fileClientFactory;
+    }
 
     @Override
     @SneakyThrows
