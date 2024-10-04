@@ -3,6 +3,7 @@ package com.example.filespringbootstarter.core.client.s3;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import com.example.filespringbootstarter.config.FileClientConfig;
 import com.example.filespringbootstarter.config.s3.S3FileClientConfig;
 import com.example.filespringbootstarter.core.client.AbstractFileClient;
 import io.minio.*;
@@ -18,11 +19,11 @@ import java.io.ByteArrayInputStream;
  */
 public class S3FileClient extends AbstractFileClient<S3FileClientConfig> {
 
-    private MinioClient client;
-
-    public S3FileClient(S3FileClientConfig config) {
-        super(config);
+    private S3FileClient(FileClientConfig config) {
+        super((S3FileClientConfig) config);
     }
+
+    private MinioClient client;
 
 
     @Override

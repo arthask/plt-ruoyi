@@ -4,6 +4,7 @@ package com.example.filespringbootstarter.core.client.local;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import com.example.filespringbootstarter.config.FileClientConfig;
 import com.example.filespringbootstarter.config.local.LocalFileClientConfig;
 import com.example.filespringbootstarter.core.client.AbstractFileClient;
 
@@ -15,8 +16,8 @@ import java.io.File;
  */
 public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
 
-    public LocalFileClient(LocalFileClientConfig config) {
-        super(config);
+    private LocalFileClient(FileClientConfig config) {
+        super((LocalFileClientConfig) config);
     }
 
     @Override

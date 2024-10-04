@@ -4,7 +4,6 @@ import com.example.filespringbootstarter.config.FileClientConfig;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -13,7 +12,6 @@ import javax.validation.constraints.NotEmpty;
  *
  * @author author
  */
-@Component
 @ConfigurationProperties(prefix = "file.storage.local")
 @Data
 public class LocalFileClientConfig implements FileClientConfig {
