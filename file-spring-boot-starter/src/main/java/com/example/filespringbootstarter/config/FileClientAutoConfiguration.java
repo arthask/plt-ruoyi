@@ -10,23 +10,25 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@ConditionalOnProperty(value = "file.storage.use", matchIfMissing = false)
+@ConditionalOnProperty(value = "file.storage.enable", matchIfMissing = false)
 @Configuration
 @ConfigurationPropertiesScan(basePackages = "com.example.filespringbootstarter.config")
 public class FileClientAutoConfiguration {
 
+    @ConditionalOnProperty(value = "file.storage.local.use")
     @Bean
     public FileClientConfig localFileClientConfig() {
         return new LocalFileClientConfig();
     }
 
+    @ConditionalOnProperty(value = "file.storage.s3.use")
     @Bean
     public FileClientConfig s3FileClientConfig() {
         return new S3FileClientConfig();
     }
 
     @Bean
-    public FileService fileService() {
+    public FileService complexFileService() {
         return new FileServiceImpl(new FileClientFactoryImpl(localFileClientConfig(), s3FileClientConfig()));
     }
 }

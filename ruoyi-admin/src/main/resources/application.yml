@@ -128,11 +128,13 @@ xss:
   urlPatterns: /system/*,/monitor/*,/tool/*
 file:
   storage:
-    use: true
+    enable: true
     local:
+      use: true
       basePath: ${LOCAL_FILE_BASE_PATH}
       domain: ${LOCAL_FILE_DOMAIN}
     s3:
+      use: true
       endpoint: ${S3_ENDPOINT}
       domain: ${S3_DOMAIN}
       bucket: ${S3_BUCKET}
