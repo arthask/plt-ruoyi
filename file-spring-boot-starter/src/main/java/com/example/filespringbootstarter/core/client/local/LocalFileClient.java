@@ -34,7 +34,7 @@ public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
         String filePath = getFilePath(path);
         FileUtil.writeBytes(content, filePath);
         // 拼接返回路径
-        return StrUtil.format("{}/{}", config.getDomain(), path);
+        return StrUtil.format("{}/get{}", config.getDomain(), path);
     }
 
     @Override
