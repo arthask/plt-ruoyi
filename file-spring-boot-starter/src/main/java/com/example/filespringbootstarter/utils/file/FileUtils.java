@@ -6,7 +6,12 @@ import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.example.filespringbootstarter.utils.date.DateUtils;
+import com.example.filespringbootstarter.utils.strings.StringUtils;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -81,4 +86,25 @@ public class FileUtils {
         return sha256Hex + '.' + FileTypeUtil.getType(new ByteArrayInputStream(content));
     }
 
+
+    /**
+     * 获取文件扩展名
+     *
+     * @param file MultipartFile
+     * @return 文件扩展名，不带。
+     */
+    public static String getWebFileExtName(MultipartFile file) {
+        // 情况一：如果存在 name，则优先使用 name 的后缀
+        String originalFilename = file.getOriginalFilename();
+        Assert.notNull(originalFilename, "文件名称为空，无法识别文件类型");
+        return FileNameUtil.extName(originalFilename);
+    }
+
+    /**
+     * 编码文件名
+     */
+    public static String extractUploadWebFilePath(MultipartFile file) {
+        return StringUtils.format("{}/{}.{}", DateUtils.datePath(),
+                FilenameUtils.getBaseName(file.getOriginalFilename()), getWebFileExtName(file));
+    }
 }

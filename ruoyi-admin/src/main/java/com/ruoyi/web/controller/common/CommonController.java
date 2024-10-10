@@ -12,7 +12,6 @@ import com.ruoyi.framework.config.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +34,7 @@ public class CommonController {
     @Autowired
     private ServerConfig serverConfig;
 
-    @Qualifier("complexFileService")
+    @Autowired
     private FileService fileService;
 
     private static final String FILE_DELIMETER = ",";
@@ -72,9 +71,8 @@ public class CommonController {
     @PostMapping("/upload")
     public AjaxResult uploadFile(@RequestParam("upload") MultipartFile file) throws Exception {
         try {
-            // 上传文件路径
             // 上传并返回新文件名称
-            String url = fileService.createFile(FileStorageEnum.LOCAL, file.getName(), "common", file.getBytes());
+            String url = fileService.createWebFile(FileStorageEnum.LOCAL, file);
             AjaxResult ajax = AjaxResult.success();
             ajax.put("url", url);
             ajax.put("fileName", file.getName());
@@ -82,6 +80,7 @@ public class CommonController {
             ajax.put("originalFilename", file.getOriginalFilename());
             return ajax;
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
