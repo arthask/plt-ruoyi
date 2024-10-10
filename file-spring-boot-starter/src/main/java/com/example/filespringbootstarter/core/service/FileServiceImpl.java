@@ -8,7 +8,9 @@ import com.example.filespringbootstarter.enums.FileStorageEnum;
 import com.example.filespringbootstarter.utils.file.FileTypeUtils;
 import com.example.filespringbootstarter.utils.file.FileUtils;
 import lombok.SneakyThrows;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 
 
 /**
@@ -36,11 +38,16 @@ public class FileServiceImpl implements FileService {
         if (StrUtil.isEmpty(name)) {
             name = path;
         }
-
         // 上传到文件存储器
         FileClient client = fileClientFactory.getFileClient(fileStorageEnum);
         Assert.notNull(client, "客户端(master) 不能为空");
         return client.upload(content, path, type);
+    }
+
+    @Override
+    public String createWebFile(FileStorageEnum fileStorageEnum, MultipartFile file) throws IOException {
+        String uploadFilePath = FileUtils.extractUploadWebFilePath(file);
+        return createFile(fileStorageEnum, file.getOriginalFilename(), uploadFilePath, file.getBytes());
     }
 
     @Override

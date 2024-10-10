@@ -1,11 +1,5 @@
 package com.ruoyi.common.utils.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Objects;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.file.FileNameLengthLimitExceededException;
@@ -14,6 +8,13 @@ import com.ruoyi.common.exception.file.InvalidExtensionException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.uuid.Seq;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * 文件上传工具类
@@ -100,20 +101,23 @@ public class FileUploadUtils
      */
     public static final String upload(String baseDir, MultipartFile file, String[] allowedExtension)
             throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException,
-            InvalidExtensionException
-    {
-        int fileNamelength = Objects.requireNonNull(file.getOriginalFilename()).length();
-        if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH)
+            InvalidExtensionException {
+        // 文件名长度校验
+        int fileNameLength = Objects.requireNonNull(file.getOriginalFilename()).length();
+        if (fileNameLength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH)
         {
             throw new FileNameLengthLimitExceededException(FileUploadUtils.DEFAULT_FILE_NAME_LENGTH);
         }
-
+        // 文件类型校验
         assertAllowed(file, allowedExtension);
 
+        // 提取文件名，{yyyy/MM/dd}/{文件名}_{序号}.{文件类型}
         String fileName = extractFilename(file);
-
+        // 写入到指定路径，/ruoyi/uploadPath/{yyyy/MM/dd}/{文件名}_{序号}.{文件类型}
+        // 若父目录不存在，则创建目录
         String absPath = getAbsoluteFile(baseDir, fileName).getAbsolutePath();
         file.transferTo(Paths.get(absPath));
+        // 返回资源映射路径
         return getPathFileName(baseDir, fileName);
     }
 

@@ -6,6 +6,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.example.filespringbootstarter.config.FileClientConfig;
 import com.example.filespringbootstarter.config.local.LocalFileClientConfig;
+import com.example.filespringbootstarter.constant.Constants;
 import com.example.filespringbootstarter.core.client.AbstractFileClient;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
         String filePath = getFilePath(path);
         FileUtil.writeBytes(content, filePath);
         // 拼接返回路径
-        return StrUtil.format("{}/get{}", config.getDomain(), path);
+        return StrUtil.format("{}{}/{}", config.getDomain(), Constants.RESOURCE_PREFIX, path);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
     }
 
     private String getFilePath(String path) {
-        return config.getBasePath() + path;
+        return config.getBasePath() + File.separator + path;
     }
 
 }

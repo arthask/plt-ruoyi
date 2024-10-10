@@ -2,6 +2,9 @@ package com.example.filespringbootstarter.core.service;
 
 
 import com.example.filespringbootstarter.enums.FileStorageEnum;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * 文件 Service 接口
@@ -19,6 +22,8 @@ public interface FileService {
      * @return 文件路径
      */
     String createFile(FileStorageEnum fileStorageEnum, String name, String path, byte[] content);
+
+    String createWebFile(FileStorageEnum fileStorageEnum, MultipartFile file) throws IOException;
 
 
     /**
