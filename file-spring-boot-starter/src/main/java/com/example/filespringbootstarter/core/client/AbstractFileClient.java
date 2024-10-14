@@ -18,6 +18,7 @@ public abstract class AbstractFileClient<Config extends FileClientConfig> implem
 
     public AbstractFileClient(Config config) {
         this.config = config;
+        this.init();
     }
 
     /**
