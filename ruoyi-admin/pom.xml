@@ -9,7 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ruoyi-admin</artifactId>
-
+    <properties>
+        <okhttp3.version>4.11.0</okhttp3.version>
+    </properties>
     <description>
         web服务入口
     </description>
@@ -36,7 +38,7 @@
             <version>1.6.2</version>
         </dependency>
 
-         <!-- Mysql驱动包 -->
+        <!-- Mysql驱动包 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -85,6 +87,17 @@
             <groupId>com.example</groupId>
             <artifactId>file-spring-boot-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp3.version}</version>
         </dependency>
 
     </dependencies>
@@ -106,15 +119,15 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>   
-                <groupId>org.apache.maven.plugins</groupId>   
-                <artifactId>maven-war-plugin</artifactId>   
-                <version>3.1.0</version>   
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <warName>${project.artifactId}</warName>
-                </configuration>   
-           </plugin>   
+                </configuration>
+            </plugin>
         </plugins>
         <finalName>${project.artifactId}</finalName>
     </build>

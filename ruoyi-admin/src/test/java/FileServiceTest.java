@@ -43,7 +43,7 @@ public class FileServiceTest {
                 "text/plain", // 文件类型
                 "Hello, World!".getBytes() // 文件内容
         );
-        String returnPath = fileService.createWebFile(FileStorageEnum.LOCAL, multipartFile);
+        String returnPath = fileService.createWebFile(FileStorageEnum.S3, multipartFile);
         System.out.println(returnPath);
     }
 
