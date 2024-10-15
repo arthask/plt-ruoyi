@@ -109,7 +109,7 @@ public class S3FileClient extends AbstractFileClient<S3FileClientConfig> {
                 .stream(new ByteArrayInputStream(content), content.length, -1) // 文件内容
                 .build());
         // 拼接返回路径
-        return config.getDomain() + "/" + path;
+        return "/" + path;
     }
 
     @Override
