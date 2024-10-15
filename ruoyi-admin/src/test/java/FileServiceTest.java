@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = FileServiceTest.Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FileServiceTest {
     @Autowired
@@ -24,6 +24,10 @@ public class FileServiceTest {
     byte[] content = ResourceUtil.readBytes("file/erweima.jpg");
 
     String path = IdUtil.fastSimpleUUID() + ".jpg";
+
+    String s3Path = "/2024/10/14/test.txt";
+
+    byte[] s3Content = ResourceUtil.readBytes("file/test.txt");
 
     @Test
     @Disabled
@@ -45,22 +49,25 @@ public class FileServiceTest {
         );
         String returnPath = fileService.createWebFile(FileStorageEnum.S3, multipartFile);
         System.out.println(returnPath);
+        s3Path = returnPath;
     }
 
     @Test
     @Order(2)
-    @Disabled
+//    @Disabled
     void testGetFile() throws Exception {
-        byte[] result = fileService.getFileContent(FileStorageEnum.LOCAL, "/home/" + path);
-        // 断言
-        assertEquals(result.length, content.length);
+//        byte[] result = fileService.getFileContent(FileStorageEnum.Local, "/home/" + path);
+//        assertEquals(result.length, content.length);
+        byte[] result = fileService.getFileContent(FileStorageEnum.S3, s3Path);
+        assertEquals(result.length, s3Content.length);
     }
 
     @Test
     @Order(3)
     @Disabled
     void testDeleteFile() throws Exception {
-        fileService.deleteFile(FileStorageEnum.LOCAL, "/home/" + path);
+//        fileService.deleteFile(FileStorageEnum.LOCAL, "/home/" + path);
+        fileService.deleteFile(FileStorageEnum.S3, s3Path);
     }
 
     @Import({FileClientAutoConfiguration.class, EnvConfig.class})
