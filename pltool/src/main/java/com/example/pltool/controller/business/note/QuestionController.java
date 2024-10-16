@@ -1,5 +1,13 @@
 package com.example.pltool.controller.business.note;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.pltool.domain.dto.note.QuestionDto;
 import com.example.pltool.domain.entity.Question;
@@ -9,14 +17,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 问题Controller
@@ -28,63 +28,63 @@ import java.util.List;
 @RequestMapping("/system/question")
 public class QuestionController extends BaseController {
 
-    @Autowired
-    private QuestionService newQuestionService;
+  @Autowired
+  private QuestionService newQuestionService;
 
-    /**
-     * 查询问题列表
-     */
-    @PreAuthorize("@ss.hasPermi('system:question:list')")
-    @GetMapping("/list")
-    public TableDataInfo list(Question question) {
-        startPage();
-        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByDesc("create_time");
-        List<Question> list = newQuestionService.list(queryWrapper);
-        return getDataTable(list);
-    }
+  /**
+   * 查询问题列表
+   */
+  @PreAuthorize("@ss.hasPermi('system:question:list')")
+  @GetMapping("/list")
+  public TableDataInfo list(Question question) {
+    startPage();
+    QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+    queryWrapper.orderByDesc("create_time");
+    List<Question> list = newQuestionService.list(queryWrapper);
+    return getDataTable(list);
+  }
 
-    /**
-     * 获取问题详细信息
-     */
-    @PreAuthorize("@ss.hasPermi('system:question:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(newQuestionService.getById(id));
-    }
+  /**
+   * 获取问题详细信息
+   */
+  @PreAuthorize("@ss.hasPermi('system:question:query')")
+  @GetMapping(value = "/{id}")
+  public AjaxResult getInfo(@PathVariable("id") Long id) {
+    return success(newQuestionService.getById(id));
+  }
 
-    /**
-     * 新增问题
-     */
-    @PreAuthorize("@ss.hasPermi('system:question:add')")
-    @Log(title = "问题", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@Validated @RequestBody QuestionDto questionData) {
-        return AjaxResult.success(newQuestionService.insertQuestion(questionData, this.getUserId()));
-    }
+  /**
+   * 新增问题
+   */
+  @PreAuthorize("@ss.hasPermi('system:question:add')")
+  @Log(title = "问题", businessType = BusinessType.INSERT)
+  @PostMapping
+  public AjaxResult add(@Validated @RequestBody QuestionDto questionData) {
+    return AjaxResult.success(newQuestionService.insertQuestion(questionData, this.getUserId()));
+  }
 
-    /**
-     * 修改问题
-     */
-    @PreAuthorize("@ss.hasPermi('system:question:edit')")
-    @Log(title = "问题", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody Question question) {
-        return toAjax(newQuestionService.updateById(question));
-    }
+  /**
+   * 修改问题
+   */
+  @PreAuthorize("@ss.hasPermi('system:question:edit')")
+  @Log(title = "问题", businessType = BusinessType.UPDATE)
+  @PutMapping
+  public AjaxResult edit(@RequestBody Question question) {
+    return toAjax(newQuestionService.updateById(question));
+  }
 
-    /**
-     * 删除问题
-     */
-    @PreAuthorize("@ss.hasPermi('system:question:remove')")
-    @Log(title = "问题", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(newQuestionService.removeBatchByIds(Arrays.asList(ids)));
-    }
+  /**
+   * 删除问题
+   */
+  @PreAuthorize("@ss.hasPermi('system:question:remove')")
+  @Log(title = "问题", businessType = BusinessType.DELETE)
+  @DeleteMapping("/{ids}")
+  public AjaxResult remove(@PathVariable Long[] ids) {
+    return toAjax(newQuestionService.removeBatchByIds(Arrays.asList(ids)));
+  }
 
-    @GetMapping("/searchQuestion")
-    public AjaxResult searchQuestion(@RequestParam("question") String question) {
-        return success(newQuestionService.searchQuestion(question));
-    }
+  @GetMapping("/searchQuestion")
+  public AjaxResult searchQuestion(@RequestParam("question") String question) {
+    return success(newQuestionService.searchQuestion(question));
+  }
 }

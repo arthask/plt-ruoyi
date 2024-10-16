@@ -1,17 +1,18 @@
 package com.example.pltool.domain.entity;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -27,60 +28,61 @@ import java.time.LocalDateTime;
 @TableName("note")
 public class Note implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @JsonIgnore
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+  @JsonIgnore
+  @TableId(value = "id", type = IdType.AUTO)
+  private Long id;
 
-    @TableField("uuid")
-    private String uuid;
+  @TableField("uuid")
+  private String uuid;
 
-    /**
-     * 笔记标题
-     */
-    @TableField("title")
-    private String title;
+  /**
+   * 笔记标题
+   */
+  @TableField("title")
+  private String title;
 
-    /**
-     * 总结
-     */
-    @TableField("summary")
-    private String summary;
+  /**
+   * 总结
+   */
+  @TableField("summary")
+  private String summary;
 
-    @TableField("user_id")
-    private Long userId;
+  @TableField("user_id")
+  private Long userId;
 
-    /**
-     * 笔记类型
-     * @see com.example.pltool.controller.business.constant.enums.NoteTypeEnum
-     */
-    @TableField("type")
-    private Integer type;
+  /**
+   * 笔记类型
+   * 
+   * @see com.example.pltool.controller.business.constant.enums.NoteTypeEnum
+   */
+  @TableField("type")
+  private Integer type;
 
-    /**
-     * 关联uuid
-     */
-    @TableField("ref_uuid")
-    private String refUuid;
+  /**
+   * 关联uuid
+   */
+  @TableField("ref_uuid")
+  private String refUuid;
 
-    /**
-     * 创建时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @TableField("create_time")
-    private LocalDateTime createTime;
+  /**
+   * 创建时间
+   */
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  @TableField("create_time")
+  private LocalDateTime createTime;
 
-    /**
-     * 更新时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @TableField("update_time")
-    private LocalDateTime updateTime;
+  /**
+   * 更新时间
+   */
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  @TableField("update_time")
+  private LocalDateTime updateTime;
 
-    /**
-     * 笔记内容
-     */
-    @TableField("content")
-    private String content;
+  /**
+   * 笔记内容
+   */
+  @TableField("content")
+  private String content;
 }

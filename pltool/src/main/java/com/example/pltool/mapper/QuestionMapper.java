@@ -1,12 +1,12 @@
 package com.example.pltool.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.List;
 
-import com.example.pltool.domain.entity.Question;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.pltool.domain.entity.Question;
 
 /**
  * <p>
@@ -19,5 +19,5 @@ import java.util.List;
 @Mapper
 public interface QuestionMapper extends BaseMapper<Question> {
 
-    int updateQuestionBatch(@Param("list") List<Question> questions);
+  int updateQuestionBatch(@Param("list") List<Question> questions);
 }

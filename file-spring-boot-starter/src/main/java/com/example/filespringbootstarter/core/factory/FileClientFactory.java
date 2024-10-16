@@ -6,10 +6,11 @@ import com.example.filespringbootstarter.enums.FileStorageEnum;
 
 public interface FileClientFactory {
 
-    /**
-     * 获取文件客户端
-     * @param fileStorageEnum 存储类型
-     * @return 文件客户端
-     */
-    FileClient getFileClient(FileStorageEnum fileStorageEnum);
+  /**
+   * 获取文件客户端
+   * 
+   * @param fileStorageEnum 存储类型
+   * @return 文件客户端
+   */
+  FileClient getFileClient(FileStorageEnum fileStorageEnum);
 }

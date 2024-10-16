@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class PackageCollectionData {
-    private Integer cardType;
-    private String collectionUUID;
-    private String packageUUID;
-    private Long userId;
+  private Integer cardType;
+  private String collectionUUID;
+  private String packageUUID;
+  private Long userId;
 }

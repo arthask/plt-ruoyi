@@ -5,14 +5,11 @@ package com.ruoyi.common.utils;
  * 
  * @author ruoyi
  */
-public class LogUtils
-{
-    public static String getBlock(Object msg)
-    {
-        if (msg == null)
-        {
-            msg = "";
-        }
-        return "[" + msg.toString() + "]";
+public class LogUtils {
+  public static String getBlock(Object msg) {
+    if (msg == null) {
+      msg = "";
     }
+    return "[" + msg.toString() + "]";
+  }
 }

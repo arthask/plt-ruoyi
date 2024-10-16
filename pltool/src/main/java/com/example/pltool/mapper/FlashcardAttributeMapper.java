@@ -1,13 +1,13 @@
 package com.example.pltool.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.List;
 
-import com.example.pltool.domain.dto.flashcard.cardattribute.ClassifyCountVo;
-import com.example.pltool.domain.entity.FlashcardAttribute;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.pltool.domain.dto.flashcard.cardattribute.ClassifyCountVo;
+import com.example.pltool.domain.entity.FlashcardAttribute;
 
 /**
  * <p>
@@ -19,10 +19,11 @@ import java.util.List;
  */
 @Mapper
 public interface FlashcardAttributeMapper extends BaseMapper<FlashcardAttribute> {
-    /**
-     * 获取卡包中各熟悉类型数量
-     * @param packageUUID packageUUID
-     * @return
-     */
-    List<ClassifyCountVo> getClassifyCount(@Param("packageUUID") String packageUUID);
+  /**
+   * 获取卡包中各熟悉类型数量
+   * 
+   * @param packageUUID packageUUID
+   * @return
+   */
+  List<ClassifyCountVo> getClassifyCount(@Param("packageUUID") String packageUUID);
 }

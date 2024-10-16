@@ -1,15 +1,16 @@
 package com.example.pltool.domain.entity;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -25,51 +26,50 @@ import java.time.LocalDateTime;
 @TableName("label_ref")
 public class LabelRef implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * uuid
-     */
-    @TableField("uuid")
-    private String uuid;
+  /**
+   * uuid
+   */
+  @TableField("uuid")
+  private String uuid;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+  @TableId(value = "id", type = IdType.AUTO)
+  private Long id;
 
-    /**
-     * label_uuid
-     */
-    @TableField("label_uuid")
-    private String labelUuid;
+  /**
+   * label_uuid
+   */
+  @TableField("label_uuid")
+  private String labelUuid;
 
-    /**
-     * 关联uuid 单词uuid或者词库uuid
-     */
-    @TableField("ref_uuid")
-    private String refUuid;
+  /**
+   * 关联uuid 单词uuid或者词库uuid
+   */
+  @TableField("ref_uuid")
+  private String refUuid;
 
-    /**
-     * @see com.example.pltool.controller.business.constant.enums.RefTypeEnum
-     * 关联类型 0：代表词库 1：代表单词 2：卡包
-     */
-    @TableField("ref_type")
-    private Integer refType;
+  /**
+   * @see com.example.pltool.controller.business.constant.enums.RefTypeEnum 关联类型 0：代表词库 1：代表单词 2：卡包
+   */
+  @TableField("ref_type")
+  private Integer refType;
 
-    /**
-     * 创建人
-     */
-    @TableField("create_user_id")
-    private Long createUserId;
+  /**
+   * 创建人
+   */
+  @TableField("create_user_id")
+  private Long createUserId;
 
-    /**
-     * 创建时间
-     */
-    @TableField("create_time")
-    private LocalDateTime createTime;
+  /**
+   * 创建时间
+   */
+  @TableField("create_time")
+  private LocalDateTime createTime;
 
-    /**
-     * 更新时间
-     */
-    @TableField("update_time")
-    private LocalDateTime updateTime;
+  /**
+   * 更新时间
+   */
+  @TableField("update_time")
+  private LocalDateTime updateTime;
 }

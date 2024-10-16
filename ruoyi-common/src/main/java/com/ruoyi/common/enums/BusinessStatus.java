@@ -6,15 +6,14 @@ package com.ruoyi.common.enums;
  * @author ruoyi
  *
  */
-public enum BusinessStatus
-{
-    /**
-     * 成功
-     */
-    SUCCESS,
+public enum BusinessStatus {
+  /**
+   * 成功
+   */
+  SUCCESS,
 
-    /**
-     * 失败
-     */
-    FAIL,
+  /**
+   * 失败
+   */
+  FAIL,
 }

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CardContent {
-    private String front;
-    private String back;
+  private String front;
+  private String back;
 }

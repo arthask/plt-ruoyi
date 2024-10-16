@@ -1,11 +1,11 @@
 package com.example.pltool.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pltool.domain.dto.language.wordsentence.WordSentenceDto;
 import com.example.pltool.domain.entity.WordSentence;
 import com.ruoyi.common.core.domain.AjaxResult;
-
-import java.util.List;
 
 /**
  * <p>
@@ -16,9 +16,9 @@ import java.util.List;
  * @since 2024-08-28
  */
 public interface IWordSentenceService extends IService<WordSentence> {
-    List<WordSentence> getSentencesByWordUUId(String wordUUId);
+  List<WordSentence> getSentencesByWordUUId(String wordUUId);
 
-    AjaxResult addSentenceOfWord(WordSentenceDto wordSentenceDto);
+  AjaxResult addSentenceOfWord(WordSentenceDto wordSentenceDto);
 
-    AjaxResult editSentenceOfWord(WordSentenceDto wordSentenceDto);
+  AjaxResult editSentenceOfWord(WordSentenceDto wordSentenceDto);
 }

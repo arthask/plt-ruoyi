@@ -1,7 +1,4 @@
-package ${packageName}.service;
-
-import java.util.List;
-import ${packageName}.domain.${ClassName};
+package ${packageName}import java.util.List; ${packageName}.domain.${ClassName};
 
 /**
  * ${functionName}Service接口
