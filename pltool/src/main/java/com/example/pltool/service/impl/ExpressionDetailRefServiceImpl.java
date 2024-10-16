@@ -1,11 +1,11 @@
 package com.example.pltool.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.pltool.domain.entity.ExpressionDetailRef;
 import com.example.pltool.mapper.ExpressionDetailRefMapper;
 import com.example.pltool.service.ExpressionDetailRefService;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
  * @since 2024-07-04
  */
 @Service
-public class ExpressionDetailRefServiceImpl extends ServiceImpl<ExpressionDetailRefMapper, ExpressionDetailRef> implements ExpressionDetailRefService {
+public class ExpressionDetailRefServiceImpl
+    extends ServiceImpl<ExpressionDetailRefMapper, ExpressionDetailRef>
+    implements ExpressionDetailRefService {
 
 }

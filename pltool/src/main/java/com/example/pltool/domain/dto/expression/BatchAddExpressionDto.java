@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class BatchAddExpressionDto {
-    private String content;
-    private String expression;
+  private String content;
+  private String expression;
 }

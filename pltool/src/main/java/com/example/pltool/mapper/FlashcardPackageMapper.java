@@ -1,9 +1,9 @@
 package com.example.pltool.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import com.example.pltool.domain.entity.FlashcardPackage;
 import org.apache.ibatis.annotations.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.pltool.domain.entity.FlashcardPackage;
 
 /**
  * <p>

@@ -1,22 +1,21 @@
 package com.ruoyi.common.enums;
 
 public enum SnapshotType {
-    REVIEW("REVIEW", 0),
-    NEW("NEW", 1)
-    ;
-   private final String code;
-   private final Integer value;
+  REVIEW("REVIEW", 0), NEW("NEW", 1);
 
-    SnapshotType(String code, Integer value) {
-        this.code = code;
-        this.value = value;
-    }
+  private final String code;
+  private final Integer value;
 
-    public String getCode() {
-        return code;
-    }
+  SnapshotType(String code, Integer value) {
+    this.code = code;
+    this.value = value;
+  }
 
-    public Integer getValue() {
-        return value;
-    }
+  public String getCode() {
+    return code;
+  }
+
+  public Integer getValue() {
+    return value;
+  }
 }

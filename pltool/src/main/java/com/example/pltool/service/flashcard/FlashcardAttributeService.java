@@ -1,11 +1,10 @@
 package com.example.pltool.service.flashcard;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pltool.domain.dto.flashcard.cardattribute.ClassifyCountVo;
 import com.example.pltool.domain.entity.FlashcardAttribute;
-
-
-import java.util.List;
 
 /**
  * <p>
@@ -17,18 +16,20 @@ import java.util.List;
  */
 public interface FlashcardAttributeService extends IService<FlashcardAttribute> {
 
-    /**
-     * 学习闪卡
-     * @param cardUUID 闪卡uuid
-     * @param familiarity 熟悉程度
-     */
-    void studyCard(String cardUUID, Integer familiarity);
+  /**
+   * 学习闪卡
+   * 
+   * @param cardUUID 闪卡uuid
+   * @param familiarity 熟悉程度
+   */
+  void studyCard(String cardUUID, Integer familiarity);
 
-    /**
-     * 获取分类数量
-     * @return
-     */
-    List<ClassifyCountVo> getClassifyCount(String packageUUID);
+  /**
+   * 获取分类数量
+   * 
+   * @return
+   */
+  List<ClassifyCountVo> getClassifyCount(String packageUUID);
 
 
 }

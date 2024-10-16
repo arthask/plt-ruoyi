@@ -14,23 +14,23 @@ import com.example.pltool.domain.entity.UserWord;
  * @since 2024-05-16
  */
 public interface UserWordService extends IService<UserWord> {
-    /**
-     * 收藏单词
-     *
-     * @param wordUUID 单词uuid
-     * @param userId   用户id
-     * @param userName 用户名
-     */
-    int collect(String wordUUID, Long userId, String userName);
+  /**
+   * 收藏单词
+   *
+   * @param wordUUID 单词uuid
+   * @param userId 用户id
+   * @param userName 用户名
+   */
+  int collect(String wordUUID, Long userId, String userName);
 
-    /**
-     * 新增用户单词
-     *
-     * @param userWord 用户单词
-     * @return 结果
-     */
-    int insertUserWord(UserWord userWord);
+  /**
+   * 新增用户单词
+   *
+   * @param userWord 用户单词
+   * @return 结果
+   */
+  int insertUserWord(UserWord userWord);
 
 
-    WordShowData getNeedReviewWord(Long userId);
+  WordShowData getNeedReviewWord(Long userId);
 }

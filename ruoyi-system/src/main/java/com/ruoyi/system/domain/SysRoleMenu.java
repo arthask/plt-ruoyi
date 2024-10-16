@@ -8,39 +8,32 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * 
  * @author ruoyi
  */
-public class SysRoleMenu
-{
-    /** 角色ID */
-    private Long roleId;
-    
-    /** 菜单ID */
-    private Long menuId;
+public class SysRoleMenu {
+  /** 角色ID */
+  private Long roleId;
 
-    public Long getRoleId()
-    {
-        return roleId;
-    }
+  /** 菜单ID */
+  private Long menuId;
 
-    public void setRoleId(Long roleId)
-    {
-        this.roleId = roleId;
-    }
+  public Long getRoleId() {
+    return roleId;
+  }
 
-    public Long getMenuId()
-    {
-        return menuId;
-    }
+  public void setRoleId(Long roleId) {
+    this.roleId = roleId;
+  }
 
-    public void setMenuId(Long menuId)
-    {
-        this.menuId = menuId;
-    }
+  public Long getMenuId() {
+    return menuId;
+  }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("roleId", getRoleId())
-            .append("menuId", getMenuId())
-            .toString();
-    }
+  public void setMenuId(Long menuId) {
+    this.menuId = menuId;
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("roleId", getRoleId())
+        .append("menuId", getMenuId()).toString();
+  }
 }

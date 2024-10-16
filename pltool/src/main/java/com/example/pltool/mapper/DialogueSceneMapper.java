@@ -1,12 +1,13 @@
 package com.example.pltool.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.pltool.domain.dto.scene.DialogueData;
-import com.example.pltool.domain.entity.DialogueScene;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.pltool.domain.dto.scene.DialogueData;
+import com.example.pltool.domain.entity.DialogueScene;
 
 /**
  * <p>
@@ -18,10 +19,11 @@ import java.util.List;
  */
 @Mapper
 public interface DialogueSceneMapper extends BaseMapper<DialogueScene> {
-    /**
-     * 获取场景下面的对话
-     * @param sceneUUID 场景uuid
-     * @return
-     */
-    List<DialogueData> getDialoguesOfScene(@Param("sceneUUID") String sceneUUID);
+  /**
+   * 获取场景下面的对话
+   * 
+   * @param sceneUUID 场景uuid
+   * @return
+   */
+  List<DialogueData> getDialoguesOfScene(@Param("sceneUUID") String sceneUUID);
 }
