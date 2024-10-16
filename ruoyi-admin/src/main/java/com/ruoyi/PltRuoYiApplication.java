@@ -10,14 +10,12 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * 
  * @author ruoyi
  */
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
-        scanBasePackages = {"com.ruoyi", "com.example.pltool", "com.example.filespringbootstarter"})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class},
+    scanBasePackages = {"com.ruoyi", "com.example.pltool", "com.example.filespringbootstarter"})
 @MapperScan("com.example.pltool.mapper")
-public class PltRuoYiApplication
-{
-    public static void main(String[] args)
-    {
-        // System.setProperty("spring.devtools.restart.enabled", "false");
-        SpringApplication.run(PltRuoYiApplication.class, args);
-    }
+public class PltRuoYiApplication {
+  public static void main(String[] args) {
+    // System.setProperty("spring.devtools.restart.enabled", "false");
+    SpringApplication.run(PltRuoYiApplication.class, args);
+  }
 }
